@@ -38,12 +38,12 @@ namespace potts {
                 if(a > 0)
                     --a;
                 else
-                    ++a;
+                    return;
             else
                 if(a + 1 < max_state)
                     ++a;
                 else
-                    --a;
+                    return;
                     
             auto const E_new = grid_.neighbour_diff(i, j);
             auto const index = (n_neighbour + E_old - E_new) >> 1;
@@ -78,14 +78,18 @@ namespace potts {
             data_["E"];
             data_["M"];
             
-            for(int i = 0; i < pre_exp_.size(); ++i) {
-                pre_exp_[i] = std::min(1.0, std::exp(eunit_ * (2.0*i - n_neighbour) / T_));
-            }
+            set_T(T_);
             
             grid_.init();
             
             E_ = grid_.energy();
             M_ = grid_.magn();
+        }
+        void set_T(double const & T) {
+            T_ = T;
+            for(int i = 0; i < pre_exp_.size(); ++i) {
+                pre_exp_[i] = std::min(1.0, std::exp(eunit_ * (2.0*i - n_neighbour) / T_));
+            }
         }
     //  +---------------------------------------------------+
     //  |                   const methods                   |
@@ -102,6 +106,9 @@ namespace potts {
             std::cout << GREEN << "Measurements: " << NONE << std::endl;
             for(auto & d : data_)
                 std::cout << d.first << ": " << d.second << std::endl;
+        }
+        typename grid_class<Ht, Lt>::grid_type const & grid() {
+            return grid_.grid();
         }
     private:
         //------------------- grid -------------------

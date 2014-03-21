@@ -13,13 +13,13 @@
 //  +---------------------------------------------------+
 namespace potts {
     //------------------- state type -------------------
-    typedef int8_t state_type; //must be signed
+    using state_type = int8_t; //must be signed
     const state_type max_state = 4;
     const uint n_neighbour = 4;
     const uint n_state = max_state;
     
     //------------------- technical typedefs -------------------
-    typedef int index_type;
+    using index_type = int;
 }//end namespace 
 
 #endif //__GLOBAL_HEADER

@@ -18,6 +18,8 @@ namespace potts {
         template<typename T, int N>
         using array_type = std::array<T, N>;
     public:
+        //------------------- public typedefs -------------------
+        using grid_type = array_type<array_type<state_type, Lt>, Ht>;
         //------------------- ctor -------------------
         grid_class(): H(Ht), L(Lt) {
             init();
@@ -87,6 +89,9 @@ namespace potts {
                     M += a;
             return M;
         }
+        grid_type const & grid() {
+            return grid_;
+        }
     //  +---------------------------------------------------+
     //  |                   class members                   |
     //  +---------------------------------------------------+
@@ -94,7 +99,7 @@ namespace potts {
         index_type const H;
     private:
         //------------------- grid -------------------
-        array_type<array_type<state_type, Lt>, Ht> grid_;
+        grid_type grid_;
         
         //------------------- boundary conditions -------------------
         array_type<index_type, Lt> x_next_;
