@@ -7,6 +7,7 @@
 #include <cassert>
 #include <math.h>
 #include <baseline_impl_greschd/lib/global.hpp>
+#include <baseline_impl_greschd/lib/ppm_picture.hpp>
 
 namespace mc_potts {
 
@@ -62,11 +63,19 @@ namespace mc_potts {
             for(dim_t i = 0; i < L1; ++i) {
                 for(dim_t j = 0; j < L2; ++j) {
                     for(dim_t k = 0; k < L3; ++k) {
-                        res -= (get(i, j, k) - (S - 1) / 2.) * (get_nn(i, j, k) - 8 * (S - 1) / 2. );
+                        res -= (get(i, j, k) - (S - 1) / 2.) * (get_nn(i, j, k) - 6 * (S - 1) / 2. );
                     }
                 }
             }
             return res * Jh / (2. * L1 * L2 * L3);
+        }
+        
+    //-------------------print a picture of a slice at x----------------//
+        void picture_slice (dim_t const & x, std::string const & outfile = "output", dim_t resolution = 10) const {
+            addon::ppm_picture_class pict(outfile);
+            pict.set_cellsize(resolution);
+            pict.init(S);
+            pict.print(system_.at(x));
         }
 
     private:

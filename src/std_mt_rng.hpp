@@ -51,7 +51,7 @@ namespace mc_potts {
     template<class T>
     class helper_cl<T, true> {
     //-------------------------local typedefs---------------------------//
-        typedef std::uniform_int_distribution<T> distr_t;
+        typedef std::uniform_int_distribution<int> distr_t;
 
     public:
         helper_cl(T const & lower = T(0), T const & upper = T(2)): distr_(lower, upper - 1)  {
@@ -74,7 +74,7 @@ namespace mc_potts {
     //-------------------------matching the interface-------------------//
     
     template<typename T>
-    using rng_baseline_greschd = helper_cl<T, std::numeric_limits<T>::is_integer>;
+    using std_mt_rng = helper_cl<T, std::numeric_limits<T>::is_integer>;
     
 }//end namespace mc_potts
 
