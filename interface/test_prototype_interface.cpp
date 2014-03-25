@@ -3,8 +3,8 @@
 // File:    test_prototype_interface.cpp
 
 #include <iostream>
-#include "rng_interface.hpp" //change to global include after cmake
-#include "sim_interface.hpp" //change to global include after cmake
+#include <../interface/rng_interface.hpp>
+#include <../interface/sim_interface.hpp> 
 
 template<typename T>
 using rng_type = interface::rng_proto_type<T>;
