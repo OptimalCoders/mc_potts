@@ -81,8 +81,8 @@ namespace mc_potts {
             std::cout << "magnetisation density: " << system_.magn_density() << std::endl;
         }
         
-        void picture(std::string const & outfile = "output") {
-            system_.picture(outfile);
+        void picture (std::string const & outfile = "output", dim_t resolution = 10) const {
+            system_.picture(outfile, resolution);
         }
         
     private:

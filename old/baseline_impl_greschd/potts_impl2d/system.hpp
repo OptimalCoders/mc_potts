@@ -91,8 +91,9 @@ namespace mc_potts {
             }
         }
         
-        void picture(std::string const & outfile = "output") {
+        void picture(std::string const & outfile = "output", dim_t resolution = 10) const {
             addon::ppm_picture_class out(outfile);
+            out.set_cellsize(resolution);
             out.init(S);
             out.print(system_);
         }

@@ -39,7 +39,7 @@ namespace interface {
                 , template<typename> class RNG >
         class impl {
         public:
-            impl(uint32_t const & N_therm, uint32_t const & N_update, double const & T_init) {
+            impl(double const & T_init, uint32_t const & N_therm, uint32_t const & N_update) {
             }
             void thermalize() {
             }

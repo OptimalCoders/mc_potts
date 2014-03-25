@@ -6,11 +6,11 @@
 #define __RNG_HEADER
 
 /*
-rng_proto_type<double> rng() // [0, 1)
-rng_proto_type<double> rng(5, 8) // [5, 9)
+rng_proto_type<double> rng; // [0, 1)
+rng_proto_type<double> rng(5, 8); // [5, 9)
 
-rng_proto_type<int> rng() // {0, 1}
-rng_proto_type<int> rng(0, size) // {0, ... , size - 1}
+rng_proto_type<int> rng; // {0, 1}
+rng_proto_type<int> rng(0, size); // {0, ... , size - 1}
 
 rng.set_seed(double);
 rng.seed();
