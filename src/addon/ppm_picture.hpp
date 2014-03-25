@@ -5,10 +5,11 @@
 #ifndef __PPM_PICTURE_HEADER
 #define __PPM_PICTURE_HEADER
 
+#include <map>
 #include <iomanip>
 #include <fstream>
 #include <sstream>
-#include <map>
+#include <iostream>
 
 namespace addon {
     class ppm_picture_class {
