@@ -6,8 +6,8 @@
 #include <algorithm>
 #include <cassert>
 #include <math.h>
-#include <baseline_impl_greschd/lib/global.hpp>
-#include <baseline_impl_greschd/lib/ppm_picture.hpp>
+#include <baseline_impl_greschd/global.hpp>
+#include <addon/ppm_picture.hpp>
 
 namespace mc_potts {
 

@@ -2,7 +2,7 @@
 // Date:    24.03.2014 21:16:39 CET
 // File:    sim_baseline_greschd.cpp
 
-#include <baseline_impl_greschd/lib/system.cpp>
+#include <baseline_impl_greschd/system.hpp>
 #include <std_mt_rng.hpp>
 #include <result_struct.hpp>
 #include <algorithm>
