@@ -11,7 +11,7 @@
 //  +---------------------------------------------------+
 //  |                   typedefs                        |
 //  +---------------------------------------------------+
-namespace potts {
+namespace mc_potts {
     //------------------- state type -------------------
     using state_type = int8_t; //must be signed
     const state_type max_state = 4;
@@ -20,6 +20,6 @@ namespace potts {
     
     //------------------- technical typedefs -------------------
     using index_type = int;
-}//end namespace 
+}//end mc_namespace 
 
 #endif //__GLOBAL_HEADER

@@ -5,6 +5,7 @@
 #ifndef __SIM_HEADER
 #define __SIM_HEADER
 
+#include <result.hpp>
 #include <addon/color.hpp>
 #include <addon/accum_double.hpp>
 #include <baseline_impl_mskoenz/grid.hpp>
@@ -12,125 +13,156 @@
 
 #include <map>
 
-namespace potts {
-    template<index_type Ht, index_type Lt>
-    class sim_class {
-    public:
-        sim_class(): eunit_(1)
-                   , T_(10)
-                   , rngY_(0, Ht)
-                   , rngX_(0, Lt)
-                   , rngp_()
-                   , rngS_(0, 2)
-        {
-            init();
-        }
-        void step() {
-            int const i = rngY_();
-            int const j = rngX_();
-            int const shift = rngS_();
-            
-            auto & a = grid_.ref(i, j);
-            auto const old = a;
-            auto const E_old = grid_.neighbour_diff(i, j);
-            
-            if(shift == 0)
-                if(a > 0)
-                    --a;
+namespace mc_potts {
+    struct baseline_mskoenz_struct {
+        template< int L1
+                , int L2
+                , int L3
+                , int S
+                , template<typename> class RNG >
+        class impl {
+        public:
+            impl(double const & T_init, uint32_t const & N_therm, uint32_t const & N_update): 
+                                 eunit_(1)
+                               , T_(10)
+                               , N_therm_(N_therm)
+                               , N_update_(N_update)
+                               , rngY_(0, L1)
+                               , rngX_(0, L2)
+                               , rngp_()
+                               , rngS_(0, 2) {
+                clear();
+            }
+            void step() {
+                int const i = rngY_();
+                int const j = rngX_();
+                int const shift = rngS_();
+                
+                auto & a = grid_.ref(i, j);
+                auto const old = a;
+                auto const E_old = grid_.neighbour_diff(i, j);
+                
+                if(shift == 0)
+                    if(a > 0)
+                        --a;
+                    else
+                        return;
                 else
-                    return;
-            else
-                if(a + 1 < max_state)
-                    ++a;
+                    if(a + 1 < max_state)
+                        ++a;
+                    else
+                        return;
+                        
+                auto const E_new = grid_.neighbour_diff(i, j);
+                auto const index = (n_neighbour + E_old - E_new) >> 1;
+                
+                assert(std::abs(E_old - E_new) <= n_neighbour);
+                assert(std::abs(E_old - E_new) % 2 == 0);
+                
+                if(pre_exp_[index] > rngp_()) {
+                    E_ += E_new - E_old;
+                    M_ += a - old;
+                    data_.at("acc") << 1;
+                }
                 else
-                    return;
-                    
-            auto const E_new = grid_.neighbour_diff(i, j);
-            auto const index = (n_neighbour + E_old - E_new) >> 1;
-            
-            assert(std::abs(E_old - E_new) <= n_neighbour);
-            assert(std::abs(E_old - E_new) % 2 == 0);
-            
-            if(pre_exp_[index] > rngp_()) {
-                E_ += E_new - E_old;
-                M_ += a - old;
-                data_.at("acc") << 1;
+                    a = old;
+                data_.at("acc") << 0;
             }
-            else
-                a = old;
-            data_.at("acc") << 0;
-        }
-        void update() {
-            for(index_type i = 0; i < Ht * Lt; ++i) {
-                step();
+            void update() { //ensure decorr
+                for(uint32_t i = 0; i < N_update_; ++i) {
+                    step();
+                }
             }
-        }
-        void measure() {
-            assert(E_ == grid_.energy());
-            assert(M_ == grid_.magn());
-            
-            data_.at("E") << E_ / (Ht * Lt);
-            data_.at("M") << M_ / (Ht * Lt);
-        }
-        void init() {
-            data_.clear();
-            data_["acc"];
-            data_["E"];
-            data_["M"];
-            
-            set_T(T_);
-            
-            grid_.init();
-            
-            E_ = grid_.energy();
-            M_ = grid_.magn();
-        }
-        void set_T(double const & T) {
-            T_ = T;
-            for(int i = 0; i < pre_exp_.size(); ++i) {
-                pre_exp_[i] = std::min(1.0, std::exp(eunit_ * (2.0*i - n_neighbour) / T_));
+            void thermalize() {
+                for(uint32_t i = 0; i < N_therm_; ++i) {
+                    update();
+                }
             }
-        }
-    //  +---------------------------------------------------+
-    //  |                   const methods                   |
-    //  +---------------------------------------------------+
-        //------------------- print -------------------
-        void print() const {
-            std::cout << GREEN << "Grid: " << NONE << std::endl;
-            grid_.print();
-            std::cout << GREEN << "Probabilities: " << NONE << std::endl;
-            for(auto & a: pre_exp_) {
-                std::cout << a << " ";
+            void measure() { //feeding
+                assert(E_ == grid_.energy());
+                assert(M_ == grid_.magn());
+                
+                data_.at("E") << E_ / (L1 * L2);
+                data_.at("M") << M_ / (L1 * L2);
             }
-            std::cout << std::endl;
-            std::cout << GREEN << "Measurements: " << NONE << std::endl;
-            for(auto & d : data_)
-                std::cout << d.first << ": " << d.second << std::endl;
-        }
-        typename grid_class<Ht, Lt>::grid_type const & grid() {
-            return grid_.grid();
-        }
-    private:
-        //------------------- grid -------------------
-        grid_class<Ht, Lt> grid_;
-        
-        //------------------- measurements/physics -------------------
-        std::map<std::string, accumulator_double> data_;
-        double const eunit_;
-        double T_;
-        double E_;
-        double M_;
-        
-        //------------------- technical -------------------
-        std::array<double, n_neighbour + 1> pre_exp_;
-        
-        //------------------- rngs -------------------
-        addon::random_class<index_type, addon::mersenne> rngY_;
-        addon::random_class<index_type, addon::mersenne> rngX_;
-        addon::random_class<float, addon::mersenne> rngp_;
-        addon::random_class<int, addon::mersenne> rngS_;
+            mc_potts::result_struct energy() const {
+                return mc_potts::result_struct(data_.at("E").mean()
+                                             , data_.at("E").deviation()
+                                             , data_.at("E").error()
+                                             , data_.at("E").count()
+                                             );
+            }
+            mc_potts::result_struct magn() const {
+                return mc_potts::result_struct(data_.at("M").mean()
+                                             , data_.at("M").deviation()
+                                             , data_.at("M").error()
+                                             , data_.at("M").count()
+                                             );
+            }
+            void set_T(double const & T) {
+                T_ = T;
+                for(int i = 0; i < pre_exp_.size(); ++i) {
+                    pre_exp_[i] = std::min(1.0, std::exp(eunit_ * (2.0*i - n_neighbour) / T_));
+                }
+            }
+            void clear() {
+                data_.clear();
+                data_["acc"];
+                data_["E"];
+                data_["M"];
+                
+                set_T(T_);
+                
+                grid_.init();
+                
+                E_ = grid_.energy();
+                M_ = grid_.magn();
+            }
+            uint8_t get(  uint32_t const & l1
+                        , uint32_t const & l2
+                        , uint32_t const & l3) const {
+                return grid_.grid()[l1][l2];
+            }
+            //  +---------------------------------------------------+
+            //  |                   const methods                   |
+            //  +---------------------------------------------------+
+            //------------------- print -------------------
+            void print() const {
+                std::cout << GREEN << "Grid: " << NONE << std::endl;
+                grid_.print();
+                std::cout << GREEN << "Probabilities: " << NONE << std::endl;
+                for(auto & a: pre_exp_) {
+                    std::cout << a << " ";
+                }
+                std::cout << std::endl;
+                std::cout << GREEN << "Measurements: " << NONE << std::endl;
+                for(auto & d : data_)
+                    std::cout << d.first << ": " << d.second << std::endl;
+            }
+        private:
+            //------------------- grid -------------------
+            grid_class<L1, L2> grid_;
+            
+            //------------------- measurements/physics -------------------
+            std::map<std::string, accumulator_double> data_;
+            double const eunit_;
+            double T_;
+            double E_;
+            double M_;
+            
+            uint32_t const N_therm_;
+            uint32_t const N_update_;
+            
+            //------------------- technical -------------------
+            std::array<double, n_neighbour + 1> pre_exp_;
+            
+            //------------------- rngs -------------------
+            addon::random_class<index_type, addon::mersenne> rngY_;
+            addon::random_class<index_type, addon::mersenne> rngX_;
+            addon::random_class<float, addon::mersenne> rngp_;
+            addon::random_class<int, addon::mersenne> rngS_;
+        };
     };
-    
-}//end namespace potts
+}//end namespace mc_potts
 
 #endif //__SIM_HEADER

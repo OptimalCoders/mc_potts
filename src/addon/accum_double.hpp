@@ -9,27 +9,30 @@ using namespace std;
 class accumulator_double {
     public:
         accumulator_double(): n_(0), sum_(0), sum2_(0) {};
-        void operator<<(double const & val) {
+        inline void operator<<(double const & val) {
             sum_ += val;
             sum2_ += val * val;
             ++n_;
         }
-        double mean() const {
+        inline double mean() const {
             return sum_ / n_;
         }
-        double deviation() const {
+        inline double deviation() const {
             return sqrt(sum2_ / (n_ - 1) - sum_ *sum_ / n_ / (n_ - 1));
         }
-        double error() const {
+        inline double error() const {
             return deviation() / sqrt(n_);
         }
-        void reset() {
+        inline uint64_t const & count() const {
+            return n_;
+        }
+        inline void reset() {
             n_ = 0;
             sum_ = 0;
             sum2_ = 0;
         }
     private:
-        long int n_;
+        uint64_t n_;
         double sum_;
         double sum2_;
 };

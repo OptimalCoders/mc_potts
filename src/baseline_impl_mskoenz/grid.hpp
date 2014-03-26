@@ -11,7 +11,7 @@
 #include <assert.h>
 #include <array>
 
-namespace potts {
+namespace mc_potts {
     template<index_type Ht, index_type Lt>
     class grid_class {
         //------------------- local typedefs -------------------
@@ -106,6 +106,6 @@ namespace potts {
         array_type<index_type, Ht> y_prev_;
     };
     
-}//end namespace potts
+}//end namespace mc_potts
 
 #endif //__GRID_HEADER

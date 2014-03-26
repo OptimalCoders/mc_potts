@@ -5,6 +5,7 @@
 #ifndef __SIM_HEADER
 #define __SIM_HEADER
 
+#include <result.hpp>
 
 /*
 init()
@@ -23,14 +24,6 @@ precompute prob
 */
 
 namespace interface {
-
-    struct result_struct {
-        double mean;
-        double dev;
-        double err;
-        uint64_t n;
-    };
-    
     struct sim_proto_type {
         template< int L1
                 , int L2
@@ -47,11 +40,11 @@ namespace interface {
             }
             void measure() { //feeding
             }
-            result_struct energy() const {
-                return result_struct(1, 1, 1, 1);
+            mc_potts::result_struct energy() const {
+                return mc_potts::result_struct(1, 1, 1, 1);
             }
-            result_struct magn() const {
-                return result_struct(1, 1, 1, 1);
+            mc_potts::result_struct magn() const {
+                return mc_potts::result_struct(1, 1, 1, 1);
             }
             void set_T(double const & T) {
             }

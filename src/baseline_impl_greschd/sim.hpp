@@ -4,7 +4,7 @@
 
 #include <baseline_impl_greschd/system.hpp>
 #include <std_mt_rng.hpp>
-#include <result_struct.hpp>
+#include <result.hpp>
 #include <algorithm>
 #include <vector>
 #include <math.h>
