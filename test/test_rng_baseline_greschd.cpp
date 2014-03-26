@@ -3,9 +3,9 @@
 // File:    test_rng_baseline_greschd.cpp
 
 #include <iostream>
-#include <std_mt_rng.hpp>
+#include <rng/std_mt_rng.hpp>
 
-using namespace mc_potts;
+using namespace addon;
 
 template<class T>
 using rng_type = std_mt_rng<T>;

@@ -6,7 +6,6 @@
 #define __SIM_BASELINE_GRESCHD_HEADER
 
 #include <baseline_impl_greschd/system_baseline_greschd.hpp>
-#include <std_mt_rng.hpp>
 #include <result.hpp>
 
 #include <algorithm>

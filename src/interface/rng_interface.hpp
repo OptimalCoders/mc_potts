@@ -2,8 +2,10 @@
 // Date:    24.03.2014 15:03:04 CET
 // File:    rng.hpp
 
-#ifndef __RNG_HEADER
-#define __RNG_HEADER
+#ifndef __RNG_INTERFACE_HEADER
+#define __RNG_INTERFACE_HEADER
+
+#include <iostream>
 
 /*
 rng_proto_type<double> rng; // [0, 1)
@@ -37,4 +39,4 @@ namespace interface {
     };
 }//end namespace interface
 
-#endif //__RNG_HEADER
+#endif //__RNG_INTERFACE_HEADER

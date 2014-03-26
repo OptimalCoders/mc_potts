@@ -101,7 +101,7 @@ namespace mc_potts {
                         M += a;
             return M;
         }
-        grid_type const & grid() {
+        grid_type const & grid() const {
             return grid_;
         }
     private:

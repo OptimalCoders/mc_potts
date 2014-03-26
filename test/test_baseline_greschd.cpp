@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <baseline_impl_greschd/sim_baseline_greschd.hpp>
-#include <std_mt_rng.hpp>
+#include <rng/std_mt_rng.hpp>
 
 int main(int argc, char* argv[]) {
     
@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
     
     constexpr int size = 30;
     
-    sim_baseline_greschd::impl<size, size, size, 4, std_mt_rng> testsim(1e-8, 200);
+    sim_baseline_greschd::impl<size, size, size, 4, addon::std_mt_rng> testsim(1e-8, 200);
     testsim.thermalize();
     //~ for(uint i = 0; i < 10; ++i) {
         //~ testsim.update();

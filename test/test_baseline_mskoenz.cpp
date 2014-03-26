@@ -2,25 +2,39 @@
 // Date:    25.03.2014 15:04:30 CET
 // File:    test_baseline_mskoenz.cpp
 
+#include <rng/lag_fib_rng.hpp>
 #include <addon/ppm_picture.hpp>
 #include <baseline_impl_mskoenz/sim.hpp>
-#include <std_mt_rng.hpp>
+
+#include <baseline_impl_greschd/sim_baseline_greschd.hpp>
 
 #include <iostream>
 
-template<typename T>
-struct dummy_rng_struct {
-};
-
-
 int main(int argc, char* argv[]) {
-    //------------------- set seed -------------------
-    addon::global_seed.set(43);
-    
     //------------------- test sim -------------------
     // mc_potts::std_mt_rng
-    typename mc_potts::baseline_mskoenz_struct::template impl<50, 50, 50, 4, addon::msk_rng> s(0.1, 10, 50*50);
+    
+    addon::detail::lag_fib_engine.seed(0);
+    
+    mc_potts::baseline_mskoenz_struct::impl<2, 10, 10, 4, addon::lag_fib_rng> s(0.1, 10);
     s.set_T(2);
+    s.update();
+    
+    addon::detail::lag_fib_engine.seed(0);
+    
+    mc_potts::sim_baseline_greschd::impl<2, 10, 10, 4, addon::lag_fib_rng> s2(0.1, 10);
+    s2.set_T(2);
+    s2.update();
+    
+    for(uint i = 0; i < 2; ++i) {
+        for(uint j = 0; j < 10; ++j) {
+            for(uint k = 0; k < 10; ++k) {
+                std::cout <<  (s2.get(i, j, k) == s.get(i, j, k)) << " ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
     
     //------------------- ppm pic -------------------
     addon::ppm_picture_class ppm("out");
@@ -37,7 +51,7 @@ int main(int argc, char* argv[]) {
         s.measure();
         //~ ppm.print(s.grid()[0], i); //ppm picture
     }
-    s.print();
+    //~ s.print();
     
     return 0;
 }

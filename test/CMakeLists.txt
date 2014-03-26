@@ -1,6 +1,6 @@
 FOREACH (name   test_baseline_greschd
                 test_baseline_mskoenz
-                test_prototype_interface
+                test_sim_rng_interface
                 test_rng_baseline_greschd
                 test_validation
     )
