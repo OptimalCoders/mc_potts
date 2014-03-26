@@ -3,8 +3,8 @@
 // File:    test_validation.cpp
 
 #include <std_mt_rng.hpp>
-#include <baseline_impl_greschd/sim.hpp>
-//~ #include <baseline_impl_mskoenz/sim.hpp>
+#include <baseline_impl_greschd/sim_baseline_greschd.hpp>
+#include <baseline_impl_mskoenz/sim.hpp>
 #include <validation.hpp>
 
 #include <iostream>

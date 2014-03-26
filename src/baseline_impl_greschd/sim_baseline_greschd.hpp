@@ -1,10 +1,14 @@
 // Author:  Dominik Gresch <greschd@phys.ethz.ch>
-// Date:    24.03.2014 21:16:39 CET
-// File:    sim_baseline_greschd.cpp
+// Date:    26.03.2014 20:46:58 CET
+// File:    sim_baseline_greschd.hpp
 
-#include <baseline_impl_greschd/system.hpp>
+#ifndef __SIM_BASELINE_GRESCHD_HEADER
+#define __SIM_BASELINE_GRESCHD_HEADER
+
+#include <baseline_impl_greschd/system_baseline_greschd.hpp>
 #include <std_mt_rng.hpp>
 #include <result.hpp>
+
 #include <algorithm>
 #include <vector>
 #include <math.h>
@@ -175,3 +179,6 @@ namespace mc_potts {
     }; // struct sim_baseline_greschd
     
 }
+
+
+#endif //__SIM_BASELINE_GRESCHD_HEADER

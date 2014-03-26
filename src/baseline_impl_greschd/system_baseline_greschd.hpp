@@ -1,13 +1,18 @@
 // Author:  Dominik Gresch <greschd@phys.ethz.ch>
-// Date:    24.03.2014 22:50:47 CET
-// File:    system.cpp
+// Date:    26.03.2014 20:52:50 CET
+// File:    system_baseline_greschd.hpp
+
+#ifndef __SYSTEM_BASELINE_GRESCHD_HEADER
+#define __SYSTEM_BASELINE_GRESCHD_HEADER
+
+
+#include <baseline_impl_greschd/global_baseline_greschd.hpp>
+#include <addon/ppm_picture.hpp>
 
 #include <vector>
 #include <algorithm>
 #include <cassert>
 #include <math.h>
-#include <baseline_impl_greschd/global.hpp>
-#include <addon/ppm_picture.hpp>
 
 namespace mc_potts {
 
@@ -85,3 +90,6 @@ namespace mc_potts {
     };
 
 }
+
+
+#endif //__SYSTEM_BASELINE_GRESCHD_HEADER

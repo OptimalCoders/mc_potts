@@ -1,12 +1,12 @@
 // Author:  Dominik Gresch <greschd@phys.ethz.ch>
-// Date:    22.03.2014 18:59:07 CET
-// File:    global.hpp
+// Date:    26.03.2014 20:51:53 CET
+// File:    global_baseline_greschd.hpp
 
-#ifndef __GLOBAL_HEADER
-#define __GLOBAL_HEADER
-
+#ifndef __GLOBAL_BASELINE_GRESCHD_HEADER
+#define __GLOBAL_BASELINE_GRESCHD_HEADER
 
 namespace mc_potts {
+
     typedef int num_t;
     typedef int dim_t;
     typedef uint8_t spin_t;
@@ -19,4 +19,5 @@ namespace mc_potts {
     const energy_t physical_const = Jh / kb;
 }
 
-#endif //__GLOBAL_HEADER
+
+#endif //__GLOBAL_BASELINE_GRESCHD_HEADER
