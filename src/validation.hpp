@@ -17,8 +17,6 @@
 
 namespace mc_potts {
 
-    using namespace boost::mpl;
-
     template<class IMPL1, class IMPL2, int S, template<class> class RNG>
     struct compare {
         template< typename U > void operator()(U) {
@@ -32,31 +30,23 @@ namespace mc_potts {
             RNG<int> rng_handle;
             int seed(std::time(NULL));
             
+            // testing sequence
+            #define CALL(x, y) \
+            rng_handle.set_seed(seed); \
+            typename y::template impl<U::value, U::value, U::value, S, RNG > x(T1, N_therm); \
+            x.thermalize(); \
+            for(uint i = 0; i < updates; ++i) { \
+                x.update(); \
+            } \
+            x.set_T(T2); \
+            for(uint i = 0; i < updates; ++i) { \
+                x.update(); \
+            } \
             
-            //impl1
-            rng_handle.set_seed(seed);
-            typename IMPL1::template impl<U::value, U::value, U::value, S, RNG > impl1(T1, N_therm);
-            impl1.thermalize();
-            for(uint i = 0; i < updates; ++i) {
-                impl1.update();
-            }
-            impl1.set_T(T2);
-            for(uint i = 0; i < updates; ++i) {
-                impl1.update();
-            }
+            CALL(impl1, IMPL1)
+            CALL(impl2, IMPL2)
             
-            // impl2
-            rng_handle.set_seed(seed);
-            typename IMPL2::template impl<U::value, U::value, U::value, S, RNG > impl2(T1, N_therm);
-            impl2.thermalize();
-            for(uint i = 0; i < updates; ++i) {
-                impl2.update();
-            }
-            impl2.set_T(T2);
-            for(uint i = 0; i < updates; ++i) {
-                impl2.update();
-            }
-            
+            // compare elements
             for(uint i = 0; i < U::value; ++i) {
                 for(uint j = 0; j < U::value; ++j) {
                     for(uint k = 0; k < U::value; ++k) {
@@ -66,6 +56,12 @@ namespace mc_potts {
             }
         }
     };
+    
+    template<class IMPL1, class IMPL2, int S, template<class> class RNG>
+    void validate() {
+        typedef boost::mpl::vector<boost::mpl::int_<1>, boost::mpl::int_<2>, boost::mpl::int_<4>>::type vec_type;
+        boost::mpl::for_each<vec_type>(compare<IMPL1, IMPL2, S, RNG>());
+    }
 
 } // namespace mc_potts
 
