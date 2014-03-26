@@ -27,20 +27,22 @@ namespace mc_potts {
                                , T_(10)
                                , N_therm_(N_therm)
                                , N_update_(N_update)
-                               , rngY_(0, L1)
-                               , rngX_(0, L2)
+                               , rngL1_(0, L1)
+                               , rngL2_(0, L2)
+                               , rngL3_(0, L3)
                                , rngp_()
                                , rngS_(0, 2) {
                 clear();
             }
             void step() {
-                int const i = rngY_();
-                int const j = rngX_();
+                int const i = rngL1_();
+                int const j = rngL2_();
+                int const k = rngL3_();
                 int const shift = rngS_();
                 
-                auto & a = grid_.ref(i, j);
+                auto & a = grid_.ref(i, j, k);
                 auto const old = a;
-                auto const E_old = grid_.neighbour_diff(i, j);
+                auto const E_old = grid_.neighbour_diff(i, j, k);
                 
                 if(shift == 0)
                     if(a > 0)
@@ -53,7 +55,7 @@ namespace mc_potts {
                     else
                         return;
                         
-                auto const E_new = grid_.neighbour_diff(i, j);
+                auto const E_new = grid_.neighbour_diff(i, j, k);
                 auto const index = (n_neighbour + E_old - E_new) >> 1;
                 
                 assert(std::abs(E_old - E_new) <= n_neighbour);
@@ -82,8 +84,8 @@ namespace mc_potts {
                 assert(E_ == grid_.energy());
                 assert(M_ == grid_.magn());
                 
-                data_.at("E") << E_ / (L1 * L2);
-                data_.at("M") << M_ / (L1 * L2);
+                data_.at("E") << E_ / (L1 * L2 * L3);
+                data_.at("M") << M_ / (L1 * L2 * L3);
             }
             mc_potts::result_struct energy() const {
                 return mc_potts::result_struct(data_.at("E").mean()
@@ -121,7 +123,7 @@ namespace mc_potts {
             uint8_t get(  uint32_t const & l1
                         , uint32_t const & l2
                         , uint32_t const & l3) const {
-                return grid_.grid()[l1][l2];
+                return grid_.grid()[l1][l2][l3];
             }
             //  +---------------------------------------------------+
             //  |                   const methods                   |
@@ -139,9 +141,10 @@ namespace mc_potts {
                 for(auto & d : data_)
                     std::cout << d.first << ": " << d.second << std::endl;
             }
+            
         private:
             //------------------- grid -------------------
-            grid_class<L1, L2> grid_;
+            grid_class<L1, L2, L3> grid_;
             
             //------------------- measurements/physics -------------------
             std::map<std::string, accumulator_double> data_;
@@ -157,10 +160,11 @@ namespace mc_potts {
             std::array<double, n_neighbour + 1> pre_exp_;
             
             //------------------- rngs -------------------
-            addon::random_class<index_type, addon::mersenne> rngY_;
-            addon::random_class<index_type, addon::mersenne> rngX_;
-            addon::random_class<float, addon::mersenne> rngp_;
-            addon::random_class<int, addon::mersenne> rngS_;
+            RNG<index_type> rngL1_;
+            RNG<index_type> rngL2_;
+            RNG<index_type> rngL3_;
+            RNG<float> rngp_;
+            RNG<int> rngS_;
         };
     };
 }//end namespace mc_potts

@@ -15,7 +15,7 @@ namespace mc_potts {
     //------------------- state type -------------------
     using state_type = int8_t; //must be signed
     const state_type max_state = 4;
-    const uint n_neighbour = 4;
+    const uint n_neighbour = 6;
     const uint n_state = max_state;
     
     //------------------- technical typedefs -------------------

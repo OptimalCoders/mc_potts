@@ -178,6 +178,10 @@ namespace addon
             uint64_t seed_; ///< the used seed
             uint64_t count_; ///< counts how many number are used
     };
+    
+    template<typename T>
+    using msk_rng = addon::random_class<T, addon::mersenne_fast>;
+    
 }//end namespace addon
 
 #endif //__RANDOM2_MSK_HEADER

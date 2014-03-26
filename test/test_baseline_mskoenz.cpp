@@ -4,6 +4,7 @@
 
 #include <addon/ppm_picture.hpp>
 #include <baseline_impl_mskoenz/sim.hpp>
+#include <std_mt_rng.hpp>
 
 #include <iostream>
 
@@ -17,7 +18,8 @@ int main(int argc, char* argv[]) {
     addon::global_seed.set(43);
     
     //------------------- test sim -------------------
-    typename mc_potts::baseline_mskoenz_struct::template impl<50, 50, 50, 4, dummy_rng_struct> s(0.1, 10, 50*50);
+    // mc_potts::std_mt_rng
+    typename mc_potts::baseline_mskoenz_struct::template impl<50, 50, 50, 4, addon::msk_rng> s(0.1, 10, 50*50);
     s.set_T(2);
     
     //------------------- ppm pic -------------------
@@ -33,7 +35,7 @@ int main(int argc, char* argv[]) {
         s.set_T(2*(1 - double(i)/300)); //cooling down
         s.update();
         s.measure();
-        //~ ppm.print(s.grid(), i); //ppm picture
+        //~ ppm.print(s.grid()[0], i); //ppm picture
     }
     s.print();
     
