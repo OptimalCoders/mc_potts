@@ -7,7 +7,7 @@
 
 #include <random>
 
-namespace mc_potts {
+namespace addon {
     
     struct common_rng {
         typedef std::mt19937 rng_t;
@@ -76,7 +76,7 @@ namespace mc_potts {
     template<typename T>
     using std_mt_rng = helper_cl<T, std::numeric_limits<T>::is_integer>;
     
-}//end namespace mc_potts
+}//end namespace addon
 
 #endif //__RNG_HEADER
 

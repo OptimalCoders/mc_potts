@@ -2,14 +2,13 @@
 // Date:    21.03.2014 09:55:10 CET
 // File:    sim.hpp
 
-#ifndef __SIM_HEADER
-#define __SIM_HEADER
+#ifndef __BASELINE_IMPL_MSKOENZ_SIM_HEADER
+#define __BASELINE_IMPL_MSKOENZ_SIM_HEADER
 
 #include <result.hpp>
 #include <addon/color.hpp>
 #include <addon/accum_double.hpp>
 #include <baseline_impl_mskoenz/grid.hpp>
-#include <baseline_impl_mskoenz/random2_msk.hpp>
 
 #include <map>
 
@@ -22,7 +21,7 @@ namespace mc_potts {
                 , template<typename> class RNG >
         class impl {
         public:
-            impl(double const & T_init, uint32_t const & N_therm, uint32_t const & N_update): 
+            impl(double const & T_init, uint32_t const & N_therm, uint32_t const & N_update = L1 * L2 * L3): 
                                  eunit_(1)
                                , T_(10)
                                , N_therm_(N_therm)
@@ -31,14 +30,14 @@ namespace mc_potts {
                                , rngL2_(0, L2)
                                , rngL3_(0, L3)
                                , rngp_()
-                               , rngS_(0, 2) {
+                               , rngUD_(0, 2) {
                 clear();
             }
             void step() {
                 int const i = rngL1_();
                 int const j = rngL2_();
                 int const k = rngL3_();
-                int const shift = rngS_();
+                int const shift = rngUD_();
                 
                 auto & a = grid_.ref(i, j, k);
                 auto const old = a;
@@ -117,13 +116,22 @@ namespace mc_potts {
                 
                 grid_.init();
                 
+                RNG<state_type> rngS(0, S);
+                for(index_type i = 0; i < L1; ++i) {
+                    for(index_type j = 0; j < L2; ++j) {
+                        for(index_type k = 0; k < L3; ++k) {
+                            grid_.ref(i, j, k) = rngS();
+                        }
+                    }
+                }
+                
                 E_ = grid_.energy();
                 M_ = grid_.magn();
             }
             uint8_t get(  uint32_t const & l1
                         , uint32_t const & l2
                         , uint32_t const & l3) const {
-                return grid_.grid()[l1][l2][l3];
+                return grid_.grid()[l1][l2][l3];;
             }
             //  +---------------------------------------------------+
             //  |                   const methods                   |
@@ -164,9 +172,9 @@ namespace mc_potts {
             RNG<index_type> rngL2_;
             RNG<index_type> rngL3_;
             RNG<float> rngp_;
-            RNG<int> rngS_;
+            RNG<int> rngUD_;
         };
     };
 }//end namespace mc_potts
 
-#endif //__SIM_HEADER
+#endif //__BASELINE_IMPL_MSKOENZ_SIM_HEADER

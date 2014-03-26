@@ -67,8 +67,6 @@ namespace addon {
         }
         double sec() const {
             using namespace std::chrono;
-            // ratio<1, 1> == sec 
-            // ratio<1, 1000> == msec
             duration<double, std::ratio<1, 1>> res = duration_cast<duration<double>>(end_time_ - start_time_);
             return res.count();
         }

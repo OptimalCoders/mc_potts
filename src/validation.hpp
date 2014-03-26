@@ -31,17 +31,17 @@ namespace mc_potts {
             int seed(std::time(NULL));
             
             // testing sequence
-            #define CALL(x, y) \
-            rng_handle.set_seed(seed); \
-            typename y::template impl<U::value, U::value, U::value, S, RNG > x(T1, N_therm); \
-            x.thermalize(); \
-            for(uint i = 0; i < updates; ++i) { \
-                x.update(); \
-            } \
-            x.set_T(T2); \
-            for(uint i = 0; i < updates; ++i) { \
-                x.update(); \
-            } \
+            #define CALL(x, y)                                                                  \
+            rng_handle.set_seed(seed);                                                          \
+            typename y::template impl<U::value, U::value, U::value, S, RNG > x(T1, N_therm);    \
+            x.thermalize();                                                                     \
+            for(uint i = 0; i < updates; ++i) {                                                 \
+                x.update();                                                                     \
+            }                                                                                   \
+            x.set_T(T2);                                                                        \
+            for(uint i = 0; i < updates; ++i) {                                                 \
+                x.update();                                                                     \
+            }                                                                                   \
             
             CALL(impl1, IMPL1)
             CALL(impl2, IMPL2)
@@ -51,6 +51,10 @@ namespace mc_potts {
                 for(uint j = 0; j < U::value; ++j) {
                     for(uint k = 0; k < U::value; ++k) {
                         assert(impl1.get(i, j, k) == impl2.get(i, j, k));
+                        //~ if(impl1.get(i, j, k) != impl2.get(i, j, k)) {
+                            //~ std::cout << i << " " << j << " " << k << std::endl;
+                            //~ std::cout << int(impl1.get(i, j, k)) << " " << int(impl2.get(i, j, k)) << "\n" << std::endl;
+                        //~ }
                     }
                 }
             }

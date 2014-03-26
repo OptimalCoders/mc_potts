@@ -8,6 +8,8 @@
 namespace mc_potts {
   
     struct result_struct {
+        result_struct(double m = 0, double d = 0, double e = 0, uint64_t _n = 0): mean(m), dev(d), err(e), n(_n) {
+        }
         double mean;
         double dev;
         double err;

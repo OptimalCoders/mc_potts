@@ -2,10 +2,12 @@
 // Date:    24.03.2014 15:19:21 CET
 // File:    sim.hpp
 
-#ifndef __SIM_HEADER
-#define __SIM_HEADER
+#ifndef __SIM_INTERFACE_HEADER
+#define __SIM_INTERFACE_HEADER
 
 #include <result.hpp>
+
+#include <iostream>
 
 /*
 init()
@@ -59,4 +61,4 @@ namespace interface {
     };
 }//end namespace interface
 
-#endif //__SIM_HEADER
+#endif //__SIM_INTERFACE_HEADER
