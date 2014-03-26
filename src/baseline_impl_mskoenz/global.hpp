@@ -5,8 +5,7 @@
 #ifndef __GLOBAL_HEADER
 #define __GLOBAL_HEADER
 
-#define DEBUG_VAR(x) std::cout << "\033[1;31m" << "  DEBUG_VAR: " << "\033[0;31m" << #x << " = " << x << "\033[0m" << std::endl;
-#define DEBUG_MSG(x) std::cout << "\033[1;31m" << "  DEBUG_MSG: " << "\033[0;31m" << x << "\033[0m" << std::endl;
+#include <addon/debug.hpp>
 
 //  +---------------------------------------------------+
 //  |                   typedefs                        |
