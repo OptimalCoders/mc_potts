@@ -6,7 +6,7 @@
 #include <addon/ppm_picture.hpp>
 #include <baseline_impl_mskoenz/sim.hpp>
 
-#include <baseline_impl_greschd/sim_baseline_greschd.hpp>
+#include <baseline_impl_greschd/sim.hpp>
 
 #include <iostream>
 
@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     
     addon::detail::lag_fib_engine.seed(0);
     
-    mc_potts::sim_baseline_greschd::impl<2, 10, 10, 4, addon::lag_fib_rng> s2(0.1, 10);
+    mc_potts::baseline_greschd::sim::impl<2, 10, 10, 4, addon::lag_fib_rng> s2(0.1, 10);
     s2.set_T(2);
     s2.update();
     

@@ -1,12 +1,11 @@
-// Author:  Dominik Gresch <greschd@ethz.ch>
-// Date:    26.03.2014 23:15:19 CET
-// File:    sim_v1.hpp
+// Author:  Dominik Gresch <greschd@phys.ethz.ch>
+// Date:    26.03.2014 20:46:58 CET
+// File:    sim.hpp
 
-#ifndef __SIM_V1_HEADER
-#define __SIM_V1_HEADER
+#ifndef __SIM_BASELINE_GRESCHD_HEADER
+#define __SIM_BASELINE_GRESCHD_HEADER
 
-
-#include <v1_int2t/system_v1.hpp>
+#include <baseline_impl_greschd/system.hpp>
 #include <result.hpp>
 
 #include <algorithm>
@@ -15,9 +14,9 @@
 
 namespace mc_potts {
     
-    namespace v1 {
-
-        struct sim_v1 {
+    namespace baseline_greschd {
+    
+        struct sim {
 
         template< int L1
                 , int L2
@@ -98,10 +97,10 @@ namespace mc_potts {
                 return system_.get(l1, l2, l3); 
             }
             
-            //~ void picture_slice (dim_t const & x, std::string const & outfile = "output", dim_t resolution = 10) const {
-                //~ assert(x < L1);
-                //~ system_.picture_slice(x, outfile, resolution);
-            //~ }
+            void picture_slice (dim_t const & x, std::string const & outfile = "output", dim_t resolution = 10) const {
+                assert(x < L1);
+                system_.picture_slice(x, outfile, resolution);
+            }
             
         private:
         
@@ -176,12 +175,11 @@ namespace mc_potts {
             resvec_t energy_res_;
             resvec_t magn_res_;
             
-        }; // impl
+        }; // sim_baseline_greschd
 
-        }; // struct sim_v1
-        
-    } // namespace v1
+        }; // struct sim_baseline_greschd
+    } // namespace baseline_greschd
 } // namespace mc_potts
 
 
-#endif //__SIM_V1_HEADER
+#endif //__SIM_BASELINE_GRESCHD_HEADER
