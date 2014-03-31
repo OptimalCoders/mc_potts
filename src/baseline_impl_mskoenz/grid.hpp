@@ -2,8 +2,8 @@
 // Date:    21.03.2014 09:55:15 CET
 // File:    grid.hpp
 
-#ifndef __GRID_HEADER
-#define __GRID_HEADER
+#ifndef ___BASELINE_IMPL_MSKOENZ_GRID_HEADER
+#define ___BASELINE_IMPL_MSKOENZ_GRID_HEADER
 
 #include <baseline_impl_mskoenz/global.hpp>
 
@@ -23,7 +23,7 @@ namespace mc_potts {
         //------------------- ctor -------------------
         grid_class() {
             init();
-            
+            assert(state_type(max_state * n_neighbour) == double(max_state) * n_neighbour);
         }
         void init() {
             //------------------- reset grid -------------------
@@ -73,14 +73,13 @@ namespace mc_potts {
             std::cout << std::endl;
         }
         //------------------- stencil computation -------------------
-        inline state_type neighbour_diff(index_type const & i, index_type const & j, index_type const & k) const {
-            auto p = grid_[i][j][k];
-            return std::abs(p - grid_[L1_prev_[i]][j][k])
-                 + std::abs(p - grid_[L1_next_[i]][j][k])
-                 + std::abs(p - grid_[i][L2_prev_[j]][k])
-                 + std::abs(p - grid_[i][L2_next_[j]][k])
-                 + std::abs(p - grid_[i][j][L2_prev_[k]])
-                 + std::abs(p - grid_[i][j][L2_next_[k]])
+        inline state_type neighbour(index_type const & i, index_type const & j, index_type const & k) const {
+            return grid_[L1_prev_[i]][j][k]
+                 + grid_[L1_next_[i]][j][k]
+                 + grid_[i][L2_prev_[j]][k]
+                 + grid_[i][L2_next_[j]][k]
+                 + grid_[i][j][L2_prev_[k]]
+                 + grid_[i][j][L2_next_[k]]
                  ;
         }
         double energy() const {
@@ -88,7 +87,8 @@ namespace mc_potts {
             for(index_type i = 0; i < L1; ++i) {
                 for(index_type j = 0; j < L2; ++j) {
                     for(index_type k = 0; k < L3; ++k)
-                        E += neighbour_diff(i, j, k);
+                        E += (grid_[i][j][k] - (max_state - 1) / 2.0)
+                           * (neighbour(i, j, k) - n_neighbour * (max_state - 1) / 2.0);
                 }
             }
             return E / 2;
@@ -121,4 +121,4 @@ namespace mc_potts {
     };
 }//end namespace mc_potts
 
-#endif //__GRID_HEADER
+#endif //___BASELINE_IMPL_MSKOENZ_GRID_HEADER

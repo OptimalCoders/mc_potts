@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
     
     VALIDATE_INTERFACE(interface::sim_proto_type, interface::rng_proto_type)
     VALIDATE_INTERFACE(mc_potts::baseline_greschd::sim, addon::std_mt_rng)
-    VALIDATE_INTERFACE(mc_potts::baseline_mskoenz_struct, addon::lag_fib_rng)
+    VALIDATE_INTERFACE(mc_potts::baseline_mskoenz::sim, addon::lag_fib_rng)
     
     return 0;
 }

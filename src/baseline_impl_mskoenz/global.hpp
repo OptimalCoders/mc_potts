@@ -2,8 +2,8 @@
 // Date:    21.03.2014 09:57:00 CET
 // File:    global.hpp
 
-#ifndef __GLOBAL_HEADER
-#define __GLOBAL_HEADER
+#ifndef ___BASELINE_IMPL_MSKOENZ_GLOBAL_HEADER
+#define ___BASELINE_IMPL_MSKOENZ_GLOBAL_HEADER
 
 #include <addon/debug.hpp>
 
@@ -21,4 +21,4 @@ namespace mc_potts {
     using index_type = int;
 }//end mc_namespace 
 
-#endif //__GLOBAL_HEADER
+#endif //___BASELINE_IMPL_MSKOENZ_GLOBAL_HEADER

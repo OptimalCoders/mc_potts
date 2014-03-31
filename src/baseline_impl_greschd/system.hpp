@@ -53,7 +53,7 @@ namespace mc_potts {
             
         //------------------------observables-------------------------------//
         
-            spin_t magn_density() const {
+            double magn_density() const {
                 spin_t res = 0;
                 for(dim_t i = 0; i < L1; ++i) {
                     for(dim_t j = 0; j < L2; ++j) {

@@ -3,6 +3,7 @@
 // File:    test_validation.cpp
 
 #include <rng/std_mt_rng.hpp>
+#include <rng/lag_fib_rng.hpp>
 #include <baseline_impl_greschd/sim.hpp>
 #include <v1_int2t/sim_v1.hpp>
 #include <baseline_impl_mskoenz/sim.hpp>
@@ -18,7 +19,12 @@ int main(int argc, char* argv[]) {
     validate<baseline_greschd::sim, baseline_greschd::sim, 4, addon::std_mt_rng>();
     validate<v1::sim_v1, v1::sim_v1, 4, addon::std_mt_rng>();
     validate<v1::sim_v1, baseline_greschd::sim, 4, addon::std_mt_rng>();
-    //~ validate<baseline_mskoenz_struct, sim_baseline_greschd, 4, addon::std_mt_rng>();
+    
+    validate<baseline_mskoenz::sim, baseline_mskoenz::sim, 4, addon::lag_fib_rng>();
+    validate<baseline_mskoenz::sim, baseline_mskoenz::sim, 4, addon::std_mt_rng>();
+    
+    validate<baseline_mskoenz::sim, baseline_greschd::sim, 4, addon::lag_fib_rng>(); //works
+    //~ validate<baseline_mskoenz::sim, baseline_greschd::sim, 4, addon::std_mt_rng>(); //doesn't work
     
     return 0;
 }
