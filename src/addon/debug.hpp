@@ -10,5 +10,7 @@
 #define DEBUG_VAR(x) std::cout << REDB << "  DEBUG_VAR: " << RED << #x << " = " << x << NONE << std::endl;
 #define DEBUG_MSG(x) std::cout << REDB << "  DEBUG_MSG: " << RED << x << NONE << std::endl;
 #define WARNING(x)   std::cout << YELLOWB << "  WARNING: " << YELLOW << x << NONE << std::endl;
+#define STRING2(x)   #x
+#define STRING(x)    STRING2(x)
 
 #endif //__ADDON_DEBUG_HEADER

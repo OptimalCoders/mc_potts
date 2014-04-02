@@ -11,28 +11,38 @@
 
 int main(int argc, char* argv[]) {
     
-    mc_potts::baseline_greschd::sim::impl<100, 100, 100, 4, addon::std_mt_rng> sim1(100, 1.1);
-    mc_potts::baseline_mskoenz::sim::impl<100, 100, 100, 4, addon::lag_fib_rng> sim2(100, 1.1);
+    uint32_t const L = 100;
+    
+    mc_potts::baseline_greschd::sim::impl<L, L, L, 4, addon::std_mt_rng> sim1(100, 1.1);
+    mc_potts::baseline_mskoenz::sim::impl<L, L, L, 4, addon::lag_fib_rng> sim2(100, 1.1);
+    
+    sim1.thermalize();
+    sim2.thermalize();
     
     addon::std_mt_rng<int> rng1;
     addon::lag_fib_rng<int> rng2;
     
-    const int N = 1;
+    // MEASURE takes an expression and a name
+    MEASURE(rng1(), "std_mt_rng")
+    MEASURE(rng2(), "lag_fib_rng")
     
-    addon::clock.start();
-    for(uint i = 0; i < 10*N; ++i) {
-        sim1.update();
-        //~ rng1();
-    }
-    addon::clock.stop();
-    std::cout << addon::clock.cycles() << std::endl;
+    // MEASURE_DIV does the same as MEASURE but takes another parameter. 
+    // The measured cycles will be devided by ths parameter
+    MEASURE_DIV(sim1.update(), "baseline_greschd", L*L*L)
+    MEASURE_DIV(sim2.update(), "baseline_mskoenz", L*L*L)
     
-    addon::clock.start();
-    for(uint i = 0; i < 10*N; ++i) {
-        sim2.update();
-        //~ rng2();
-    }
-    addon::clock.stop();
-    std::cout << addon::clock.cycles() << std::endl;
+    // P_RESULTS just prints all results in a nice way
+    P_RESULTS()
+    
+    // CLEAR_MEASURE() clears all measurements
+    CLEAR_MEASURE()
+    
+    // measure rng again
+    MEASURE(rng1(), "std_mt_rng")
+    MEASURE(rng2(), "lag_fib_rng")
+    
+    // P_SPEEDUP prints the speedup (x) relative to the slowest measurement (decreasing order)
+    P_SPEEDUP()
+    
     return 0;
 }
