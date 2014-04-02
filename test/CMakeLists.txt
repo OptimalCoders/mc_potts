@@ -5,6 +5,7 @@ FOREACH (name   test_baseline_greschd
                 test_validation
                 test_v1
                 test_int2t_vec
+                zorder
     )
     add_executable(${name} ${name}.cpp)
     add_dependencies(${name} ${SRC}/conf.hpp)

@@ -1,24 +1,28 @@
-#ifndef ACC_DOUBLE_HEADER
-#define ACC_DOUBLE_HEADER
+// Author:  Mario S. Könz <mskoenz@gmx.net>
+// Date:    02.04.2014 22:29:33 CEST
+// File:    accum_int.hpp
+
+#ifndef __ACCUM_INT_HEADER
+#define __ACCUM_INT_HEADER
 
 #include <iostream>
 #include <cmath>
 
 using namespace std;
 
-class accumulator_double {
+class accumulator_int {
     public:
-        accumulator_double(): n_(0), sum_(0), sum2_(0) {};
-        inline void operator<<(double const & val) {
+        accumulator_int(): n_(0), sum_(0), sum2_(0) {};
+        inline void operator<<(uint64_t const & val) {
             sum_ += val;
             sum2_ += val * val;
             ++n_;
         }
         inline double mean() const {
-            return sum_ / n_;
+            return double(sum_) / n_;
         }
         inline double deviation() const {
-            return sqrt(sum2_ / (n_ - 1) - sum_ *sum_ / n_ / (n_ - 1));
+            return sqrt(double(sum2_) / (n_ - 1) - sum_ * double(sum_) / n_ / (n_ - 1.0));
         }
         inline double error() const {
             return deviation() / sqrt(n_);
@@ -33,12 +37,12 @@ class accumulator_double {
         }
     private:
         uint64_t n_;
-        double sum_;
-        double sum2_;
+        int64_t sum_;
+        int64_t sum2_;
 };
 
-ostream& operator<<(ostream& os, const accumulator_double &d) {
+ostream& operator<<(ostream& os, const accumulator_int &d) {
     os << d.mean() << " +/- " << d.error();
     return os;
 }
-#endif
+#endif //__ACCUM_INT_HEADER

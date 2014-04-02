@@ -5,6 +5,8 @@
 #ifndef __RESULT_STRUCT_HEADER
 #define __RESULT_STRUCT_HEADER
 
+#include <cstdint>
+
 namespace mc_potts {
   
     struct result_struct {

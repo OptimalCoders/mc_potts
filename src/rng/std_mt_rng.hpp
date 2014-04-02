@@ -1,9 +1,9 @@
 // Author:  Dominik Gresch <greschd@phys.ethz.ch>
 // Date:    24.03.2014 22:54:21 CET
-// File:    rng.hpp
+// File:    std_mt_rng.hpp
 
-#ifndef __RNG_HEADER
-#define __RNG_HEADER
+#ifndef __STD_MT_RNG_HEADER
+#define __STD_MT_RNG_HEADER
 
 #include <random>
 
@@ -78,6 +78,6 @@ namespace addon {
     
 }//end namespace addon
 
-#endif //__RNG_HEADER
+#endif //__STD_MT_RNG_HEADER
 
 

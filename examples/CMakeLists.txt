@@ -1,6 +1,7 @@
 FOREACH (name   performance_example
                 rng_performance_example
                 sim_performance_example
+                msk_version_comparision
     )
     add_executable(${name} ${name}.cpp)
     add_dependencies(${name} ${SRC}/conf.hpp)
