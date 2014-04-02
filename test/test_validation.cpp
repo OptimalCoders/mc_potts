@@ -23,8 +23,8 @@ int main(int argc, char* argv[]) {
     validate<baseline_mskoenz::sim, baseline_mskoenz::sim, 4, addon::lag_fib_rng>();
     validate<baseline_mskoenz::sim, baseline_mskoenz::sim, 4, addon::std_mt_rng>();
     
-    validate<baseline_mskoenz::sim, baseline_greschd::sim, 4, addon::lag_fib_rng>(); //works
-    //~ validate<baseline_mskoenz::sim, baseline_greschd::sim, 4, addon::std_mt_rng>(); //doesn't work
+    validate<baseline_mskoenz::sim, baseline_greschd::sim, 4, addon::lag_fib_rng>();
+    validate<baseline_mskoenz::sim, baseline_greschd::sim, 4, addon::std_mt_rng>();
     
     return 0;
 }

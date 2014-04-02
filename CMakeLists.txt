@@ -2,8 +2,8 @@ cmake_minimum_required (VERSION 2.6)
 project(mc_potts)
 
 #=================== compiler & flags ===================
-#~ SET(CMAKE_CXX_COMPILER "g++")
-SET(CMAKE_CXX_FLAGS "-Wall -std=c++11 -O3 -pedantic")
+#~ SET(CMAKE_CXX_COMPILER "g++4.7" CACHE STRING "the compiler")
+SET(CMAKE_CXX_FLAGS "-Wall -std=c++11 -O3 -pedantic -fno-tree-vectorize")
 
 #=================== set paths ===================
 set(SRC "${PROJECT_SOURCE_DIR}/src")

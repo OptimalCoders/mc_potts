@@ -52,7 +52,6 @@ namespace mc_potts {
                             return;
                     }
                     
-                    shift = shift * 2 - 1;
                     auto n = grid_.neighbour(i, j, k);
                     
                     //~ auto const E_new = grid_.neighbour(i, j, k);
@@ -61,10 +60,11 @@ namespace mc_potts {
                     //~ assert(std::abs(E_old - E_new) <= n_neighbour);
                     //~ assert(std::abs(E_old - E_new) % 2 == 0);
                     
-                    double energy_diff = std::exp(eunit_ / T_ * shift * (n - 6 * (S - 1) / 2.0));
+                    double prob = pre_exp_[2*n + shift];
+                    shift = shift * 2 - 1;
                     
                     //~ if(pre_exp_[n] > rngp_()) {
-                    if(energy_diff > rngp_()) {
+                    if(prob > rngp_()) {
                         E_ += shift * (n - n_neighbour * ((double)S - 1) / 2);
                         a += shift;
                         M_ += shift;
@@ -84,8 +84,6 @@ namespace mc_potts {
                     }
                 }
                 void measure() { //feeding
-                    DEBUG_VAR(E_)
-                    DEBUG_VAR(grid_.energy())
                     assert(E_ == grid_.energy());
                     assert(M_ == grid_.magn());
                     
@@ -109,7 +107,9 @@ namespace mc_potts {
                 void set_T(double const & T) {
                     T_ = T;
                     for(int i = 0; i < pre_exp_.size(); ++i) {
-                        //~ pre_exp_[i] = std::min(1.0, std::exp(eunit_ / T_ * shift * (i - 6 * (S - 1) / 2.0)));
+                        auto shift = 1 - ((i & 1) == 0)*2;
+                        int n = i/2;
+                        pre_exp_[i] = std::min(1.0, std::exp(eunit_ / T_ * shift * (n - 6 * (S - 1) / 2.0)));
                     }
                 }
                 void clear() {
@@ -171,13 +171,13 @@ namespace mc_potts {
                 uint32_t const N_update_;
                 
                 //------------------- technical -------------------
-                std::array<double, n_neighbour * (max_state - 1) + 1> pre_exp_;
+                std::array<double, 2*(n_neighbour * (max_state - 1) + 1)> pre_exp_;
                 
                 //------------------- rngs -------------------
                 RNG<index_type> rngL1_;
                 RNG<index_type> rngL2_;
                 RNG<index_type> rngL3_;
-                RNG<float> rngp_;
+                RNG<double> rngp_;
                 RNG<int> rngUD_;
             };
         };

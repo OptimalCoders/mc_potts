@@ -11,25 +11,12 @@
 
 int main(int argc, char* argv[]) {
     
-    uint32_t const L = 100;
-    
-    mc_potts::baseline_greschd::sim::impl<L, L, L, 4, addon::std_mt_rng> sim1(100, 1.1);
-    mc_potts::baseline_mskoenz::sim::impl<L, L, L, 4, addon::lag_fib_rng> sim2(100, 1.1);
-    
-    sim1.thermalize();
-    sim2.thermalize();
-    
     addon::std_mt_rng<int> rng1;
     addon::lag_fib_rng<int> rng2;
     
     // MEASURE takes an expression and a name
     MEASURE(rng1(), "std_mt_rng")
     MEASURE(rng2(), "lag_fib_rng")
-    
-    // MEASURE_DIV does the same as MEASURE but takes another parameter. 
-    // The measured cycles will be devided by ths parameter
-    MEASURE_DIV(sim1.update(), "baseline_greschd", L*L*L)
-    MEASURE_DIV(sim2.update(), "baseline_mskoenz", L*L*L)
     
     // P_RESULTS just prints all results in a nice way
     P_RESULTS()
