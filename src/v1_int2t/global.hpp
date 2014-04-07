@@ -6,7 +6,7 @@
 #define __GLOBAL_V1_HEADER
 
 namespace mc_potts {
-    namespace v1 {
+    namespace v1_int2t {
         typedef int num_t;
         typedef int dim_t;
         typedef uint8_t spin_t;

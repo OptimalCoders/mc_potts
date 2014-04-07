@@ -3,7 +3,7 @@
 // File:    test_v1.cpp
 
 #include <iostream>
-#include <v1_int2t/sim_v1.hpp>
+#include <v1_int2t/sim.hpp>
 #include <rng/std_mt_rng.hpp>
 
 int main(int argc, char* argv[]) {
@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
     
     constexpr int size = 30;
     
-    v1::sim_v1::impl<size, size, size, 4, addon::std_mt_rng> testsim(1e-8, 200);
+    v1_int2t::sim::impl<size, size, size, 4, addon::std_mt_rng> testsim(1e-8, 200);
     testsim.thermalize();
     for(uint i = 0; i < 10; ++i) {
         testsim.update();

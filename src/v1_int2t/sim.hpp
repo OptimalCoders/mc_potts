@@ -6,7 +6,7 @@
 #define __SIM_V1_HEADER
 
 
-#include <v1_int2t/system_v1.hpp>
+#include <v1_int2t/system.hpp>
 #include <result.hpp>
 
 #include <algorithm>
@@ -15,9 +15,9 @@
 
 namespace mc_potts {
     
-    namespace v1 {
+    namespace v1_int2t {
 
-        struct sim_v1 {
+        struct sim {
 
         template< int L1
                 , int L2

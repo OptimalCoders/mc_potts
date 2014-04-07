@@ -1,6 +1,6 @@
 // Author:  Mario S. Könz <mskoenz@gmx.net>
 // Date:    02.04.2014 21:13:33 CEST
-// File:    msk_version_comparision.cpp
+// File:    msk_version_comparison.cpp
 
 #include <validation.hpp>
 #include <msk_v01/sim.hpp>
@@ -9,6 +9,7 @@
 #include <addon/performance.hpp>
 #include <baseline_impl_mskoenz/sim.hpp>
 #include <baseline_impl_greschd/sim.hpp>
+#include <v1_int2t/sim.hpp>
 
 #include <iostream>
 
@@ -37,6 +38,11 @@ int main(int argc, char* argv[]) {
     msk_v1::sim::impl<L, L, L, 4, rng_type> s3(T, 10);
     s3.thermalize();
     MEASURE_DIV(s3.update(), "msk_v01", L*L*L)
+    
+    addon::detail::lag_fib_engine.seed(0);
+    v1_int2t::sim::impl<L, L, L, 4, rng_type> s4(T, 10);
+    s3.thermalize();
+    MEASURE_DIV(s3.update(), "int2t", L*L*L)
     
     P_RESULTS()
     P_SPEEDUP()

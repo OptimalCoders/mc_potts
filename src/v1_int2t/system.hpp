@@ -6,7 +6,7 @@
 #define __SYSTEM_V1_HEADER
 
 
-#include <v1_int2t/global_v1.hpp>
+#include <v1_int2t/global.hpp>
 #include <v1_int2t/int2t_vec.hpp>
 #include <addon/ppm_picture.hpp>
 
@@ -17,7 +17,7 @@
 
 namespace mc_potts {
     
-    namespace v1 {
+    namespace v1_int2t {
             
 
         template<int L1, int L2, int L3, int S>
