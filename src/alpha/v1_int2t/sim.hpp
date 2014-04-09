@@ -1,30 +1,31 @@
-// Author:  Dominik Gresch <greschd@phys.ethz.ch>
-// Date:    26.03.2014 20:46:58 CET
-// File:    sim.hpp
+// Author:  Dominik Gresch <greschd@ethz.ch>
+// Date:    26.03.2014 23:15:19 CET
+// File:    sim_v1.hpp
 
-#ifndef __SIM_BASELINE_GRESCHD_HEADER
-#define __SIM_BASELINE_GRESCHD_HEADER
+#ifndef __SIM_V1_HEADER
+#define __SIM_V1_HEADER
 
-#include <baseline_impl_greschd/system.hpp>
+
 #include <types.hpp>
 #include <global.hpp>
+#include <alpha/v1_int2t/system.hpp>
 
-#include <algorithm>
 #include <vector>
 #include <math.h>
+#include <algorithm>
 
 namespace mc_potts {
     
-    namespace baseline_greschd {
-    
+    namespace v1_int2t {
+
         struct sim {
 
         template< int L1
                 , int L2
                 , int L3
-                , template<typename> class RNG
+                , template<class> class RNG
                 , class GRID = void
-                , class MATRIX = void>
+                , class MATRIX = void >
         class impl {
             //---------------------local typedefs---------------------------//
             typedef uint8_t spin_t;
@@ -99,10 +100,10 @@ namespace mc_potts {
                 return system_.get(l1, l2, l3); 
             }
             
-            void picture_slice (dim_t const & x, std::string const & outfile = "output", dim_t resolution = 10) const {
-                assert(x < L1);
-                system_.picture_slice(x, outfile, resolution);
-            }
+            //~ void picture_slice (dim_t const & x, std::string const & outfile = "output", dim_t resolution = 10) const {
+                //~ assert(x < L1);
+                //~ system_.picture_slice(x, outfile, resolution);
+            //~ }
             
         private:
         
@@ -177,11 +178,12 @@ namespace mc_potts {
             resvec_t energy_res_;
             resvec_t magn_res_;
             
-        }; // sim_baseline_greschd
+        }; // impl
 
-        }; // struct sim_baseline_greschd
-    } // namespace baseline_greschd
+        }; // struct sim_v1
+        
+    } // namespace v1
 } // namespace mc_potts
 
 
-#endif //__SIM_BASELINE_GRESCHD_HEADER
+#endif //__SIM_V1_HEADER

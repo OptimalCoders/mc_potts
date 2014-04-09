@@ -3,7 +3,7 @@
 // File:    test.cpp
 
 #include <iostream>
-#include <baseline_impl_greschd/sim.hpp>
+#include <alpha/baseline_impl_greschd/sim.hpp>
 #include <rng/std_mt_rng.hpp>
 
 int main(int argc, char* argv[]) {

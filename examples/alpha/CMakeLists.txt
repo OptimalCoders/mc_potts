@@ -1,6 +1,7 @@
-add_subdirectory("alpha")
-
-FOREACH (name   msk_v1_test
+FOREACH (name   performance_example
+                rng_performance_example
+                sim_performance_example
+                version_comparison
     )
     add_executable(${name} ${name}.cpp)
     add_dependencies(${name} ${SRC}/conf.hpp)

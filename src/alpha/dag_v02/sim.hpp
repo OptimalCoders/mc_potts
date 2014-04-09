@@ -2,13 +2,13 @@
 // Date:    26.03.2014 23:15:19 CET
 // File:    sim_v1.hpp
 
-#ifndef __SIM_V1_HEADER
-#define __SIM_V1_HEADER
+#ifndef __SIM_V02_HEADER
+#define __SIM_V02_HEADER
 
 
 #include <types.hpp>
 #include <global.hpp>
-#include <v1_int2t/system.hpp>
+#include <alpha/dag_v02/system.hpp>
 
 #include <vector>
 #include <math.h>
@@ -16,7 +16,7 @@
 
 namespace mc_potts {
     
-    namespace v1_int2t {
+    namespace dag_v02 {
 
         struct sim {
 
@@ -186,4 +186,4 @@ namespace mc_potts {
 } // namespace mc_potts
 
 
-#endif //__SIM_V1_HEADER
+#endif //__SIM_V02_HEADER

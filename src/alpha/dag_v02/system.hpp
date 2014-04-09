@@ -6,8 +6,8 @@
 #define __SYSTEM_V02_HEADER
 
 
-#include <dag_v02/global.hpp>
-#include <dag_v02/int2t_vec.hpp>
+#include <alpha/dag_v02/global.hpp>
+#include <alpha/dag_v02/int2t_vec.hpp>
 #include <addon/ppm_picture.hpp>
 
 #include <vector>

@@ -2,25 +2,24 @@
 // Date:    21.03.2014 09:55:10 CET
 // File:    sim.hpp
 
-#ifndef __MSK_V01_SIM_HEADER
-#define __MSK_V01_SIM_HEADER
+#ifndef __BASELINE_IMPL_MSKOENZ_SIM_HEADER
+#define __BASELINE_IMPL_MSKOENZ_SIM_HEADER
 
 #include <types.hpp>
 #include <global.hpp>
 #include <addon/color.hpp>
 #include <addon/accum_double.hpp>
-#include <addon/accum_int.hpp>
-#include <msk_v01/grid.hpp>
+#include <alpha/baseline_impl_mskoenz/grid.hpp>
 
 #include <map>
 
 namespace mc_potts {
-    namespace msk_v1 {
+    namespace baseline_mskoenz {
         struct sim {
             template< int L1
                     , int L2
                     , int L3
-                    , template<typename> class RNG
+                    , template<typename> class RNG 
                     , class GRID = void
                     , class MATRIX = void >
             class impl {
@@ -44,7 +43,7 @@ namespace mc_potts {
                     int const k = rngL3_();
                     int shift = rngUD_();
                     
-                    auto & a = grid_.get(i, j, k);
+                    auto & a = grid_.ref(i, j, k);
                     
                     if(shift == 0) {
                         if(a == 0)
@@ -57,15 +56,24 @@ namespace mc_potts {
                     
                     auto n = grid_.neighbour(i, j, k);
                     
-                    if(pre_exp_[2*n + shift] > rngp_()) {
-                        shift = shift * 2 - 1;
+                    //~ auto const E_new = grid_.neighbour(i, j, k);
+                    //~ auto const index = (n_neighbour + E_old - E_new) >> 1;
+                    
+                    //~ assert(std::abs(E_old - E_new) <= n_neighbour);
+                    //~ assert(std::abs(E_old - E_new) % 2 == 0);
+                    
+                    double prob = pre_exp_[2*n + shift];
+                    shift = shift * 2 - 1;
+                    
+                    //~ if(pre_exp_[n] > rngp_()) {
+                    if(prob > rngp_()) {
                         E_ += shift * (n - n_neighbour * ((double)S - 1) / 2);
                         a += shift;
                         M_ += shift;
-                        accacc_ << 1;
+                        data_.at("acc") << 1;
                     }
                     else
-                        accacc_ << 0;
+                        data_.at("acc") << 0;
                 }
                 void update() { //ensure decorr
                     for(uint32_t i = 0; i < N_update_; ++i) {
@@ -108,9 +116,9 @@ namespace mc_potts {
                 }
                 void clear() {
                     data_.clear();
+                    data_["acc"];
                     data_["E"];
                     data_["M"];
-                    accacc_.clear();
                     
                     set_T(T_);
                     
@@ -120,7 +128,7 @@ namespace mc_potts {
                     for(index_type i = 0; i < L1; ++i) {
                         for(index_type j = 0; j < L2; ++j) {
                             for(index_type k = 0; k < L3; ++k) {
-                                grid_.get(i, j, k) = rngS();
+                                grid_.ref(i, j, k) = rngS();
                             }
                         }
                     }
@@ -131,7 +139,7 @@ namespace mc_potts {
                 uint8_t get(  uint32_t const & l1
                             , uint32_t const & l2
                             , uint32_t const & l3) const {
-                    return grid_.get(l1, l2, l3);
+                    return grid_.grid()[l1][l2][l3];
                 }
                 //  +---------------------------------------------------+
                 //  |                   const methods                   |
@@ -149,14 +157,12 @@ namespace mc_potts {
                     for(auto & d : data_)
                         std::cout << d.first << ": " << d.second << std::endl;
                 }
-                
             private:
                 //------------------- grid -------------------
                 grid_class<L1, L2, L3> grid_;
                 
                 //------------------- measurements/physics -------------------
                 std::map<std::string, accumulator_double> data_;
-                accumulator_int accacc_;
                 double const eunit_;
                 double T_;
                 double E_;
@@ -176,7 +182,7 @@ namespace mc_potts {
                 RNG<int> rngUD_;
             };
         };
-    }//end namespace msk_v1
+    }//end namespace baseline_mskoenz
 }//end namespace mc_potts
 
-#endif //__MSK_V01_SIM_HEADER
+#endif //__BASELINE_IMPL_MSKOENZ_SIM_HEADER

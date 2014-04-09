@@ -7,7 +7,7 @@
 #include <rng/lag_fib_rng.hpp>
 #include <matrix/msk_v1_zorder.hpp>
 
-#include <baseline_impl_mskoenz/sim.hpp>
+#include <alpha/baseline_impl_mskoenz/sim.hpp>
 #include <iostream>
 
 #include <validation.hpp>

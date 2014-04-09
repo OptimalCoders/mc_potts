@@ -3,14 +3,14 @@
 // File:    msk_version_comparison.cpp
 
 #include <validation.hpp>
-#include <dag_v02/sim.hpp>
-#include <msk_v01/sim.hpp>
-#include <v1_int2t/sim.hpp>
-#include <rng/lag_fib_rng.hpp>
 #include <rng/std_mt_rng.hpp>
+#include <rng/lag_fib_rng.hpp>
 #include <addon/performance.hpp>
-#include <baseline_impl_greschd/sim.hpp>
-#include <baseline_impl_mskoenz/sim.hpp>
+#include <alpha/dag_v02/sim.hpp>
+#include <alpha/msk_v01/sim.hpp>
+#include <alpha/v1_int2t/sim.hpp>
+#include <alpha/baseline_impl_greschd/sim.hpp>
+#include <alpha/baseline_impl_mskoenz/sim.hpp>
 
 #include <iostream>
 

@@ -3,7 +3,7 @@
 // File:    test_int2t_vec.cpp
 
 #include <iostream>
-#include <v1_int2t/int2t_vec.hpp>
+#include <alpha/v1_int2t/int2t_vec.hpp>
 
 int main(int argc, char* argv[]) {
     

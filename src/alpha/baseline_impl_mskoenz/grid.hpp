@@ -5,7 +5,7 @@
 #ifndef ___BASELINE_IMPL_MSKOENZ_GRID_HEADER
 #define ___BASELINE_IMPL_MSKOENZ_GRID_HEADER
 
-#include <baseline_impl_mskoenz/global.hpp>
+#include <alpha/baseline_impl_mskoenz/global.hpp>
 
 #include <iostream>
 #include <assert.h>

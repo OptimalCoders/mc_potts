@@ -3,7 +3,7 @@
 // File:    test_v1.cpp
 
 #include <iostream>
-#include <v1_int2t/sim.hpp>
+#include <alpha/v1_int2t/sim.hpp>
 #include <rng/std_mt_rng.hpp>
 
 int main(int argc, char* argv[]) {

@@ -6,8 +6,8 @@
 #define __SYSTEM_V1_HEADER
 
 
-#include <v1_int2t/global.hpp>
-#include <v1_int2t/int2t_vec.hpp>
+#include <alpha/v1_int2t/global.hpp>
+#include <alpha/v1_int2t/int2t_vec.hpp>
 #include <addon/ppm_picture.hpp>
 
 #include <vector>

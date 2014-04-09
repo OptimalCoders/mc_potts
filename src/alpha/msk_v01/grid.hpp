@@ -5,7 +5,7 @@
 #ifndef ___MSK_V01_GRID_HEADER
 #define ___MSK_V01_GRID_HEADER
 
-#include <msk_v01/global.hpp>
+#include <alpha/msk_v01/global.hpp>
 
 #include <iostream>
 #include <assert.h>
