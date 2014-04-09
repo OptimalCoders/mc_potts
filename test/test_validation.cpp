@@ -7,6 +7,11 @@
 #include <baseline_impl_greschd/sim.hpp>
 #include <v1_int2t/sim.hpp>
 #include <baseline_impl_mskoenz/sim.hpp>
+
+#include <sim/msk_v1_sim.hpp>
+#include <grid/msk_v1_pbc.hpp>
+#include <matrix/msk_v1_zorder.hpp>
+
 #include <validation.hpp>
 
 #include <iostream>
@@ -25,6 +30,7 @@ int main(int argc, char* argv[]) {
     
     validate<baseline_mskoenz::sim, baseline_greschd::sim, addon::lag_fib_rng>();
     validate<baseline_mskoenz::sim, baseline_greschd::sim, addon::std_mt_rng>();
+    validate<baseline_mskoenz::sim, msk_v1_sim, addon::lag_fib_rng, void, msk_v1_pbc, void, msk_v1_zorder>();
     
     return 0;
 }

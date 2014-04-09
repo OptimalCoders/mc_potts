@@ -33,12 +33,11 @@ namespace mc_potts {
             uint32_t N_therm = 200;
             uint32_t updates = 50;
             
-            RNG<int> rng_handle;
             int seed(std::time(NULL));
             
             // testing sequence
             #define CALL(x, y, grid, mat)                                                                   \
-            rng_handle.seed(seed);                                                                          \
+            RNG<int>::seed(seed);                                                                          \
             typename y::template impl< U::value, U::value, U::value, RNG, grid, mat > x(T1, N_therm);        \
             x.thermalize();                                                                                 \
             for(uint i = 0; i < updates; ++i) {                                                             \
@@ -50,7 +49,7 @@ namespace mc_potts {
             }                                                                                               //
             
             CALL(impl1, IMPL1, GRID1, MATRIX1)
-            CALL(impl2, IMPL2, GRID1, MATRIX1)
+            CALL(impl2, IMPL2, GRID2, MATRIX2)
             
             // compare elements
             for(uint i = 0; i < U::value; ++i) {

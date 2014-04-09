@@ -32,13 +32,13 @@ namespace interface {
         T operator()() {
             return T();
         }
-        void seed(seed_type const & seed) {
+        static void seed(seed_type const & seed) {
         }
-        seed_type const & seed() const {
+        static seed_type const & seed() {
             return seed_;
         }
     private:
-        uint32_t seed_;
+        static uint32_t seed_;
     };
 }//end namespace interface
 

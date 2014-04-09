@@ -18,15 +18,12 @@ namespace addon {
     class lag_fib_rng {
     public:
         lag_fib_rng(): scale(2), shift(std::numeric_limits<T>::is_integer) {
-            init();
         }
         lag_fib_rng(T const & end): scale(end), offset(0), shift(1) {
-            init();
         }
         lag_fib_rng(T const & start, T const & end): scale(end-start), offset(start), shift(2) {
-            init();
         }
-        inline T operator()() {
+        T operator()() {
             if (shift == 0) {
                 return detail::lag_fib_engine();
             }
@@ -35,25 +32,21 @@ namespace addon {
             }
             return offset + scale * detail::lag_fib_engine();
         }
-        void seed(uint32_t const & sd) {
+        static void seed(uint32_t const & sd) {
             detail::lag_fib_engine.seed(sd);
             seed_ = sd;
         }
-        inline uint32_t seed() const {
+        static uint32_t seed() {
             return seed_;
         }
     private:
-        inline void init() {
-            for(unsigned i = 0; i < 100; ++i) {
-                //~ detail::lag_fib_engine(); //warming up the rng
-                //fibbonaci has for several seconds the same first number even though the seed changes every second
-            }
-        }
         T scale;
         T offset;
         const uint8_t shift;  //< shows, what operations are needed (for speedup. Tested!)
-        uint64_t seed_;
+        static uint32_t seed_;
     };
+    template<typename T>
+    uint32_t lag_fib_rng<T>::seed_ = 0;
 }//end namespace addon
 
 #endif //__LAG_FIB_RNG_HEADER

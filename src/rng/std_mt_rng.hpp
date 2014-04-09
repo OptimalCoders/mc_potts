@@ -32,17 +32,20 @@ namespace addon {
         T operator()() {
             return distr_(common_rng::rng);
         }
-        void seed(uint32_t const & seed) {
+        static void seed(uint32_t const & seed) {
             seed_ = seed;
             common_rng::rng.seed(seed);
         }
-        uint32_t const & seed() const {
+        static uint32_t const & seed() {
             return seed_;
         }
     private:
-        uint32_t seed_;
+        static uint32_t seed_;
         distr_t distr_;
     };
+    
+    template<class T, bool F>
+    uint32_t helper_cl<T, F>::seed_ = 0;
     
     //------------------------------------------------------------------//
     //                      specialization for int types                //
@@ -59,17 +62,20 @@ namespace addon {
         T operator()() {
             return distr_(common_rng::rng);
         }
-        void seed(uint32_t const & seed) {
+        static void seed(uint32_t const & seed) {
             seed_ = seed;
             common_rng::rng.seed(seed);
         }
-        uint32_t const & seed() const {
+        static uint32_t const & seed() {
             return seed_;
         }
     private:
-        uint32_t seed_;
+        static uint32_t seed_;
         distr_t distr_;
     };
+    
+    template<class T>
+    uint32_t helper_cl<T, true>::seed_ = 0;
     
     //-------------------------matching the interface-------------------//
     

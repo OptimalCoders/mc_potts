@@ -15,8 +15,6 @@ namespace interface {
             using spin_ret_type = mc_potts::spin_ret_type;
             using index_type = mc_potts::index_type;
         public:
-            impl() {
-            }
             spin_ret_type & get(  index_type const & l1
                                 , index_type const & l2
                                 , index_type const & l3) {

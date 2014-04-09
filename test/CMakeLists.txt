@@ -1,6 +1,7 @@
-FOREACH (name   test_baseline_greschd
+FOREACH (name   msk_v1_test
+                test_baseline_greschd
                 test_baseline_mskoenz
-                #~ test_sim_rng_interface
+                test_interface
                 test_rng_baseline_greschd
                 test_validation
                 test_v1
