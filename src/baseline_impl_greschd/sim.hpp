@@ -7,6 +7,7 @@
 
 #include <baseline_impl_greschd/system.hpp>
 #include <types.hpp>
+#include <global.hpp>
 
 #include <algorithm>
 #include <vector>
@@ -21,8 +22,9 @@ namespace mc_potts {
         template< int L1
                 , int L2
                 , int L3
-                , int S
-                , template<class> class RNG >
+                , template<typename> class RNG
+                , class GRID = void
+                , class MATRIX = void>
         class impl {
             //---------------------local typedefs---------------------------//
             typedef uint8_t spin_t;

@@ -16,15 +16,15 @@ using namespace mc_potts;
 
 int main(int argc, char* argv[]) {
     
-    validate<baseline_greschd::sim, baseline_greschd::sim, 4, addon::std_mt_rng>();
-    validate<v1_int2t::sim, v1_int2t::sim, 4, addon::std_mt_rng>();
-    validate<v1_int2t::sim, baseline_greschd::sim, 4, addon::std_mt_rng>();
+    validate<baseline_greschd::sim, baseline_greschd::sim, addon::std_mt_rng>();
+    validate<v1_int2t::sim, v1_int2t::sim, addon::std_mt_rng>();
+    validate<v1_int2t::sim, baseline_greschd::sim, addon::std_mt_rng>();
     
-    validate<baseline_mskoenz::sim, baseline_mskoenz::sim, 4, addon::lag_fib_rng>();
-    validate<baseline_mskoenz::sim, baseline_mskoenz::sim, 4, addon::std_mt_rng>();
+    validate<baseline_mskoenz::sim, baseline_mskoenz::sim, addon::lag_fib_rng>();
+    validate<baseline_mskoenz::sim, baseline_mskoenz::sim, addon::std_mt_rng>();
     
-    validate<baseline_mskoenz::sim, baseline_greschd::sim, 4, addon::lag_fib_rng>();
-    validate<baseline_mskoenz::sim, baseline_greschd::sim, 4, addon::std_mt_rng>();
+    validate<baseline_mskoenz::sim, baseline_greschd::sim, addon::lag_fib_rng>();
+    validate<baseline_mskoenz::sim, baseline_greschd::sim, addon::std_mt_rng>();
     
     return 0;
 }

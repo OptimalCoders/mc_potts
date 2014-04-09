@@ -6,6 +6,7 @@
 #define __MSK_V01_SIM_HEADER
 
 #include <types.hpp>
+#include <global.hpp>
 #include <addon/color.hpp>
 #include <addon/accum_double.hpp>
 #include <addon/accum_int.hpp>
@@ -19,8 +20,9 @@ namespace mc_potts {
             template< int L1
                     , int L2
                     , int L3
-                    , int S
-                    , template<typename> class RNG >
+                    , template<typename> class RNG
+                    , class GRID = void
+                    , class MATRIX = void >
             class impl {
             public:
                 impl(double const & T_init, uint32_t const & N_therm, uint32_t const & N_update = L1 * L2 * L3): 

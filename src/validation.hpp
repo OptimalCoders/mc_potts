@@ -17,7 +17,13 @@
 
 namespace mc_potts {
 
-    template<class IMPL1, class IMPL2, int S, template<class> class RNG>
+    template<   class IMPL1, 
+                class IMPL2, 
+                template<typename> class RNG,
+                class GRID1 = void, 
+                class GRID2 = void, 
+                class MATRIX1 = void, 
+                class MATRIX2 = void >
     struct compare {
         template< typename U > void operator()(U) {
             
@@ -31,27 +37,27 @@ namespace mc_potts {
             int seed(std::time(NULL));
             
             // testing sequence
-            #define CALL(x, y)                                                                  \
-            rng_handle.seed(seed);                                                          \
-            typename y::template impl<U::value, U::value, U::value, S, RNG > x(T1, N_therm);    \
-            x.thermalize();                                                                     \
-            for(uint i = 0; i < updates; ++i) {                                                 \
-                x.update();                                                                     \
-            }                                                                                   \
-            x.set_T(T2);                                                                        \
-            for(uint i = 0; i < updates; ++i) {                                                 \
-                x.update();                                                                     \
-            }                                                                                   \
+            #define CALL(x, y, grid, mat)                                                                   \
+            rng_handle.seed(seed);                                                                          \
+            typename y::template impl< U::value, U::value, U::value, RNG, grid, mat > x(T1, N_therm);        \
+            x.thermalize();                                                                                 \
+            for(uint i = 0; i < updates; ++i) {                                                             \
+                x.update();                                                                                 \
+            }                                                                                               \
+            x.set_T(T2);                                                                                    \
+            for(uint i = 0; i < updates; ++i) {                                                             \
+                x.update();                                                                                 \
+            }                                                                                               //
             
-            CALL(impl1, IMPL1)
-            CALL(impl2, IMPL2)
+            CALL(impl1, IMPL1, GRID1, MATRIX1)
+            CALL(impl2, IMPL2, GRID1, MATRIX1)
             
             // compare elements
             for(uint i = 0; i < U::value; ++i) {
                 for(uint j = 0; j < U::value; ++j) {
                     for(uint k = 0; k < U::value; ++k) {
                         assert(impl1.get(i, j, k) == impl2.get(i, j, k));
-                        //~ if(impl1.get(i, j, k) != impl2.get(i, j, k)) {
+                        //~ if(impl1.get(i, j, k) != impl2.get(i, j, k)) { //DEBUG
                             //~ std::cout << i << " " << j << " " << k << std::endl;
                             //~ std::cout << int(impl1.get(i, j, k)) << " " << int(impl2.get(i, j, k)) << "\n" << std::endl;
                         //~ }
@@ -61,10 +67,16 @@ namespace mc_potts {
         }
     };
     
-    template<class IMPL1, class IMPL2, int S, template<class> class RNG>
+    template<   class IMPL1, 
+                class IMPL2, 
+                template<typename> class RNG, 
+                class GRID1 = void,
+                class GRID2 = void,
+                class MATRIX1 = void,
+                class MATRIX2 = void>
     void validate() {
         typedef boost::mpl::vector<boost::mpl::int_<1>, boost::mpl::int_<2>, boost::mpl::int_<4>, boost::mpl::int_<8>>::type vec_type;
-        boost::mpl::for_each<vec_type>(compare<IMPL1, IMPL2, S, RNG>());
+        boost::mpl::for_each<vec_type>(compare<IMPL1, IMPL2, RNG, GRID1, GRID2, MATRIX1, MATRIX2>());
     }
 
 } // namespace mc_potts

@@ -6,12 +6,13 @@
 #define __SIM_V02_HEADER
 
 
-#include <dag_v02/system.hpp>
 #include <types.hpp>
+#include <global.hpp>
+#include <dag_v02/system.hpp>
 
-#include <algorithm>
 #include <vector>
 #include <math.h>
+#include <algorithm>
 
 namespace mc_potts {
     
@@ -22,8 +23,9 @@ namespace mc_potts {
         template< int L1
                 , int L2
                 , int L3
-                , int S
-                , template<class> class RNG >
+                , template<class> class RNG
+                , class GRID = void
+                , class MATRIX = void >
         class impl {
             //---------------------local typedefs---------------------------//
             typedef uint8_t spin_t;

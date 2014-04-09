@@ -18,14 +18,14 @@ int main(int argc, char* argv[]) {
     //~ /*
     int const L = 204;
     addon::common_rng::rng.seed(0);
-    mc_potts::baseline_mskoenz::sim::impl<L, L, L, 4, addon::std_mt_rng> s(0.1, 10, 2);
+    mc_potts::baseline_mskoenz::sim::impl<L, L, L, addon::std_mt_rng> s(0.1, 10, 2);
     //~ s.thermalize();
     //~ s.update();
     //~ s.update();
     //~ s.update();
     DEBUG_MSG("greschd")
     addon::common_rng::rng.seed(0);
-    mc_potts::baseline_greschd::sim::impl<L, L, L, 4, addon::std_mt_rng> s2(0.1, 10, 2);
+    mc_potts::baseline_greschd::sim::impl<L, L, L, addon::std_mt_rng> s2(0.1, 10, 2);
     //~ s2.thermalize();
     //~ s2.update();
     //~ s2.update();
