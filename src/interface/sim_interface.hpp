@@ -26,12 +26,15 @@ precompute prob
 */
 
 namespace interface {
+    using mc_potts::index_type;
     struct sim_proto_type {
-        template< int L1
-                , int L2
-                , int L3
-                , int S
-                , template<typename> class RNG >
+        template< index_type L1
+                , index_type L2
+                , index_type L3
+                , template<typename> class RNG
+                , typename GRID
+                , typename MATRIX
+                >
         class impl {
             using spin_ret_type = mc_potts::spin_ret_type;
             using index_type = mc_potts::index_type;

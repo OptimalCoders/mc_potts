@@ -25,5 +25,4 @@
     sim.get(0, 0, 0);                                       \
 }
 
-
 #endif //__VALIDATE_INTERFACE_HEADER
