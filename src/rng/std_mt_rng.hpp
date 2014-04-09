@@ -32,7 +32,7 @@ namespace addon {
         T operator()() {
             return distr_(common_rng::rng);
         }
-        void set_seed(uint32_t const & seed) {
+        void seed(uint32_t const & seed) {
             seed_ = seed;
             common_rng::rng.seed(seed);
         }
@@ -59,7 +59,7 @@ namespace addon {
         T operator()() {
             return distr_(common_rng::rng);
         }
-        void set_seed(uint32_t const & seed) {
+        void seed(uint32_t const & seed) {
             seed_ = seed;
             common_rng::rng.seed(seed);
         }

@@ -5,7 +5,7 @@
 #ifndef __BASELINE_IMPL_MSKOENZ_SIM_HEADER
 #define __BASELINE_IMPL_MSKOENZ_SIM_HEADER
 
-#include <result.hpp>
+#include <types.hpp>
 #include <addon/color.hpp>
 #include <addon/accum_double.hpp>
 #include <baseline_impl_mskoenz/grid.hpp>

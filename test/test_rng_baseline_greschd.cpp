@@ -13,13 +13,13 @@ using rng_type = std_mt_rng<T>;
 int main(int argc, char* argv[]) {
     
     rng_type<uint8_t> rng;
-    rng.set_seed(42);
+    rng.seed(42);
     for(uint i = 0; i < 10; ++i) {
         std::cout << int(rng()) << " ";
     }
     std::cout << std::endl;
     rng_type<int> rng2;
-    rng2.set_seed(42);
+    rng2.seed(42);
     for(uint i = 0; i < 10; ++i) {
         std::cout << int(rng2()) << " ";
     }

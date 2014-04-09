@@ -10,7 +10,7 @@
     /*------------- valid expressions for rng -----------*/ \
     RNG<double> rng(0, 1);                                  \
     RNG<int> rng2;                                          \
-    rng.set_seed(8);                                        \
+    rng.seed(8);                                            \
     rng2.seed();                                            \
     rng();                                                  \
     /*------------- valid expressions for sim -----------*/ \

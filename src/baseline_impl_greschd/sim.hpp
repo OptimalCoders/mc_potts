@@ -6,7 +6,7 @@
 #define __SIM_BASELINE_GRESCHD_HEADER
 
 #include <baseline_impl_greschd/system.hpp>
-#include <result.hpp>
+#include <types.hpp>
 
 #include <algorithm>
 #include <vector>

@@ -5,6 +5,8 @@
 #ifndef __RNG_INTERFACE_HEADER
 #define __RNG_INTERFACE_HEADER
 
+#include <types.hpp>
+
 #include <iostream>
 
 /*
@@ -14,7 +16,7 @@ rng_proto_type<double> rng(5, 8); // [5, 9)
 rng_proto_type<int> rng; // {0, 1}
 rng_proto_type<int> rng(0, size); // {0, ... , size - 1}
 
-rng.set_seed(double);
+rng.seed(double);
 rng.seed();
 
 rng();
@@ -23,15 +25,16 @@ rng();
 namespace interface {
     template<typename T>
     class rng_proto_type {
+        using seed_type = mc_potts::seed_type;
     public:
         rng_proto_type(T const & lower = T(), T const & upper = T()) {
         }
         T operator()() {
             return T();
         }
-        void set_seed(uint32_t const & seed) {
+        void seed(seed_type const & seed) {
         }
-        uint32_t const & seed() const {
+        seed_type const & seed() const {
             return seed_;
         }
     private:

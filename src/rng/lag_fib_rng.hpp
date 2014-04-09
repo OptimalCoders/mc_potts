@@ -35,7 +35,7 @@ namespace addon {
             }
             return offset + scale * detail::lag_fib_engine();
         }
-        void set_seed(uint32_t const & sd) {
+        void seed(uint32_t const & sd) {
             detail::lag_fib_engine.seed(sd);
             seed_ = sd;
         }

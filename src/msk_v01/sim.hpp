@@ -5,7 +5,7 @@
 #ifndef __MSK_V01_SIM_HEADER
 #define __MSK_V01_SIM_HEADER
 
-#include <result.hpp>
+#include <types.hpp>
 #include <addon/color.hpp>
 #include <addon/accum_double.hpp>
 #include <addon/accum_int.hpp>

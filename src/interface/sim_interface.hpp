@@ -5,7 +5,7 @@
 #ifndef __SIM_INTERFACE_HEADER
 #define __SIM_INTERFACE_HEADER
 
-#include <result.hpp>
+#include <types.hpp>
 
 #include <iostream>
 
@@ -33,6 +33,8 @@ namespace interface {
                 , int S
                 , template<typename> class RNG >
         class impl {
+            using spin_ret_type = mc_potts::spin_ret_type;
+            using index_type = mc_potts::index_type;
         public:
             impl(double const & T_init, uint32_t const & N_therm, uint32_t const & N_update) {
             }
@@ -52,9 +54,9 @@ namespace interface {
             }
             void clear() {
             }
-            uint8_t get(  uint32_t const & l1
-                        , uint32_t const & l2
-                        , uint32_t const & l3) const {
+            spin_ret_type get(index_type const & l1
+                            , index_type const & l2
+                            , index_type const & l3) const {
                 return 42;
             }
         };
