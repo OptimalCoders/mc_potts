@@ -3,13 +3,14 @@
 // File:    msk_version_comparison.cpp
 
 #include <validation.hpp>
+#include <dag_v02/sim.hpp>
 #include <msk_v01/sim.hpp>
+#include <v1_int2t/sim.hpp>
 #include <rng/lag_fib_rng.hpp>
 #include <rng/std_mt_rng.hpp>
 #include <addon/performance.hpp>
-#include <baseline_impl_mskoenz/sim.hpp>
 #include <baseline_impl_greschd/sim.hpp>
-#include <v1_int2t/sim.hpp>
+#include <baseline_impl_mskoenz/sim.hpp>
 
 #include <iostream>
 
@@ -22,7 +23,7 @@ int main(int argc, char* argv[]) {
     double T = 1;
     int const L = 128;
     
-    validate<baseline_mskoenz::sim, msk_v1::sim, 4, rng_type>();
+    //~ validate<baseline_mskoenz::sim, msk_v1::sim, 4, rng_type>();
     
     addon::detail::lag_fib_engine.seed(0);
     baseline_mskoenz::sim::impl<L, L, L, 4, rng_type> s1(T, 10);
@@ -41,8 +42,13 @@ int main(int argc, char* argv[]) {
     
     addon::detail::lag_fib_engine.seed(0);
     v1_int2t::sim::impl<L, L, L, 4, rng_type> s4(T, 10);
-    s3.thermalize();
-    MEASURE_DIV(s3.update(), "int2t", L*L*L)
+    s4.thermalize();
+    MEASURE_DIV(s4.update(), "int2t", L*L*L)
+    
+    addon::detail::lag_fib_engine.seed(0);
+    dag_v02::sim::impl<L, L, L, 4, rng_type> s5(T, 10);
+    s5.thermalize();
+    MEASURE_DIV(s5.update(), "int2t-zorder", L*L*L)
     
     P_RESULTS()
     P_SPEEDUP()

@@ -63,7 +63,7 @@ namespace mc_potts {
     
     template<class IMPL1, class IMPL2, int S, template<class> class RNG>
     void validate() {
-        typedef boost::mpl::vector<boost::mpl::int_<1>, boost::mpl::int_<2>, boost::mpl::int_<4>>::type vec_type;
+        typedef boost::mpl::vector<boost::mpl::int_<1>, boost::mpl::int_<2>, boost::mpl::int_<4>, boost::mpl::int_<50>, boost::mpl::int_<135>>::type vec_type;
         boost::mpl::for_each<vec_type>(compare<IMPL1, IMPL2, S, RNG>());
     }
 
