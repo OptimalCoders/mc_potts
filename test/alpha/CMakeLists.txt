@@ -2,7 +2,7 @@ FOREACH (name   test_baseline_greschd
                 test_baseline_mskoenz
                 test_interface
                 test_rng_baseline_greschd
-                test_validation
+                #~ test_validation # replaced by validation in ../
                 test_v1
                 test_int2t_vec
                 zorder

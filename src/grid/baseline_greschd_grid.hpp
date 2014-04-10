@@ -26,7 +26,7 @@ namespace mc_potts {
         
         //------------------------get - set---------------------------------//
             
-            inline spin_ret_type const & get(index_type const & x, index_type const & y, index_type const & z) const {
+            spin_ret_type get(index_type const & x, index_type const & y, index_type const & z) const {
                 return grid_.get(x, y, z);
             }
             

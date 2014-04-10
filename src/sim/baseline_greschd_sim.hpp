@@ -25,7 +25,7 @@ namespace mc_potts {
                 , class MATRIX>
         class impl {
             //---------------------local typedefs---------------------------//
-            typedef double prob_t;
+            typedef int dir_t;
             typedef std::vector<double> resvec_t;
             
         public:
@@ -86,7 +86,6 @@ namespace mc_potts {
                         }
                     }
                 }
-                
             }
             
             uint8_t get(  uint32_t const & l1, uint32_t const & l2, uint32_t const & l3) const {
@@ -147,15 +146,15 @@ namespace mc_potts {
                 RNG<index_type> rng1(0, L1);
                 RNG<index_type> rng2(0, L2);
                 RNG<index_type> rng3(0, L3);
-                RNG<index_type> rngdir;
-                RNG<prob_t> rngprob;
+                RNG<dir_t> rngdir;
+                RNG<double> rngprob;
                 
                 index_type i = rng1();
                 index_type j = rng2();
                 index_type k = rng3();
                 
                 // choosing direction of the spin change
-                index_type dir = rngdir();
+                dir_t dir = rngdir();
                 dir = dir * 2 - 1;
                 spin_ret_type temp = system_.get(i, j, k) + dir;
                 
@@ -165,8 +164,8 @@ namespace mc_potts {
                 }
                 
                 // acceptance step
-                prob_t p = exp(baseline_greschd::physical_const / T_ * dir * (system_.get_nn(i, j, k) - 6 * (S - 1) / 2.));
-                prob_t r = rngprob();
+                double p = exp(baseline_greschd::physical_const / T_ * dir * (system_.get_nn(i, j, k) - 6 * (S - 1) / 2.));
+                double r = rngprob();
                 if(p > r) {
                     system_.set(i, j, k, temp);
                 }

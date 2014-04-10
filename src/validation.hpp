@@ -37,8 +37,8 @@ namespace mc_potts {
             
             // testing sequence
             #define CALL(x, y, grid, mat)                                                                   \
-            RNG<int>::seed(seed);                                                                          \
-            typename y::template impl< U::value, U::value, U::value, RNG, grid, mat > x(T1, N_therm);        \
+            RNG<int>::seed(seed);                                                                           \
+            typename y::template impl< U::value, U::value, U::value, RNG, grid, mat > x(T1, N_therm);       \
             x.thermalize();                                                                                 \
             for(uint i = 0; i < updates; ++i) {                                                             \
                 x.update();                                                                                 \
