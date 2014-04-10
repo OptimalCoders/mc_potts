@@ -2,15 +2,8 @@
 // Date:    09.04.2014 17:10:29 CEST
 // File:    msk_v1_test.cpp
 
-#include <sim/msk_v1_sim.hpp>
-#include <grid/msk_v1_pbc.hpp>
-#include <rng/lag_fib_rng.hpp>
-#include <matrix/msk_v1_zorder.hpp>
-#include <matrix/msk_v0_std_vec.hpp>
-#include <matrix/msk_v0_c_array_dynamic.hpp>
-#include <matrix/msk_v0_c_array_static.hpp>
-
-#include <alpha/baseline_impl_mskoenz/sim.hpp>
+#include <beta.hpp>
+#include <alpha.hpp>
 #include <iostream>
 
 #include <validation.hpp>

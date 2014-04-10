@@ -2,23 +2,10 @@
 // Date:    24.03.2014 21:21:24 CET
 // File:    test_prototype_interface.cpp
 
+#include <beta.hpp>
+#include <alpha.hpp>
+
 #include <interface/validate_interface.hpp>
-//------------------- prototype -------------------
-#include <interface/rng_interface.hpp>
-#include <interface/sim_interface.hpp>
-//------------------- baseline_greschd -------------------
-#include <alpha/baseline_impl_greschd/sim.hpp>
-#include <rng/std_mt_rng.hpp>
-//------------------- baseline_mskoenz -------------------
-#include <alpha/baseline_impl_mskoenz/sim.hpp>
-#include <rng/lag_fib_rng.hpp>
-#include <alpha/dag_v02/sim.hpp>
-#include <alpha/msk_v01/sim.hpp>
-#include <alpha/v1_int2t/sim.hpp>
-//------------------- msk_v1 -------------------
-#include <sim/msk_v1_sim.hpp>
-#include <grid/msk_v1_pbc.hpp>
-#include <matrix/msk_v1_zorder.hpp>
 
 int main(int argc, char* argv[]) {
     VALIDATE_RNG(interface::rng_proto_type)

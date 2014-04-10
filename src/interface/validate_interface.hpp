@@ -5,9 +5,10 @@
 #ifndef __VALIDATE_INTERFACE_HEADER
 #define __VALIDATE_INTERFACE_HEADER
 
+#include <interface/rng_interface.hpp>
+#include <interface/sim_interface.hpp>
 #include <interface/grid_interface.hpp>
 #include <interface/matrix_interface.hpp>
-#include <interface/rng_interface.hpp>
 
 #define VALIDATE_RNG(RNG)                                   \
 {                                                           \

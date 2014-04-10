@@ -2,22 +2,8 @@
 // Date:    26.03.2014 10:11:58 CET
 // File:    test_validation.cpp
 
-#include <rng/std_mt_rng.hpp>
-#include <rng/lag_fib_rng.hpp>
-#include <alpha/baseline_impl_greschd/sim.hpp>
-#include <alpha/v1_int2t/sim.hpp>
-#include <alpha/baseline_impl_mskoenz/sim.hpp>
-
-#include <sim/msk_v1_sim.hpp>
-#include <sim/baseline_greschd_sim.hpp>
-
-#include <grid/msk_v1_pbc.hpp>
-#include <grid/baseline_greschd_grid.hpp>
-
-#include <matrix/msk_v1_zorder.hpp>
-#include <matrix/int2t_v01_matrix.hpp>
-#include <matrix/baseline_greschd_matrix.hpp>
-
+#include <beta.hpp>
+#include <alpha.hpp>
 #include <validation.hpp>
 
 #include <iostream>

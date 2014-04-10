@@ -2,20 +2,14 @@
 // Date:    25.03.2014 15:04:30 CET
 // File:    test_baseline_mskoenz.cpp
 
-#include <rng/lag_fib_rng.hpp>
-#include <rng/std_mt_rng.hpp>
-
 #include <addon/ppm_picture.hpp>
-
-#include <alpha/baseline_impl_mskoenz/sim.hpp>
-#include <alpha/baseline_impl_greschd/sim.hpp>
+#include <alpha.hpp>
 
 #include <iostream>
 
 int main(int argc, char* argv[]) {
     DEBUG_MSG("main start")
     //------------------- test sim -------------------
-    //~ /*
     int const L = 204;
     addon::std_mt_rng<int>::seed(0);
     mc_potts::baseline_mskoenz::sim::impl<L, L, L, addon::std_mt_rng> s(0.1, 10, 2);
@@ -40,7 +34,6 @@ int main(int argc, char* argv[]) {
         }
         std::cout << std::endl;
     }
-    /**/
     /*
     addon::detail::lag_fib_engine.seed(0);
     mc_potts::baseline_mskoenz::sim::impl<2, 5, 5, 4, addon::lag_fib_rng> s(0.1, 10, 2);
@@ -61,6 +54,6 @@ int main(int argc, char* argv[]) {
         //~ ppm.print(s.grid()[0], i); //ppm picture
     }
     s.print();
-    /**/
+    */
     return 0;
 }

@@ -2,10 +2,7 @@
 // Date:    25.03.2014 00:42:33 CET
 // File:    test.cpp
 
-#include <sim/baseline_greschd_sim.hpp>
-#include <grid/baseline_greschd_grid.hpp>
-#include <matrix/int2t_v01_matrix.hpp>
-#include <rng/std_mt_rng.hpp>
+#include <beta.hpp>
 
 #include <iostream>
 

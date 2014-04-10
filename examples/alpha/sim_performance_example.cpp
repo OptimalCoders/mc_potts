@@ -2,12 +2,9 @@
 // Date:    26.03.2014 15:45:36 CET
 // File:    performance_example.cpp
 
-#include <iostream>
-#include <rng/std_mt_rng.hpp>
-#include <rng/lag_fib_rng.hpp>
+#include <alpha.hpp>
 #include <addon/performance.hpp>
-#include <alpha/baseline_impl_greschd/sim.hpp>
-#include <alpha/baseline_impl_mskoenz/sim.hpp>
+#include <iostream>
 
 int main(int argc, char* argv[]) {
     

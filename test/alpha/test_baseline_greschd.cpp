@@ -3,8 +3,7 @@
 // File:    test.cpp
 
 #include <iostream>
-#include <alpha/baseline_impl_greschd/sim.hpp>
-#include <rng/std_mt_rng.hpp>
+#include <alpha.hpp>
 
 int main(int argc, char* argv[]) {
     

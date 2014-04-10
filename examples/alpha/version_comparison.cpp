@@ -2,15 +2,9 @@
 // Date:    02.04.2014 21:13:33 CEST
 // File:    msk_version_comparison.cpp
 
+#include <alpha.hpp>
 #include <validation.hpp>
-#include <rng/std_mt_rng.hpp>
-#include <rng/lag_fib_rng.hpp>
 #include <addon/performance.hpp>
-#include <alpha/dag_v02/sim.hpp>
-#include <alpha/msk_v01/sim.hpp>
-#include <alpha/v1_int2t/sim.hpp>
-#include <alpha/baseline_impl_greschd/sim.hpp>
-#include <alpha/baseline_impl_mskoenz/sim.hpp>
 
 #include <iostream>
 
@@ -21,7 +15,7 @@ int main(int argc, char* argv[]) {
     #define rng_type addon::lag_fib_rng
     //~ #define rng_type addon::std_mt_rng
     double T = 1;
-    int const L = 128;
+    int const L = 32;
     
     //~ validate<baseline_mskoenz::sim, msk_v1::sim, 4, rng_type>();
     
