@@ -6,8 +6,9 @@
 #define __LAG_FIB_RNG_HEADER
 
 #include <boost/random.hpp>
+#include <string>
+#include <limits>
 #include <type_traits>
-#include <ctime>
 
 namespace addon {
     namespace detail {

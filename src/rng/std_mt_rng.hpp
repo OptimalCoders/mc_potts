@@ -6,6 +6,7 @@
 #define __STD_MT_RNG_HEADER
 
 #include <random>
+#include <string>
 
 namespace addon {
     
