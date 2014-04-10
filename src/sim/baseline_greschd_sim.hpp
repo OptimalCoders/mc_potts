@@ -96,7 +96,9 @@ namespace mc_potts {
             uint8_t get(  uint32_t const & l1, uint32_t const & l2, uint32_t const & l3) const {
                 return system_.get(l1, l2, l3); 
             }
-            
+            static std::string spec() {
+                return name() + ", " + GRID::name() + ", " + MATRIX::name() + ", " + RNG<int>::name();
+            }
         private:
         
         //------------------------calculating the results from a vector-----//
@@ -171,7 +173,9 @@ namespace mc_potts {
             resvec_t magn_res_;
             
         }; // impl
-
+        static std::string name() {
+            return "baseline_greschd_sim";
+        }
     }; // struct baseline_greschd_sim
     
 } // namespace mc_potts

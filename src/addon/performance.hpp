@@ -108,8 +108,8 @@ namespace addon {
         
         void print_results() {
             for(auto & p : perf_measure) {
-                std::cout << GREEN << std::setw(20) << p.first << 
-                NONE << " = " <<GREENB << std::setw(7) << std::lround(p.second) << NONE << std::endl;
+                std::cout << GREENB << std::setw(7) << std::lround(p.second) << NONE << " --> "
+                             GREEN << p.first << NONE << std::endl;
             }
         }
         void print_speedup() {
@@ -126,8 +126,7 @@ namespace addon {
             std::sort (temp.begin(), temp.end(), [](p_type const & p1, p_type const & p2) {return p1.second < p2.second;});
             
             for(auto & p : temp) {
-                std::cout << RED << std::setw(20) << p.first << 
-                NONE << " = " <<REDB << std::setw(7) << std::setprecision (2) << std::fixed << max / p.second << NONE << std::endl;
+                std::cout << REDB << std::setw(7) << std::setprecision (2) << std::fixed << max / p.second << NONE << " --> " << RED << p.first << NONE << std::endl;
             }
         }
     }//end namespace detail

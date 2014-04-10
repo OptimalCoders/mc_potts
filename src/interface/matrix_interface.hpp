@@ -6,6 +6,7 @@
 #define __MATRIX_INTERFACE_HEADER
 
 #include <types.hpp>
+#include <string>
 
 namespace interface {
     using mc_potts::index_type;
@@ -29,6 +30,9 @@ namespace interface {
         private:
             spin_ret_type s_;
         };
+        static std::string name() {
+            return "matrix_proto_type";
+        }
     };
 }//end namespace inferface
 

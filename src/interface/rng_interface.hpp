@@ -6,9 +6,7 @@
 #define __RNG_INTERFACE_HEADER
 
 #include <types.hpp>
-
-#include <iostream>
-
+#include <string>
 /*
 rng_proto_type<double> rng; // [0, 1)
 rng_proto_type<double> rng(5, 8); // [5, 9)
@@ -36,6 +34,9 @@ namespace interface {
         }
         static seed_type const & seed() {
             return seed_;
+        }
+        static std::string name() {
+            return "rng_proto_type";
         }
     private:
         static uint32_t seed_;

@@ -122,6 +122,9 @@ namespace mc_potts {
                 return grid_[calc_z_ord(i, j, k)];
                 //~ return grid_[L2*L3*i + L3*j + k];
             }
+            static std::string spec() {
+                return "alpha msk_v01";
+            }
         private:
         //  +---------------------------------------------------+
         //  |                   class members                   |

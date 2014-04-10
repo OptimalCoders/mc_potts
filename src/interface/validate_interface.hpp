@@ -19,6 +19,7 @@
     rng2.seed(8);                                           \
     rng2.seed();                                            \
     rng();                                                  \
+    RNG<double>::name();                                    \
 }                                                           //
 
 #define VALIDATE_MATRIX(MAT)                                \
@@ -26,6 +27,7 @@
     typename MAT::template impl<16, 16, 16> mat;            \
     mat.get(0, 0, 0);                                       \
     mat.set(0, 0, 0, 0);                                    \
+    MAT::name();                                            \
 }                                                           //
 
 #define VALIDATE_GRID(GRI)                                  \
@@ -34,6 +36,7 @@
     grid.get_nn(0, 0, 0);                                   \
     grid.get(0, 0, 0);                                      \
     grid.set(0, 0, 0, 0);                                   \
+    GRI::name();                                            \
 }                                                           //
 
 #define VALIDATE_SIM(SIM)                                   \
@@ -48,6 +51,8 @@
     sim.set_T(0.1);                                         \
     sim.clear();                                            \
     sim.get(0, 0, 0);                                       \
+    SIM::name();                                            \
+    sim.spec();                                             \
 }                                                           //
 
 #endif //__VALIDATE_INTERFACE_HEADER

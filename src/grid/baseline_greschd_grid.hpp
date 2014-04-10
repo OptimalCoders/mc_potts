@@ -78,6 +78,9 @@ namespace mc_potts {
             typename MATRIX::template impl<L1, L2, L3> system_;
             
         };
+        static std::string name() {
+            return "baseline_greschd_grid";
+        }
     }; // struct baseline_greschd_impl 
     
 } // namespace mc_potts

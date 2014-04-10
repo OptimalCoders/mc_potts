@@ -12,6 +12,9 @@
 //------------------- baseline_mskoenz -------------------
 #include <alpha/baseline_impl_mskoenz/sim.hpp>
 #include <rng/lag_fib_rng.hpp>
+#include <alpha/dag_v02/sim.hpp>
+#include <alpha/msk_v01/sim.hpp>
+#include <alpha/v1_int2t/sim.hpp>
 //------------------- msk_v1 -------------------
 #include <sim/msk_v1_sim.hpp>
 #include <grid/msk_v1_pbc.hpp>
@@ -26,8 +29,11 @@ int main(int argc, char* argv[]) {
     VALIDATE_RNG(addon::lag_fib_rng)
     VALIDATE_RNG(addon::std_mt_rng)
     
-    VALIDATE_SIM(mc_potts::baseline_greschd::sim)
+    VALIDATE_SIM(mc_potts::msk_v1::sim)
+    VALIDATE_SIM(mc_potts::dag_v02::sim)
+    VALIDATE_SIM(mc_potts::v1_int2t::sim)
     VALIDATE_SIM(mc_potts::baseline_mskoenz::sim)
+    VALIDATE_SIM(mc_potts::baseline_greschd::sim)
     
     VALIDATE_MATRIX(mc_potts::msk_v1_zorder)
     VALIDATE_GRID(mc_potts::msk_v1_pbc)

@@ -104,7 +104,9 @@ namespace mc_potts {
                 //~ assert(x < L1);
                 //~ system_.picture_slice(x, outfile, resolution);
             //~ }
-            
+            static std::string spec() {
+                return name();
+            }
         private:
         
         //------------------------calculating the results from a vector-----//
@@ -179,7 +181,9 @@ namespace mc_potts {
             resvec_t magn_res_;
             
         }; // impl
-
+        static std::string name() {
+            return "alpha v1_int2t";
+        }
         }; // struct sim_v1
         
     } // namespace v1

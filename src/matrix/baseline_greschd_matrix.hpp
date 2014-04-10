@@ -38,7 +38,9 @@ namespace mc_potts {
         private:
             system_t mat_;
         };
-        
+        static std::string name() {
+            return "baseline_greschd_matrix";
+        }
     }; // struct baseline_greschd_matrix
     
 }//end namespace mc_potts

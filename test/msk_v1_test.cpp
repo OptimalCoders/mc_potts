@@ -6,27 +6,50 @@
 #include <grid/msk_v1_pbc.hpp>
 #include <rng/lag_fib_rng.hpp>
 #include <matrix/msk_v1_zorder.hpp>
+#include <matrix/msk_v0_std_vec.hpp>
+#include <matrix/msk_v0_c_array_dynamic.hpp>
+#include <matrix/msk_v0_c_array_static.hpp>
 
 #include <alpha/baseline_impl_mskoenz/sim.hpp>
 #include <iostream>
 
 #include <validation.hpp>
+#include <addon/performance.hpp>
 
 int main(int argc, char* argv[]) {
     
-    addon::lag_fib_rng<double> r;
-    
-    std::cout << r() << std::endl;
-    
-    int const L = 32;
+    int const L = 128;
     
     mc_potts::msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
                                       , mc_potts::msk_v1_pbc
                                       , mc_potts::msk_v1_zorder
-                                      > s(1, 10, 2);
+                                      > s1(10, 10);
     
-    s.update();
+    mc_potts::msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
+                                      , mc_potts::msk_v1_pbc
+                                      , mc_potts::msk_v0_std_vec
+                                      > s2(10, 10);
     
+    mc_potts::msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
+                                      , mc_potts::msk_v1_pbc
+                                      , mc_potts::msk_v0_c_array_static
+                                      > s3(10, 10);
+    
+    mc_potts::msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
+                                      , mc_potts::msk_v1_pbc
+                                      , mc_potts::msk_v0_c_array_dynamic
+                                      > s4(10, 10);
+    
+    mc_potts::baseline_mskoenz::sim::impl<L, L, L, addon::lag_fib_rng> s5(10, 10);
+    
+    MEASURE_DIV(s1.update(), s1.spec(), L*L*L)
+    MEASURE_DIV(s2.update(), s2.spec(), L*L*L)
+    MEASURE_DIV(s3.update(), s3.spec(), L*L*L)
+    MEASURE_DIV(s4.update(), s4.spec(), L*L*L)
+    MEASURE_DIV(s5.update(), s5.spec(), L*L*L)
+    
+    P_RESULTS()
+    P_SPEEDUP()
     
     return 0;
 }

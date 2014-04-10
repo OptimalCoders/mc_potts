@@ -1,16 +1,16 @@
 // Author:  Mario S. Könz <mskoenz@gmx.net>
-// Date:    09.04.2014 17:04:32 CEST
-// File:    msk_v1_zorder.hpp
+// Date:    10.04.2014 12:20:28 CEST
+// File:    msk_v0_std_vec.hpp
 
-#ifndef __MSK_V1_ZORDER_HEADER
-#define __MSK_V1_ZORDER_HEADER
+#ifndef __MSK_V0_STD_VEC_HEADER
+#define __MSK_V0_STD_VEC_HEADER
 
 #include <types.hpp>
 #include <vector>
 
 namespace mc_potts {
     using mc_potts::index_type;
-    struct msk_v1_zorder {
+    struct msk_v0_std_vec {
         template<index_type L1, index_type L2, index_type L3>
         class impl {
             //------------------- local typedefs -------------------
@@ -22,42 +22,22 @@ namespace mc_potts {
             //------------------- ctor -------------------
             impl(): mat_(L3 * L2 * L1, 0) {
             }
-            //------------------- z order -------------------
-            uint32_t calc_z_ord(uint8_t const & i, uint8_t const & j, uint8_t const & k) const {
-                uint32_t x = i;
-                uint32_t y = j;
-                uint32_t z = k;
-
-                x = (x | (x << 8)) & 0x0000F00F;
-                y = (y | (y << 8)) & 0x0000F00F;
-                z = (z | (z << 8)) & 0x0000F00F;
-
-                x = (x | (x << 4)) & 0x000C30C3;
-                y = (y | (y << 4)) & 0x000C30C3;
-                z = (z | (z << 4)) & 0x000C30C3;
-                
-                x = (x | (x << 2)) & 0x00249249;
-                y = (y | (y << 2)) & 0x00249249;
-                z = (z | (z << 2)) & 0x00249249;
-
-                return x | (y << 1) | (z << 2);
-            }
             //------------------- access -------------------
             inline void set(index_type const & i, index_type const & j, index_type const & k, spin_ret_type const & s) {
-                mat_[calc_z_ord(i, j, k)] = s;
+                mat_[L2 * L3 * i + L3 * j + k] = s;
             }
             //------------------- access -------------------
             inline spin_ret_type const & get(index_type const & i, index_type const & j, index_type const & k) const {
-                return mat_[calc_z_ord(i, j, k)];
+                return mat_[L2 * L3 * i + L3 * j + k];
             }
         private:
             //------------------- grid -------------------
             mat_type mat_;
         };
         static std::string name() {
-            return "msk_v1_zorder";
+            return "msk_v0_std_vec";
         }
     };
 }//end namespace mc_potts
 
-#endif //__MSK_V1_ZORDER_HEADER
+#endif //__MSK_V0_STD_VEC_HEADER

@@ -6,9 +6,7 @@
 #define __SIM_INTERFACE_HEADER
 
 #include <types.hpp>
-
-#include <iostream>
-
+#include <string>
 /*
 init()
 
@@ -62,7 +60,13 @@ namespace interface {
                             , index_type const & l3) const {
                 return 42;
             }
+            static std::string spec() {
+                return name() + ", " + GRID::name() + ", " + MATRIX::name() + ", " + RNG<int>::name();
+            }
         };
+        static std::string name() {
+            return "sim_proto_type";
+        }
     };
 }//end namespace interface
 

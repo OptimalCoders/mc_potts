@@ -20,8 +20,8 @@ namespace mc_potts {
                     , int L2
                     , int L3
                     , template<typename> class RNG
-                    , class GRID = void
-                    , class MATRIX = void >
+                    , class GRID
+                    , class MATRIX>
             class impl {
             public:
                 impl(double const & T_init, uint32_t const & N_therm, uint32_t const & N_update = L1 * L2 * L3): 
@@ -167,7 +167,9 @@ namespace mc_potts {
                     for(auto & d : data_)
                         std::cout << d.first << ": " << d.second << std::endl;
                 }
-                
+                static std::string spec() {
+                    return name() + ", " + GRID::name() + ", " + MATRIX::name() + ", " + RNG<int>::name();
+                }
             private:
                 //------------------- grid -------------------
                 typename GRID::template impl<L1, L2, L3, MATRIX> grid_;
@@ -193,6 +195,9 @@ namespace mc_potts {
                 RNG<double> rngp_;
                 RNG<int> rngUD_;
             };
+            static std::string name() {
+                return "msk_v1_sim";
+            }
         };
 }//end namespace mc_potts
 

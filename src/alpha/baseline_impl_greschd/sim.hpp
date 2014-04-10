@@ -103,7 +103,9 @@ namespace mc_potts {
                 assert(x < L1);
                 system_.picture_slice(x, outfile, resolution);
             }
-            
+            static std::string spec() {
+                return name();
+            }
         private:
         
         //------------------------calculating the results from a vector-----//
@@ -178,7 +180,9 @@ namespace mc_potts {
             resvec_t magn_res_;
             
         }; // sim_baseline_greschd
-
+        static std::string name() {
+            return "alpha baseline_greschd";
+        }
         }; // struct sim_baseline_greschd
     } // namespace baseline_greschd
 } // namespace mc_potts

@@ -39,6 +39,9 @@ namespace addon {
         static uint32_t seed() {
             return seed_;
         }
+        static std::string name() {
+            return "lag_fib_rng";
+        }
     private:
         T scale;
         T offset;

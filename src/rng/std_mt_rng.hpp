@@ -39,6 +39,9 @@ namespace addon {
         static uint32_t const & seed() {
             return seed_;
         }
+        static std::string name() {
+            return "std_mt_rng";
+        }
     private:
         static uint32_t seed_;
         distr_t distr_;
@@ -68,6 +71,9 @@ namespace addon {
         }
         static uint32_t const & seed() {
             return seed_;
+        }
+        static std::string name() {
+            return "std_mt_rng";
         }
     private:
         static uint32_t seed_;

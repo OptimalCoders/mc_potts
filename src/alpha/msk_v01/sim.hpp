@@ -148,7 +148,9 @@ namespace mc_potts {
                     for(auto & d : data_)
                         std::cout << d.first << ": " << d.second << std::endl;
                 }
-                
+                static std::string spec() {
+                    return name();
+                }
             private:
                 //------------------- grid -------------------
                 grid_class<L1, L2, L3> grid_;
@@ -174,6 +176,9 @@ namespace mc_potts {
                 RNG<double> rngp_;
                 RNG<int> rngUD_;
             };
+            static std::string name() {
+                return "alpha msk_v1";
+            }
         };
     }//end namespace msk_v1
 }//end namespace mc_potts

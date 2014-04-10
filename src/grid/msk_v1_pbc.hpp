@@ -84,6 +84,9 @@ namespace mc_potts {
             std::array<index_type, L3> L3_next_;
             std::array<index_type, L3> L3_prev_;
         };
+        static std::string name() {
+            return "msk_v1_pbc";
+        }
     };
 }//end namespace mc_potts
 
