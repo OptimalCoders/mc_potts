@@ -25,6 +25,7 @@
 {                                                           \
     typename MAT::template impl<16, 16, 16> mat;            \
     mat.get(0, 0, 0);                                       \
+    mat.set(0, 0, 0, 0);                                    \
 }                                                           //
 
 #define VALIDATE_GRID(GRI)                                  \
@@ -32,6 +33,7 @@
     typename GRI::template impl<16, 16, 16, interface::matrix_proto_type> grid; \
     grid.get_nn(0, 0, 0);                                   \
     grid.get(0, 0, 0);                                      \
+    grid.set(0, 0, 0, 0);                                   \
 }                                                           //
 
 #define VALIDATE_SIM(SIM)                                   \

@@ -8,8 +8,7 @@
 #include <types.hpp>
 #include <global.hpp>
 #include <addon/color.hpp>
-#include <addon/accum_double.hpp>
-#include <addon/accum_int.hpp>
+#include <addon/accum.hpp>
 #include <alpha/msk_v01/grid.hpp>
 
 #include <map>
@@ -155,8 +154,8 @@ namespace mc_potts {
                 grid_class<L1, L2, L3> grid_;
                 
                 //------------------- measurements/physics -------------------
-                std::map<std::string, accumulator_double> data_;
-                accumulator_int accacc_;
+                std::map<std::string, accum_class<double>> data_;
+                accum_class<int> accacc_;
                 double const eunit_;
                 double T_;
                 double E_;

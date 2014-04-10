@@ -29,7 +29,7 @@ namespace mc_potts {
                 for(index_type i = 0; i < L1; ++i) {
                     for(index_type j = 0; j < L2; ++j) {
                         for(index_type k = 0; k < L3; ++k)
-                            get(i, j, k) = 0;
+                            set(i, j, k, 0);
                     }
                 }
             }
@@ -54,8 +54,8 @@ namespace mc_potts {
                 return x | (y << 1) | (z << 2);
             }
             //------------------- access -------------------
-            inline spin_ret_type & get(index_type const & i, index_type const & j, index_type const & k) {
-                return mat_[calc_z_ord(i, j, k)];
+            inline void set(index_type const & i, index_type const & j, index_type const & k, spin_ret_type const & s) {
+                mat_[calc_z_ord(i, j, k)] = s;
             }
             //------------------- access -------------------
             inline spin_ret_type const & get(index_type const & i, index_type const & j, index_type const & k) const {

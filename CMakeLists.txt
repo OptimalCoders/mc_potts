@@ -35,11 +35,12 @@ include_directories("${SRC}")
 #=================== added subdirs ===================
 #~ add_subdirectory("")
 
+enable_testing()
+
 if(BUILD_EXAMPLE)
     add_subdirectory("examples")
 endif(BUILD_EXAMPLE)
 
 if(BUILD_TEST)
-    enable_testing()
     add_subdirectory("test")
 endif(BUILD_TEST)

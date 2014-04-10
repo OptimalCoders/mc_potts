@@ -41,8 +41,8 @@ namespace mc_potts {
                 }
             }
             //------------------- access -------------------
-            inline spin_ret_type & get(index_type const & i, index_type const & j, index_type const & k) {
-                return mat_.get(i, j, k);
+            inline void set(index_type const & i, index_type const & j, index_type const & k, spin_ret_type const & s) {
+                return mat_.set(i, j, k, s);
             }
         //  +---------------------------------------------------+
         //  |                   const methods                   |

@@ -9,8 +9,7 @@
 #include <types.hpp>
 #include <global.hpp>
 #include <addon/color.hpp>
-#include <addon/accum_double.hpp>
-#include <addon/accum_int.hpp>
+#include <addon/accum.hpp>
 
 #include <map>
 
@@ -60,7 +59,7 @@ namespace mc_potts {
                     if(pre_exp_[2*n + shift] > rngp_()) {
                         shift = shift * 2 - 1;
                         E_ += shift * (n - n_neighbour * ((double)S - 1) / 2);
-                        a += shift;
+                        grid_.set(i, j, k, a + shift);
                         M_ += shift;
                         accacc_ << 1;
                     }
@@ -139,7 +138,7 @@ namespace mc_potts {
                     for(index_type i = 0; i < L1; ++i) {
                         for(index_type j = 0; j < L2; ++j) {
                             for(index_type k = 0; k < L3; ++k) {
-                                grid_.get(i, j, k) = rngS();
+                                grid_.set(i, j, k, rngS());
                             }
                         }
                     }
@@ -174,8 +173,8 @@ namespace mc_potts {
                 typename GRID::template impl<L1, L2, L3, MATRIX> grid_;
                 
                 //------------------- measurements/physics -------------------
-                std::map<std::string, accumulator_double> data_;
-                accumulator_int accacc_;
+                std::map<std::string, accum_class<double>> data_;
+                accum_class<int> accacc_;
                 double const eunit_;
                 double T_;
                 double E_;
