@@ -25,12 +25,8 @@ namespace mc_potts {
                 , class MATRIX>
         class impl {
             //---------------------local typedefs---------------------------//
-            typedef uint8_t spin_t;
-            typedef int dim_t;
             typedef double prob_t;
-            typedef double energy_t;
-            typedef double res_t;
-            typedef std::vector<res_t> resvec_t;
+            typedef std::vector<double> resvec_t;
             
         public:
             impl(   double const & T_init,
@@ -48,22 +44,22 @@ namespace mc_potts {
             
             // N_therm_ single spin updates
             void thermalize() {
-                for(dim_t i = 0; i < N_therm_; ++i) {
+                for(index_type i = 0; i < N_therm_; ++i) {
                     update();
                 }
             }
             
             // N_update_ single spin updates
             void update() {
-                for(dim_t i = 0; i < N_update_; ++i) {
+                for(index_type i = 0; i < N_update_; ++i) {
                     update_spin_();
                 }
             }
             
             //
             void measure() {
-                energy_res_.push_back(system_.energy_density());
-                magn_res_.push_back(system_.magn_density());
+                energy_res_.push_back(energy_density_());
+                magn_res_.push_back(magn_density_());
             }
             
             result_struct energy() const {
@@ -80,12 +76,12 @@ namespace mc_potts {
             }
             
             void clear() {
-                RNG<spin_t> spin_rng(0, S);
+                RNG<spin_ret_type> spin_rng(0, S);
                 
                 // set all spins to a random state
-                for(dim_t i = 0; i < L1; ++i) {
-                    for(dim_t j = 0; j < L2; ++j) {
-                        for(dim_t k = 0; k < L3; ++k) {
+                for(index_type i = 0; i < L1; ++i) {
+                    for(index_type j = 0; j < L2; ++j) {
+                        for(index_type k = 0; k < L3; ++k) {
                             system_.set(i, j, k, spin_rng());
                         }
                     }
@@ -99,8 +95,35 @@ namespace mc_potts {
             static std::string spec() {
                 return name() + ", " + GRID::name() + ", " + MATRIX::name() + ", " + RNG<int>::name();
             }
+        
         private:
         
+    //------------------------observables-------------------------------//
+        
+            double magn_density_() const {
+                spin_ret_type res = 0;
+                for(index_type i = 0; i < L1; ++i) {
+                    for(index_type j = 0; j < L2; ++j) {
+                        for(index_type k = 0; k < L3; ++k) {
+                            res += system_.get(i, j, k);
+                        }
+                    }
+                }
+                return res / double(L1 * L2 * L3) - (S - 1) / 2.;
+            }
+            
+            double energy_density_() const {
+                double res = 0;
+                for(index_type i = 0; i < L1; ++i) {
+                    for(index_type j = 0; j < L2; ++j) {
+                        for(index_type k = 0; k < L3; ++k) {
+                            res -= (system_.get(i, j, k) - (S - 1) / 2.) * (system_.get_nn(i, j, k) - 6 * (S - 1) / 2. );
+                        }
+                    }
+                }
+                return res * baseline_greschd::Jh / (2. * L1 * L2 * L3);
+            }
+            
         //------------------------calculating the results from a vector-----//
             result_struct get_res_(resvec_t const & v) const {
                 result_struct res;
@@ -109,7 +132,7 @@ namespace mc_potts {
                 res.mean = std::accumulate(v.begin(), v.end(), 0.) / res.n;
                 
                 res.dev = 0;
-                std::for_each(v.begin(), v.end(), [&](res_t x){res.dev += (x - res.mean)*(x - res.mean);});
+                std::for_each(v.begin(), v.end(), [&](double x){res.dev += (x - res.mean)*(x - res.mean);});
                 res.dev = sqrtf(res.dev / res.n);
                 
                 res.err = res.dev / sqrt(res.n);
@@ -121,20 +144,20 @@ namespace mc_potts {
         //------------------------single-spin update------------------------//
             void update_spin_() {
                 
-                RNG<dim_t> rng1(0, L1);
-                RNG<dim_t> rng2(0, L2);
-                RNG<dim_t> rng3(0, L3);
-                RNG<dim_t> rngdir;
+                RNG<index_type> rng1(0, L1);
+                RNG<index_type> rng2(0, L2);
+                RNG<index_type> rng3(0, L3);
+                RNG<index_type> rngdir;
                 RNG<prob_t> rngprob;
                 
-                dim_t i = rng1();
-                dim_t j = rng2();
-                dim_t k = rng3();
+                index_type i = rng1();
+                index_type j = rng2();
+                index_type k = rng3();
                 
                 // choosing direction of the spin change
-                dim_t dir = rngdir();
+                index_type dir = rngdir();
                 dir = dir * 2 - 1;
-                spin_t temp = system_.get(i, j, k) + dir;
+                spin_ret_type temp = system_.get(i, j, k) + dir;
                 
                 //return if the new state isn't a valid state
                 if(temp >= S or temp < 0) {
@@ -163,7 +186,7 @@ namespace mc_potts {
             uint32_t N_update_;
             
             // temperature
-            energy_t T_;
+            double T_;
             
             // system
             typename GRID::template impl<L1, L2, L3, MATRIX> system_;

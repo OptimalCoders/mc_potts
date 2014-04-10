@@ -8,11 +8,11 @@
 #include <types.hpp>
 
 namespace mc_potts {
-    using mc_potts::index_type;
+
     struct baseline_greschd_matrix {
         
         typedef uint8_t spin_rep_t;
-        typedef std::vector<std::vector<std::vector<spin_rep_t>>> system_t;
+        typedef std::vector<std::vector<std::vector<spin_rep_t>>> matrix_t;
         
         template<   index_type L1, 
                     index_type L2, 
@@ -36,7 +36,7 @@ namespace mc_potts {
                 return mat_.at(l1).at(l2).at(l3);
             }
         private:
-            system_t mat_;
+            matrix_t mat_;
         };
         static std::string name() {
             return "baseline_greschd_matrix";
