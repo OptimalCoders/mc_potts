@@ -23,7 +23,6 @@ namespace mc_potts {
             //------------------- ctor -------------------
             impl() {
                 init();
-                assert(spin_ret_type(S * n_neighbour) == double(S) * n_neighbour);
             }
             void init() {
                 //------------------- init boundary conditions -------------------
@@ -41,7 +40,7 @@ namespace mc_potts {
                 }
             }
             //------------------- access -------------------
-            inline void set(index_type const & i, index_type const & j, index_type const & k, spin_ret_type const & s) {
+            void set(index_type const & i, index_type const & j, index_type const & k, spin_ret_type const & s) {
                 return mat_.set(i, j, k, s);
             }
         //  +---------------------------------------------------+
@@ -59,7 +58,7 @@ namespace mc_potts {
                 std::cout << std::endl;
             }
             //------------------- stencil computation -------------------
-            inline spin_ret_type get_nn(index_type const & i, index_type const & j, index_type const & k) const {
+            spin_ret_type get_nn(index_type const & i, index_type const & j, index_type const & k) const {
                 return get(L1_prev_[i], j, k)
                      + get(L1_next_[i], j, k)
                      + get(i, L2_prev_[j], k)
@@ -69,7 +68,7 @@ namespace mc_potts {
                      ;
             }
             //------------------- access -------------------
-            inline spin_ret_type const & get(index_type const & i, index_type const & j, index_type const & k) const {
+            spin_ret_type get(index_type const & i, index_type const & j, index_type const & k) const {
                 return mat_.get(i, j, k);
             }
         private:

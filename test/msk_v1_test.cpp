@@ -10,36 +10,49 @@
 #include <addon/performance.hpp>
 
 int main(int argc, char* argv[]) {
-    
+    using namespace mc_potts;
     int const L = 128;
     
-    mc_potts::msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
-                                      , mc_potts::msk_v1_pbc
-                                      , mc_potts::msk_v1_zorder
-                                      > s1(10, 10);
+    int const up = 1000;
     
-    mc_potts::msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
-                                      , mc_potts::msk_v1_pbc
-                                      , mc_potts::msk_v0_std_vec
-                                      > s2(10, 10);
+    msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
+                            , msk_v1_pbc
+                            , msk_v1_zorder
+                            > s1(10, 10, up);
     
-    mc_potts::msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
-                                      , mc_potts::msk_v1_pbc
-                                      , mc_potts::msk_v0_c_array_static
-                                      > s3(10, 10);
+    msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
+                            , msk_v1_pbc
+                            , msk_v0_std_vec
+                            > s2(10, 10, up);
     
-    mc_potts::msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
-                                      , mc_potts::msk_v1_pbc
-                                      , mc_potts::msk_v0_c_array_dynamic
-                                      > s4(10, 10);
+    msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
+                            , msk_v1_pbc
+                            , msk_v0_c_array_static
+                            > s3(10, 10, up);
+
+    msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
+                            , msk_v1_pbc
+                            , msk_v0_c_array_dynamic
+                            > s4(10, 10, up);
     
-    mc_potts::baseline_mskoenz::sim::impl<L, L, L, addon::lag_fib_rng> s5(10, 10);
+    baseline_mskoenz::sim::impl<L, L, L, addon::lag_fib_rng> s5(10, 10, up);
     
-    MEASURE_DIV(s1.update(), s1.spec(), L*L*L)
-    MEASURE_DIV(s2.update(), s2.spec(), L*L*L)
-    MEASURE_DIV(s3.update(), s3.spec(), L*L*L)
-    MEASURE_DIV(s4.update(), s4.spec(), L*L*L)
-    MEASURE_DIV(s5.update(), s5.spec(), L*L*L)
+    baseline_greschd_sim::impl<L, L, L, addon::lag_fib_rng
+                                      , baseline_greschd_grid
+                                      , int2t_v01_matrix> s6(10, 10, up);
+    
+    msk_v1_sim::impl<L, L, L, addon::lag_fib_rng
+                            , msk_v1_pbc
+                            , msk_v2_static_zip
+                            > s7(10, 10, up);
+    
+    MEASURE_DIV(s1.update(), s1.spec(), up)
+    MEASURE_DIV(s2.update(), s2.spec(), up)
+    MEASURE_DIV(s3.update(), s3.spec(), up)
+    MEASURE_DIV(s4.update(), s4.spec(), up)
+    MEASURE_DIV(s5.update(), s5.spec(), up)
+    MEASURE_DIV(s6.update(), s6.spec(), up)
+    MEASURE_DIV(s7.update(), s7.spec() + "2", up)
     
     P_RESULTS()
     P_SPEEDUP()

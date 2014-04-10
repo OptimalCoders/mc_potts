@@ -30,9 +30,9 @@ namespace mc_potts {
                         spin_ret_type const & s) {
                 mat_.at(l1).at(l2).at(l3) = s;
             }
-            spin_ret_type const & get(  index_type const & l1,
-                                        index_type const & l2,
-                                        index_type const & l3) const {
+            spin_ret_type get(  index_type const & l1,
+                                index_type const & l2,
+                                index_type const & l3) const {
                 return mat_.at(l1).at(l2).at(l3);
             }
         private:

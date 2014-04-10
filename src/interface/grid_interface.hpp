@@ -22,9 +22,9 @@ namespace interface {
                     , spin_ret_type const & s) {
                 s_ = s;
             }
-            spin_ret_type const & get(index_type const & l1
-                                    , index_type const & l2
-                                    , index_type const & l3) const {
+            spin_ret_type get(index_type const & l1
+                            , index_type const & l2
+                            , index_type const & l3) const {
                 return s_;
             }
             spin_ret_type get_nn(index_type const & l1

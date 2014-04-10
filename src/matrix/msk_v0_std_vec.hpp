@@ -27,7 +27,7 @@ namespace mc_potts {
                 mat_[L2 * L3 * i + L3 * j + k] = s;
             }
             //------------------- access -------------------
-            inline spin_ret_type const & get(index_type const & i, index_type const & j, index_type const & k) const {
+            inline spin_ret_type get(index_type const & i, index_type const & j, index_type const & k) const {
                 return mat_[L2 * L3 * i + L3 * j + k];
             }
         private:

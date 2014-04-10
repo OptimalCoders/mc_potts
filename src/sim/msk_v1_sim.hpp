@@ -43,7 +43,7 @@ namespace mc_potts {
                     int const k = rngL3_();
                     int shift = rngUD_();
                     
-                    auto & a = grid_.get(i, j, k);
+                    auto a = grid_.get(i, j, k);
                     
                     if(shift == 0) {
                         if(a == 0)
