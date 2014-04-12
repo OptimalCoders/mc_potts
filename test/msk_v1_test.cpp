@@ -11,7 +11,7 @@
 
 int main(int argc, char* argv[]) {
     using namespace mc_potts;
-    int const L = 128;
+    int const L = 256;
     
     int const up = 1000;
     
