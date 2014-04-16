@@ -62,7 +62,7 @@ namespace mc_potts {
         };
         
         static std::string name() {
-            return "int2t_v02_matrix";
+            return "int2t_v01_matrix";
         }
 
     }; // struct int2t_v01_matrix

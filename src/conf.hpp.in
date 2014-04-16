@@ -8,5 +8,12 @@
 #define LENGTH @USE_LENGTH@
 #define HEIGHT @USE_HEIGHT@
 #define DEPTH @USE_DEPTH@
+#define TEMP @USE_TEMP@
+
+#define SIM_MACRO @USE_SIM@
+#define RNG_MACRO @USE_RNG@
+#define GRID_MACRO @USE_GRID@
+#define MATRIX_MACRO @USE_MATRIX@
+
 
 #endif //__CONF_HEADER

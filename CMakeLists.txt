@@ -3,19 +3,28 @@ project(mc_potts)
 
 #=================== compiler & flags ===================
 #~ SET(CMAKE_CXX_COMPILER "g++4.7" CACHE STRING "the compiler")
-SET(CMAKE_CXX_FLAGS "-Wall -std=c++11 -O3 -pedantic -fno-tree-vectorize")
+SET(CMACRO "")
+SET(CMAKE_CXX_FLAGS " -Wall -std=c++11 -O3 -pedantic -fno-tree-vectorize ")
+SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${CMACRO})
 
 #=================== set paths ===================
 set(SRC "${PROJECT_SOURCE_DIR}/src")
 set(TEST "${PROJECT_SOURCE_DIR}/test")
 set(EXAMPLE "${PROJECT_SOURCE_DIR}/example")
+set(PERFORMANCE "${PROJECT_SOURCE_DIR}/performance")
 
 #=================== set options ===================
 OPTION(BUILD_TEST "build all the tests" ON)
 OPTION(BUILD_EXAMPLE "build all the examples" ON)
-SET(USE_LENGTH 10 CACHE STRING "length of system")
-SET(USE_HEIGHT 10 CACHE STRING "height of system")
-SET(USE_DEPTH 10 CACHE STRING "depth of system")
+OPTION(BUILD_PERFORMANCE "build performance testing" ON)
+SET(USE_LENGTH 10 CACHE STRING "length of the system")
+SET(USE_HEIGHT 10 CACHE STRING "height of the system")
+SET(USE_DEPTH 10 CACHE STRING "depth of the system")
+SET(USE_TEMP 10 CACHE STRING "temperature of the system")
+SET(USE_SIM 10 CACHE STRING "SIM_MACRO")
+SET(USE_RNG 10 CACHE STRING "RNG_MACRO")
+SET(USE_GRID 10 CACHE STRING "GRID_MACRO")
+SET(USE_MATRIX 10 CACHE STRING "MATRIX_MACRO")
 
 #=================== custom stuff ===================
 macro(add_default_test)
@@ -44,3 +53,7 @@ endif(BUILD_EXAMPLE)
 if(BUILD_TEST)
     add_subdirectory("test")
 endif(BUILD_TEST)
+
+if(BUILD_PERFORMANCE)
+    add_subdirectory("performance")
+endif(BUILD_PERFORMANCE)
