@@ -71,13 +71,13 @@ namespace addon {
         } custom_mt_engine;
     }//end namespace detail
     template<typename T>
-    class custom_mt_rng {
+    class custom_d_mt_rng {
     public:
-        custom_mt_rng(): scale(2), shift(std::numeric_limits<T>::is_integer) {
+        custom_d_mt_rng(): scale(2), shift(std::numeric_limits<T>::is_integer) {
         }
-        custom_mt_rng(T const & end): scale(end), offset(0), shift(1) {
+        custom_d_mt_rng(T const & end): scale(end), offset(0), shift(1) {
         }
-        custom_mt_rng(T const & start, T const & end): scale(end-start), offset(start), shift(2) {
+        custom_d_mt_rng(T const & start, T const & end): scale(end-start), offset(start), shift(2) {
         }
         T operator()() {
             if (shift == 0) {
@@ -105,7 +105,68 @@ namespace addon {
         static uint32_t seed_;
     };
     template<typename T>
-    uint32_t custom_mt_rng<T>::seed_ = 0;
+    uint32_t custom_d_mt_rng<T>::seed_ = 0;
+    
+    template<typename T>
+    class eff_int_mt_rng {
+    public:
+        eff_int_mt_rng(): bit_need_(1), idx_(0), scale(2), shift(1) {
+        }
+        eff_int_mt_rng(T const & end): bit_need_(std::ceil(std::log2(end))), idx_(0), scale(end), offset(0), shift(1) {
+        }
+        eff_int_mt_rng(T const & start, T const & end): bit_need_(std::ceil(std::log2(end-start))), idx_(0), scale(end-start), offset(start), shift(2) {
+        }
+        T operator()() {
+            if(idx_ == 0) {
+                store_ = (uint64_t(detail::custom_mt_engine()) << 32) + detail::custom_mt_engine();
+                idx_ = 64 / bit_need_;
+                //~ store_ = detail::custom_mt_engine();
+                //~ idx_ = 32 / bit_need_;
+            }
+            double res = ((store_ & ((1 << bit_need_) - 1)) / double(1ul << bit_need_));
+            store_ >>= bit_need_;
+            --idx_;
+            if (shift == 1) {
+                return scale * res;
+            }
+            return offset + scale * res;
+        }
+        static void seed(uint32_t const & sd) {
+            detail::custom_mt_engine.seed(sd);
+            seed_ = sd;
+        }
+        static uint32_t seed() {
+            return seed_;
+        }
+        static std::string name() {
+            return "eff_mt_rng";
+        }
+    private:
+        uint8_t const bit_need_;
+        uint8_t idx_;
+        uint64_t store_;
+        //~ uint32_t store_;
+        T scale;
+        T offset;
+        const uint8_t shift;  //< shows, what operations are needed (for speedup. Tested!)
+        static uint32_t seed_;
+    };
+    template<typename T>
+    uint32_t eff_int_mt_rng<T>::seed_ = 0;
+    
+    template<typename T, bool b>
+    struct impl_chooser {
+        template<typename U>
+        using type = custom_d_mt_rng<U>;
+    };
+    template<typename T>
+    struct impl_chooser<T, true> {
+        template<typename U>
+        using type = eff_int_mt_rng<U>;
+    };
+    template<typename T>
+    using custom_mt_rng = typename impl_chooser<T, std::numeric_limits<T>::is_integer>::template type<T>;
+    
 }//end namespace addon
 
 
