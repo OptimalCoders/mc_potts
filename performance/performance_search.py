@@ -65,34 +65,55 @@ def measure_wrapper(idx, T, L, H, D):
     return measure(sim_versions[idx[0]], grid_versions[idx[1]], matrix_versions[idx[2]], rng_versions[idx[3]], T, L, H, D)
     
 def idx_print(idx):
-    print("sim: " + sim_versions[idx[0]] + " grid: " + grid_versions[idx[1]] + " matrix: " + matrix_versions[idx[2]] + " rng: " + rng_versions[idx[3]])
+    print("sim: " + sim_versions[idx[0]] + "; grid: " + grid_versions[idx[1]] + "; matrix: " + matrix_versions[idx[2]] + "; rng: " + rng_versions[idx[3]])
 
 def search_performance(T, L, H, D, num_runs):
     versions_length = [len(sim_versions), len(grid_versions), len(matrix_versions), len(rng_versions)]
     opt_idx = [0, 0, 0, 0]
     opt_runtime = measure_wrapper(opt_idx, T, L, H, D)
     conv_flag = False
+    tested_versions = [opt_idx.copy()]
     
     for run in range(num_runs):
+        
         if(conv_flag):
             break
         conv_flag = True
+        
         for i in range(4):
             conv_flag = True
             temp_idx = opt_idx
-            for j in list(filter(lambda x: x != i, list(range(versions_length[i])))):
+        
+            for j in list(range(versions_length[i])):
+                
+                # set up version
                 temp_idx[i] = j
+                
+                # skip version if already tested
+                if(temp_idx in tested_versions):
+                    print("skipping:")
+                    idx_print(temp_idx)
+                    continue
+                tested_versions.append(temp_idx.copy())
+        
+                # testing
                 print("testing:")
                 idx_print(temp_idx)
                 temp_runtime = measure_wrapper(temp_idx, T, L, H, D)
                 print("runtime: " + str(temp_runtime))
+                
+                # update opt_ variables
                 if(temp_runtime < opt_runtime):
                     opt_idx = temp_idx
                     opt_runtime = temp_runtime
                     conv_flag = False
+                    
     print("best estimate:")
     idx_print(opt_idx)
     print("with runtime:")
     print(opt_runtime)
+    print("amongst")
+    for version in tested_versions:
+        idx_print(version)
 
 search_performance(5, 32, 32, 32, 3)
