@@ -10,6 +10,7 @@ import build_dir
 import os
 import sys
 import glob
+import xtermcolor
 import subprocess
 
 #-----------------------------------------------------------------------#
@@ -49,16 +50,16 @@ collect_all("beta")
 os.chdir(build_dir.build_dir)
 
 def measure(sim, grid, matrix, rng, T, L, H, D):
-    os.system("cmake " + mcpath + " -DUSE_SIM:STRING=" + sim
-                                + " -DUSE_GRID:STRING=" + grid
-                                + " -DUSE_MATRIX:STRING=" + matrix
-                                + " -DUSE_RNG:STRING=" + rng
-                                + " -DUSE_TEMP:STRING=" + str(T)
-                                + " -DUSE_LENGTH:STRING=" + str(L)
-                                + " -DUSE_HEIGHT:STRING=" + str(H)
-                                + " -DUSE_DEPTH:STRING=" + str(D)
-                                )
-    os.system("make -B perf")
+    subprocess.call("cmake " + mcpath   + " -DUSE_SIM:STRING=" + sim
+                                        + " -DUSE_GRID:STRING=" + grid
+                                        + " -DUSE_MATRIX:STRING=" + matrix
+                                        + " -DUSE_RNG:STRING=" + rng
+                                        + " -DUSE_TEMP:STRING=" + str(T)
+                                        + " -DUSE_LENGTH:STRING=" + str(L)
+                                        + " -DUSE_HEIGHT:STRING=" + str(H)
+                                        + " -DUSE_DEPTH:STRING=" + str(D)
+                                        , shell = True, stdout = subprocess.DEVNULL)
+    subprocess.call("make -B perf", shell = True, stdout = subprocess.DEVNULL)
     return int(list(filter(None, str(subprocess.check_output("./performance/perf")).split(" ")))[1].split("\\x1b[0m")[0])
 
 def measure_wrapper(idx, T, L, H, D):
@@ -67,17 +68,33 @@ def measure_wrapper(idx, T, L, H, D):
 def idx_print(idx):
     print("sim: " + sim_versions[idx[0]] + "; grid: " + grid_versions[idx[1]] + "; matrix: " + matrix_versions[idx[2]] + "; rng: " + rng_versions[idx[3]])
 
+#-----------------------------------------------------------------------#
+#              searches for best-performing config                      #
+#-----------------------------------------------------------------------#
+#   T:          temperature
+#   L/D/H:      dimensions
+#   num_runs:   max. number of iterations in the search (# times each tpl-argument is optimized)
+
 def search_performance(T, L, H, D, num_runs):
     versions_length = [len(sim_versions), len(grid_versions), len(matrix_versions), len(rng_versions)]
     opt_idx = [0, 0, 0, 0]
+    
+    # initial test
+    print(xtermcolor.colorize("testing:", ansi = 46))
+    idx_print(opt_idx)
     opt_runtime = measure_wrapper(opt_idx, T, L, H, D)
+    print(xtermcolor.colorize("runtime: " + str(opt_runtime), rgb = 0x0080FF))
+    
+    
     conv_flag = False
     tested_versions = [opt_idx.copy()]
     
     for run in range(num_runs):
         
         if(conv_flag):
+            print(xtermcolor.colorize("search converged!", rgb = 0xFFFF00))
             break
+            
         conv_flag = True
         
         for i in range(4):
@@ -91,16 +108,16 @@ def search_performance(T, L, H, D, num_runs):
                 
                 # skip version if already tested
                 if(temp_idx in tested_versions):
-                    print("skipping:")
+                    print(xtermcolor.colorize("skipping:", ansi = 196))
                     idx_print(temp_idx)
                     continue
                 tested_versions.append(temp_idx.copy())
         
                 # testing
-                print("testing:")
+                print(xtermcolor.colorize("testing:", ansi = 46))
                 idx_print(temp_idx)
                 temp_runtime = measure_wrapper(temp_idx, T, L, H, D)
-                print("runtime: " + str(temp_runtime))
+                print(xtermcolor.colorize("runtime: " + str(temp_runtime), rgb = 0x0080FF))
                 
                 # update opt_ variables
                 if(temp_runtime < opt_runtime):
@@ -108,12 +125,18 @@ def search_performance(T, L, H, D, num_runs):
                     opt_runtime = temp_runtime
                     conv_flag = False
                     
-    print("best estimate:")
+    print(xtermcolor.colorize("best estimate:", rgb = 0x00FFFF))
     idx_print(opt_idx)
-    print("with runtime:")
+    print(xtermcolor.colorize("with runtime:", rgb = 0x00FFFF))
     print(opt_runtime)
     print("amongst")
     for version in tested_versions:
         idx_print(version)
+        
+        
+#-----------------------------------------------------------------------#
 
-search_performance(5, 32, 32, 32, 3)
+if __name__ == "__main__":
+    search_performance(5, 32, 32, 32, 3)
+    
+
