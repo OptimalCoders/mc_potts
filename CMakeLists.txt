@@ -38,6 +38,11 @@ configure_file(
     "${SRC}/conf.hpp"
     )
     
+configure_file(
+    "${SRC}/../performance/build_dir.py.in"
+    "${SRC}/../performance/build_dir.py"
+    )
+    
 #=================== include directories ===================
 include_directories("${SRC}")
 

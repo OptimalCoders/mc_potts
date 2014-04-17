@@ -1,15 +1,20 @@
-#!/usr/bin/python3.2
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>
 # Date:    16.04.2014 09:37:20 CEST
 # File:    performance_search.py
 
+import build_dir
+
 import os
 import sys
 import glob
+import subprocess
 
-#----------------------collecting typenames-----------------------------#
+#-----------------------------------------------------------------------#
+#                          collecting typenames                         #
+#-----------------------------------------------------------------------#
 
 mcpath = '/'.join(os.path.realpath(__file__).split("/")[:-2])
 print(mcpath)
@@ -37,6 +42,57 @@ def collect_all(keepout):
     
 collect_all("beta")
 
+
 #-----------------------------------------------------------------------#
 
-print(rng_versions)
+#change folder so that cmake happens in the right place
+os.chdir(build_dir.build_dir)
+
+def measure(sim, grid, matrix, rng, T, L, H, D):
+    os.system("cmake " + mcpath + " -DUSE_SIM:STRING=" + sim
+                                + " -DUSE_GRID:STRING=" + grid
+                                + " -DUSE_MATRIX:STRING=" + matrix
+                                + " -DUSE_RNG:STRING=" + rng
+                                + " -DUSE_TEMP:STRING=" + str(T)
+                                + " -DUSE_LENGTH:STRING=" + str(L)
+                                + " -DUSE_HEIGHT:STRING=" + str(H)
+                                + " -DUSE_DEPTH:STRING=" + str(D)
+                                )
+    os.system("make -B perf")
+    return int(list(filter(None, str(subprocess.check_output("./performance/perf")).split(" ")))[1].split("\\x1b[0m")[0])
+
+def measure_wrapper(idx, T, L, H, D):
+    return measure(sim_versions[idx[0]], grid_versions[idx[1]], matrix_versions[idx[2]], rng_versions[idx[3]], T, L, H, D)
+    
+def idx_print(idx):
+    print("sim: " + sim_versions[idx[0]] + " grid: " + grid_versions[idx[1]] + " matrix: " + matrix_versions[idx[2]] + " rng: " + rng_versions[idx[3]])
+
+def search_performance(T, L, H, D, num_runs):
+    versions_length = [len(sim_versions), len(grid_versions), len(matrix_versions), len(rng_versions)]
+    opt_idx = [0, 0, 0, 0]
+    opt_runtime = measure_wrapper(opt_idx, T, L, H, D)
+    conv_flag = False
+    
+    for run in range(num_runs):
+        if(conv_flag):
+            break
+        conv_flag = True
+        for i in range(4):
+            conv_flag = True
+            temp_idx = opt_idx
+            for j in list(filter(lambda x: x != i, list(range(versions_length[i])))):
+                temp_idx[i] = j
+                print("testing:")
+                idx_print(temp_idx)
+                temp_runtime = measure_wrapper(temp_idx, T, L, H, D)
+                print("runtime: " + str(temp_runtime))
+                if(temp_runtime < opt_runtime):
+                    opt_idx = temp_idx
+                    opt_runtime = temp_runtime
+                    conv_flag = False
+    print("best estimate:")
+    idx_print(opt_idx)
+    print("with runtime:")
+    print(opt_runtime)
+
+search_performance(5, 32, 32, 32, 3)

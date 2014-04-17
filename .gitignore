@@ -2,3 +2,5 @@
 *.out
 *.txt~
 /src/conf.hpp
+__pycache__
+/performance/build_dir.py
