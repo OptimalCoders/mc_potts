@@ -44,7 +44,7 @@ namespace mc_potts {
                         energy_res_(0),
                         magn_res_(0) {
                 clear();
-                prob_ = (double*)malloc((6 * S + 1) *sizeof(double));
+                prob_ = (double*)malloc((6 * (S - 1) + 1) *sizeof(double));
                 prob_update_();
             }
             
@@ -107,8 +107,9 @@ namespace mc_potts {
         
     //------------------------update probabilities----------------------//
             void prob_update_() {
-                for(uint i = 0; i <  6 * S + 1; ++i) {
+                for(uint i = 0; i <  6 * (S - 1) + 1; ++i) {
                     prob_[i] = exp(baseline_greschd::physical_const / T_  * (i - 6 * (S - 1) / 2.));
+                    std::cout << prob_[i] << std::endl;
                 }
             }
     
@@ -183,7 +184,7 @@ namespace mc_potts {
                 if(dir == 1)
                     p = prob_[system_.get_nn(i, j, k)];
                 else
-                    p = prob_[6 * S - system_.get_nn(i, j, k)];
+                    p = prob_[6 * (S - 1) - system_.get_nn(i, j, k)];
                 double r = rngprob();
                 if(p > r) {
                     system_.set(i, j, k, temp);

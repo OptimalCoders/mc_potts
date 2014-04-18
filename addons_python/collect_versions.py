@@ -17,7 +17,6 @@ mcpath = '/'.join(os.path.realpath(__file__).split("/")[:-2])
 def remove_if_contains(string, vector):
     return list(filter(lambda x: x.find(string) == -1, vector))
 
-
 def collect_filenames(name, collector, keepout):
     for x in glob.glob(mcpath + "/src/" + name + "/*.hpp"):
         temp = x.split("/")[-1].split(".hpp")[0]
