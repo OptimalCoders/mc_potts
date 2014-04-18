@@ -11,9 +11,12 @@
 #define TEMP @USE_TEMP@
 
 #define SIM_MACRO @USE_SIM@
+#define SIM2_MACRO @USE_SIM2@
 #define RNG_MACRO @USE_RNG@
 #define GRID_MACRO @USE_GRID@
+#define GRID2_MACRO @USE_GRID2@
 #define MATRIX_MACRO @USE_MATRIX@
+#define MATRIX2_MACRO @USE_MATRIX2@
 
 
 #endif //__CONF_HEADER

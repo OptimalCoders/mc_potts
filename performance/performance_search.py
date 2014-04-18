@@ -5,44 +5,22 @@
 # Date:    16.04.2014 09:37:20 CEST
 # File:    performance_search.py
 
-import build_dir
-
 import os
 import sys
 import glob
 import xtermcolor
 import subprocess
 
-#-----------------------------------------------------------------------#
-#                          collecting typenames                         #
-#-----------------------------------------------------------------------#
+#------------------import from the addons folder------------------------#
 
 mcpath = '/'.join(os.path.realpath(__file__).split("/")[:-2])
-print(mcpath)
+sys.path.insert(0, mcpath + '/addons_python/')
 
-sim_versions = []
-grid_versions = []
-matrix_versions = []
-rng_versions = []
-
-def remove_if_contains(string, vector):
-    return list(filter(lambda x: x.find(string) == -1, vector))
+import build_dir
+import collect_versions as co
 
 
-def collect_filenames(name, collector, keepout):
-    for x in glob.glob(mcpath + "/src/" + name + "/*.hpp"):
-        temp = x.split("/")[-1].split(".hpp")[0]
-        if(temp.find(keepout) == -1):
-            collector.append( x.split("/")[-1].split(".hpp")[0])
-            
-def collect_all(keepout):
-    collect_filenames("sim", sim_versions, keepout)
-    collect_filenames("grid", grid_versions, keepout)
-    collect_filenames("matrix", matrix_versions, keepout)
-    collect_filenames("rng", rng_versions, keepout)
-    
-collect_all("beta")
-
+sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all("beta")
 
 #-----------------------------------------------------------------------#
 

@@ -3,4 +3,4 @@
 *.txt~
 /src/conf.hpp
 __pycache__
-/performance/build_dir.py
+/addons_python/build_dir.py
