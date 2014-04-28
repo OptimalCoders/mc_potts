@@ -36,11 +36,16 @@ def validate(sim, sim2, grid, grid2, matrix, matrix2, rng):
                                         + " -DUSE_MATRIX2:STRING=" + matrix2
                                         + " -DUSE_RNG:STRING=" + rng
                                         , shell = True, stdout = subprocess.DEVNULL)
-    subprocess.call("make -B validate", shell = True, stdout = subprocess.DEVNULL)
+    comp_return = str(subprocess.check_output("make -B validate", shell = True))
+    if(comp_return.find("Built target validate") == -1):
+        print(xtermcolor.colorize("compilation error", rgb = 0xFF0000))
+        return False
+    error_msg = ''
     try:
-        subprocess.check_output("./validation/validate")
+        error_msg = subprocess.check_output("./validation/validate")
         return True
     except:
+        print(error_msg)
         return False
 
 def validate_all():

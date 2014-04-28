@@ -181,10 +181,7 @@ namespace mc_potts {
                 
                 // acceptance step
                 double p;
-                if(dir == 1)
-                    p = prob_[system_.get_nn(i, j, k)];
-                else
-                    p = prob_[6 * (S - 1) - system_.get_nn(i, j, k)];
+                    p = prob_[dir * (system_.get_nn(i, j, k) - 3 * (S - 1)) + 3 * (S - 1)];
                 double r = rngprob();
                 if(p > r) {
                     system_.set(i, j, k, temp);

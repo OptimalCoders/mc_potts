@@ -46,7 +46,7 @@ namespace mc_potts {
             void thermalize() {
                 for(index_type i = 0; i < N_therm_; ++i) {
                     update();
-                }
+                }   
             }
             
             // N_update_ single spin updates
