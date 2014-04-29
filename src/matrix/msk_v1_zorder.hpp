@@ -21,6 +21,10 @@ namespace mc_potts {
             using mat_type = std::vector<state_type>;
             //------------------- ctor -------------------
             impl(): mat_(L3 * L2 * L1, 0) {
+                int L3_ = std::pow(2, std::ceil(std::log2(L3)));
+                int L2_ = std::pow(2, std::ceil(std::log2(L2)));
+                int L1_ = std::pow(2, std::ceil(std::log2(L1)));
+                mat_.resize(L3_ * L2_ * L1_);
             }
             //------------------- z order -------------------
             uint32_t calc_z_ord(uint8_t const & i, uint8_t const & j, uint8_t const & k) const {

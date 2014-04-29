@@ -20,7 +20,11 @@ def remove_if_contains(string, vector):
 def collect_filenames(name, collector, keepout):
     for x in glob.glob(mcpath + "/src/" + name + "/*.hpp"):
         temp = x.split("/")[-1].split(".hpp")[0]
-        if(temp.find(keepout) == -1):
+        add = True
+        for k in keepout:
+            if(temp.find(k) != -1):
+                add = False
+        if add:
             collector.append( x.split("/")[-1].split(".hpp")[0])
             
 def collect_all(keepout):
@@ -28,6 +32,10 @@ def collect_all(keepout):
     grid_versions = []
     matrix_versions = []
     rng_versions = []
+    
+    if not isinstance(keepout, list):
+        keepout = [keepout]
+    
     collect_filenames("sim", sim_versions, keepout)
     collect_filenames("grid", grid_versions, keepout)
     collect_filenames("matrix", matrix_versions, keepout)
