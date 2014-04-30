@@ -4,7 +4,7 @@ project(mc_potts)
 #=================== compiler & flags ===================
 #~ SET(CMAKE_CXX_COMPILER "gcc-4.8" CACHE STRING "the compiler")
 SET(CMACRO "")
-SET(CMAKE_CXX_FLAGS " -Wall -std=c++11 -O3 -pedantic -fno-tree-vectorize ")
+SET(CMAKE_CXX_FLAGS " -Wall -std=c++11 -O3 -pedantic ")
 SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${CMACRO})
 
 #=================== set paths ===================

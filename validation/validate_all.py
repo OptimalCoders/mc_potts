@@ -51,25 +51,25 @@ def validate(sim, sim2, grid, grid2, matrix, matrix2, rng):
 def validate_all():
     failed = []
     for sim in sim_versions:
-        if(validate(sim_versions[0], sim, grid_versions[0], grid_versions[0], matrix_versions[0], matrix_versions[0], rng_versions[0])):
+        if(validate("baseline_greschd_sim", sim, "baseline_greschd_grid", "baseline_greschd_grid", "baseline_greschd_matrix", "baseline_greschd_matrix", "std_mt_rng")):
             print("validated " + sim)
         else:
             print(xtermcolor.colorize(sim + " failed", rgb = 0xFF0000))
             failed.append(sim)
     for grid in grid_versions:
-        if(validate(sim_versions[0], sim_versions[0], grid_versions[0], grid, matrix_versions[0], matrix_versions[0], rng_versions[0])):
+        if(validate("baseline_greschd_sim", "baseline_greschd_sim", "baseline_greschd_grid", grid, "baseline_greschd_matrix", "baseline_greschd_matrix", "std_mt_rng")):
             print("validated " + grid)
         else:
             print(xtermcolor.colorize(grid + " failed", rgb = 0xFF0000))
             failed.append(grid)
     for matrix in matrix_versions:
-        if(validate(sim_versions[0], sim_versions[0], grid_versions[0], grid_versions[0], matrix_versions[0], matrix, rng_versions[0])):
+        if(validate("baseline_greschd_sim", "baseline_greschd_sim", "baseline_greschd_grid", "baseline_greschd_grid", "baseline_greschd_matrix", matrix, "std_mt_rng")):
             print("validated " + matrix)
         else:
             print(xtermcolor.colorize(matrix + " failed", rgb = 0xFF0000))
             failed.append(matrix)
     for rng in rng_versions:
-        if(validate(sim_versions[0], sim_versions[0], grid_versions[0], grid_versions[0], matrix_versions[0], matrix_versions[0], rng)):
+        if(validate("baseline_greschd_sim", "baseline_greschd_sim", "baseline_greschd_grid", "baseline_greschd_grid", "baseline_greschd_matrix", "baseline_greschd_matrix", rng)):
             print("validated " + rng)
         else:
             print(xtermcolor.colorize(rng + " failed", rgb = 0xFF0000))
@@ -80,7 +80,7 @@ def validate_all():
         for fail in failed:
             print(xtermcolor.colorize(fail, rgb = 0xFF0000))
     else:
-        print(xtermcolor.colorize("all tests ran successfully!", rgb = 0x00FFFF))
+        print(xtermcolor.colorize("all tests ran successfully!", rgb = 0xFFFFFF))
     
 #-----------------------------------------------------------------------#
 

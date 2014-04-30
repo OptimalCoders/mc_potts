@@ -3,6 +3,7 @@
 // File:    screen_performance.cpp
 
 #include <beta.hpp>
+#include <alpha.hpp>
 #include <meta_tpl.hpp>
 #include <addon/performance.hpp>
 

@@ -6,7 +6,6 @@
 #define __BETA_RNG_HEADER
 
 #include <rng/std_mt_rng.hpp>
-#include <rng/lag_fib_rng.hpp>
 #include <rng/custom_mt_rng.hpp>
 
 #endif //__BETA_RNG_HEADER

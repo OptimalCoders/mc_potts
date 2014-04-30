@@ -6,7 +6,7 @@
 #define __ALPHA_HEADER
 
 #include <rng/std_mt_rng.hpp>
-#include <rng/lag_fib_rng.hpp>
+#include <alpha/rng/lag_fib_rng.hpp>
 #include <alpha/dag_v02/sim.hpp>
 #include <alpha/msk_v01/sim.hpp>
 #include <alpha/v1_int2t/sim.hpp>
