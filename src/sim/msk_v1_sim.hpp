@@ -38,24 +38,35 @@ namespace mc_potts {
                     clear();
                 }
                 void step() {
+                    START_MICRO("step")
+                    START_MICRO("rng")
                     int const i = rngL1_();
                     int const j = rngL2_();
                     int const k = rngL3_();
                     int shift = rngUD_();
                     
+                    NEXT_MICRO("lookup")
                     auto a = grid_.get(i, j, k);
                     
                     if(shift == 0) {
-                        if(a == 0)
+                        if(a == 0) {
+                            STOP_MICRO()
+                            STOP_MICRO()
                             return;
+                        }
                     }
                     else {
-                        if(a == S - 1)
+                        if(a == S - 1) {
+                            STOP_MICRO()
+                            STOP_MICRO()
                             return;
+                        }
                     }
+                    NEXT_MICRO("nn")
                     
                     auto n = grid_.get_nn(i, j, k);
                     
+                    NEXT_MICRO("metro")
                     if(pre_exp_[2*n + shift] > rngp_()) {
                         shift = shift * 2 - 1;
                         E_ += shift * (n - n_neighbour * ((double)S - 1) / 2);
@@ -65,6 +76,8 @@ namespace mc_potts {
                     }
                     else
                         accacc_ << 0;
+                    STOP_MICRO()
+                    STOP_MICRO()
                 }
                 void update() { //ensure decorr
                     for(uint32_t i = 0; i < N_update_; ++i) {
