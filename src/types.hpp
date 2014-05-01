@@ -9,7 +9,7 @@
 
 namespace mc_potts {
     
-    using index_type = uint16_t;
+    using index_type = uint32_t;
     using spin_ret_type = uint8_t;
     using seed_type = uint32_t;
     

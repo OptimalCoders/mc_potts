@@ -5,6 +5,7 @@ FOREACH (name   msk_v1_test
                 int2t_greschd_test
                 test_micro_bench
                 validation
+                test_mkl_mt_rng
     )
     add_executable(${name} ${name}.cpp)
     add_dependencies(${name} ${SRC}/conf.hpp)
@@ -19,3 +20,4 @@ FOREACH (name   screen_performance
     target_link_libraries(${name} ${LIB})
     #add_default_test(${name})
 ENDFOREACH(name)
+

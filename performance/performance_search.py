@@ -20,7 +20,7 @@ import build_dir
 import collect_versions as co
 
 
-sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["beta"])
+sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["beta", "msk_v1_sim"])
 
 #-----------------------------------------------------------------------#
 
@@ -72,12 +72,10 @@ def search_performance(T, L, H, D, num_runs):
         if(conv_flag):
             print(xtermcolor.colorize("search converged!", rgb = 0xFFFF00))
             break
-            
         conv_flag = True
         
         for i in range(4):
-            conv_flag = True
-            temp_idx = opt_idx
+            temp_idx = opt_idx.copy()
         
             for j in list(range(versions_length[i])):
                 
@@ -99,7 +97,7 @@ def search_performance(T, L, H, D, num_runs):
                 
                 # update opt_ variables
                 if(temp_runtime < opt_runtime):
-                    opt_idx = temp_idx
+                    opt_idx = temp_idx.copy()
                     opt_runtime = temp_runtime
                     conv_flag = False
                     
