@@ -24,6 +24,7 @@ def collect_filenames(name, collector, keepout):
         for k in keepout:
             if(temp.find(k) != -1):
                 add = False
+                break
         if add:
             collector.append( x.split("/")[-1].split(".hpp")[0])
             

@@ -4,3 +4,4 @@
 /src/conf.hpp
 __pycache__
 /addons_python/build_dir.py
+MKL_paths.txt

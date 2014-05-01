@@ -17,6 +17,7 @@
 #define GRID2_MACRO @USE_GRID2@
 #define MATRIX_MACRO @USE_MATRIX@
 #define MATRIX2_MACRO @USE_MATRIX2@
+#define MKL_VSL_PATH "@MKL_VSL@"
 
 
 #endif //__CONF_HEADER

@@ -1,11 +1,24 @@
 cmake_minimum_required (VERSION 2.6)
 project(mc_potts)
 
+#=================== including system specifics =========
+
+include("${PROJECT_SOURCE_DIR}/MKL_paths.txt")
+
 #=================== compiler & flags ===================
 #~ SET(CMAKE_CXX_COMPILER "gcc-4.8" CACHE STRING "the compiler")
 SET(CMACRO "")
-SET(CMAKE_CXX_FLAGS " -Wall -std=c++11 -O3 -pedantic ")
-SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${CMACRO})
+SET(COMPILER_FLAGS " -Wall -std=c++11 -O3 -pedantic " CACHE STRING "c++ flags")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILER_FLAGS} ${CMACRO}" CACHE STRING "c++ flags" FORCE)
+
+
+macro (add_executable _name)
+    # invoke built-in add_executable
+    _add_executable(${ARGV})
+    if (TARGET ${_name})
+        target_link_libraries(${_name} mkl_intel_lp64.a mkl_gnu_thread.a mkl_core.a iomp5 m dl pthread gfortran)
+    endif()
+endmacro()
 
 #=================== set paths ===================
 set(SRC "${PROJECT_SOURCE_DIR}/src")
@@ -29,6 +42,7 @@ SET(USE_GRID 10 CACHE STRING "GRID_MACRO")
 SET(USE_GRID2 10 CACHE STRING "GRID_MACRO")
 SET(USE_MATRIX 10 CACHE STRING "MATRIX_MACRO")
 SET(USE_MATRIX2 10 CACHE STRING "MATRIX2_MACRO")
+SET(MKL_VSL "/opt/intel/composer_xe_2013_sp1.2.144/mkl/include/mkl_vsl.h" CACHE STRING "path of mkl_vsl.h")
 
 #=================== custom stuff ===================
 macro(add_default_test)

@@ -20,7 +20,7 @@ import build_dir
 import collect_versions as co
 
 
-sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all("beta")
+sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["beta"])
 
 #-----------------------------------------------------------------------#
 
