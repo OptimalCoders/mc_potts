@@ -15,7 +15,7 @@ namespace addon {
         static rng_t rng;
     };
     
-    common_rng::rng_t common_rng::rng(42);
+    common_rng::rng_t common_rng::rng;
     
     
     //------------------------------------------------------------------//

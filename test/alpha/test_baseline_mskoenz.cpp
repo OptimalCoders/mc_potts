@@ -22,19 +22,19 @@ int main(int argc, char* argv[]) {
     ppm.set_color(mc_potts::baseline_mskoenz::n_state);
         
     //------------------- thermalize -------------------
-    for(uint i = 0; i < 300; ++i) {
-        s.set_T(1000*(1 - double(i)/300)); //cooling down
-		s.thermalize();
+    //~ for(uint i = 0; i < 300; ++i) {
+        //~ s.set_T(1000*(1 - double(i)/300)); //cooling down
+		//~ s.thermalize();
         //~ s.update();
         //~ s.measure();
         
-        for(uint i = 0; i < N; ++i) {
-			for(uint j = 0; j < N; ++j) {
-				temp[i][j] = s.get(i, j, 0);
-			}
-		}
-        ppm.print(temp, i); //ppm picture
-    }
+        //~ for(uint i = 0; i < N; ++i) {
+			//~ for(uint j = 0; j < N; ++j) {
+				//~ temp[i][j] = s.get(i, j, 0);
+			//~ }
+		//~ }
+        //~ ppm.print(temp, i); //ppm picture
+    //~ }
     s.print();
     
     return 0;

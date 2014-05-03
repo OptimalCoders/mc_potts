@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
     addon::std_mt_rng<int> rng1(0, up);
     addon::lag_fib_rng<int> rng2(0, up);
     addon::custom_mt_rng<int> rng3(0, up);
-    addon::eff_int_mt_rng<int> rng4(0, up);
+    addon::mkl_mt_rng<int> rng4(0, up);
     
     // MEASURE takes an expression and a name
     MEASURE(rng1(), rng1.name())
@@ -27,12 +27,21 @@ int main(int argc, char* argv[]) {
     CLEAR_MEASURE()
     
     // measure rng again
-    //~ MEASURE(rng1(), "std_mt_rng")
-    //~ MEASURE(rng2(), "lag_fib_rng")
+    MEASURE(rng1(), "std_mt_rng")
+    MEASURE(rng2(), "lag_fib_rng")
     MEASURE(rng3(), "custom_mt_rng")
-    MEASURE(rng4(), "eff_int_mt_rng")
+    MEASURE(rng4(), "mkl_mt_rng")
     
     // P_SPEEDUP prints the speedup (x) relative to the slowest measurement (decreasing order)
+    P_SPEEDUP()
+    
+    std::mt19937 std_engine;
+    
+    CLEAR_MEASURE()
+    MEASURE(addon::detail::custom_mt_engine(), "custom engine")
+    MEASURE(addon::detail::mkl_mt_engine(), "mkl engine")
+    MEASURE(std_engine(), "std engine")
+    
     P_SPEEDUP()
     
     return 0;

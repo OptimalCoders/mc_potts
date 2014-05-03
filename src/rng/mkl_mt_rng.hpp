@@ -15,11 +15,11 @@
 #include <type_traits>
 
 namespace addon {
-    namespace detail_mkl_mt {
+    namespace detail {
         class mkl_mt_engine_class {
             uint16_t const N;
         public:
-            mkl_mt_engine_class(): N(624) {
+            mkl_mt_engine_class(): N(624), seed_(5489UL) {
                 vslNewStream(&stream_, VSL_BRNG_SFMT19937, 5489UL);
                 init();
             }
@@ -96,13 +96,13 @@ namespace addon {
         uint32_t mkl_d_mt_rng<T>::seed_ = 0;
         
         template<typename T>
-        class eff_int_mt_rng {
+        class mkl_int_mt_rng {
         public:
-            eff_int_mt_rng(): bit_need_(1), idx_(0), scale(2), shift(1) {
+            mkl_int_mt_rng(): bit_need_(1), idx_(0), scale(2), shift(1) {
             }
-            eff_int_mt_rng(T const & end): bit_need_(std::ceil(std::log2(end))), idx_(0), scale(end), offset(0), shift(1) {
+            mkl_int_mt_rng(T const & end): bit_need_(std::ceil(std::log2(end))), idx_(0), scale(end), offset(0), shift(1) {
             }
-            eff_int_mt_rng(T const & start, T const & end): bit_need_(std::ceil(std::log2(end-start))), idx_(0), scale(end-start), offset(start), shift(2) {
+            mkl_int_mt_rng(T const & start, T const & end): bit_need_(std::ceil(std::log2(end-start))), idx_(0), scale(end-start), offset(start), shift(2) {
             }
             T operator()() {
                 if(idx_ == 0) {
@@ -127,7 +127,7 @@ namespace addon {
                 return seed_;
             }
             static std::string name() {
-                return "eff_mt_rng";
+                return "mkl_mt_rng";
             }
         private:
             uint8_t const bit_need_;
@@ -141,24 +141,24 @@ namespace addon {
         };
         
         template<typename T>
-        uint32_t eff_int_mt_rng<T>::seed_ = 0;
+        uint32_t mkl_int_mt_rng<T>::seed_ = 0;
         
         template<typename T, bool b>
-        struct impl_chooser {
+        struct mkl_mt_impl_chooser {
             template<typename U>
             using type = mkl_d_mt_rng<U>;
         };
         
         template<typename T>
-        struct impl_chooser<T, true> {
+        struct mkl_mt_impl_chooser<T, true> {
             template<typename U>
-            using type = eff_int_mt_rng<U>;
+            using type = mkl_int_mt_rng<U>;
         };
     } // namespace detail_mkl_mt
     
 
     template<typename T>
-    using mkl_mt_rng = typename detail_mkl_mt::impl_chooser<T, std::numeric_limits<T>::is_integer>::template type<T>;
+    using mkl_mt_rng = typename detail::mkl_mt_impl_chooser<T, std::numeric_limits<T>::is_integer>::template type<T>;
     
 } // namespace addon
 
