@@ -13,6 +13,7 @@
 #include <set>
 #include <tuple>
 #include <iomanip>
+#include <utility>
 
 namespace addon {
     addon::performance_class clock2; // use another clock in order not to create conflicts with addon::clock
@@ -89,6 +90,26 @@ namespace addon {
             tel_.clear();
             stack_.clear();
         }
+        std::map<std::string, std::pair<int, double>> get(std::string const & p) const {
+            std::map<std::string, std::pair<int, double>> res;
+            
+            double time = 0;
+            if(p == "super_secret_root_name") {
+                for(auto const & t : tel_) {
+                if(std::get<2>(t.second) == p)
+                    time += std::get<1>(t.second).mean() * std::get<1>(t.second).count();
+                }
+            }
+            else {
+                time = std::get<1>(tel_.at(p)).mean() * std::get<1>(tel_.at(p)).count();
+            }
+                 
+            for(auto const & t : tel_) {
+                if(std::get<2>(t.second) == p)
+                    res[t.first] = std::make_pair((std::get<1>(tel_.at(t.first)).mean() * std::get<1>(tel_.at(t.first)).count() / time) * 100, std::get<1>(tel_.at(t.first)).mean());
+            }
+            return res;
+        }
     private:
         std::map<std::string, std::tuple<double, accum_class<int64_t>, std::string>> tel_;
         std::vector<std::string> stack_;
@@ -112,5 +133,6 @@ addon::clock2.start();              //
 addon::timer.print();               //
 #define CLEAR_MICRO()               \
 addon::timer.clear();               //
+#define RES_MICRO(parent) addon::timer.get(parent)//
 
 #endif //__MICRO_BENCH_HEADER

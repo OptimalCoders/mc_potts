@@ -29,6 +29,7 @@ set(PERFORMANCE "${PROJECT_SOURCE_DIR}/performance")
 #=================== set options ===================
 OPTION(BUILD_TEST "build all the tests" ON)
 OPTION(BUILD_EXAMPLE "build all the examples" ON)
+OPTION(BUILD_PLOT "build all the plot progs" ON)
 OPTION(BUILD_PERFORMANCE "build performance testing" ON)
 OPTION(BUILD_VALIDATION "build validation" ON)
 SET(USE_LENGTH 10 CACHE STRING "length of the system")
@@ -72,6 +73,10 @@ enable_testing()
 if(BUILD_EXAMPLE)
     add_subdirectory("examples")
 endif(BUILD_EXAMPLE)
+
+if(BUILD_PLOT)
+    add_subdirectory("plot")
+endif(BUILD_PLOT)
 
 if(BUILD_TEST)
     add_subdirectory("test")

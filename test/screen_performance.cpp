@@ -76,7 +76,7 @@ struct measure {
         const int L = Lt::value;
         //~ const double Temp = Tt::get();
         
-        constexpr std::array<double, 1> T_arr{.1};
+        constexpr std::array<double, 1> T_arr({.1});
         
         std::cout << typeid(T).name() << std::endl;
         std::cout << idx++ << "/" << max << std::endl;

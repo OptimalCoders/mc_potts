@@ -10,8 +10,8 @@ int main(int argc, char* argv[]) {
     
     uint32_t const L = 100;
     
-    mc_potts::baseline_greschd::sim::impl<L, L, L, addon::std_mt_rng> sim1(100, 1.1);
-    mc_potts::baseline_mskoenz::sim::impl<L, L, L, addon::std_mt_rng> sim2(100, 1.1);
+    mc_potts::baseline_greschd::sim::impl<L, L, L, addon::std_mt_rng> sim1(1.1, 100);
+    mc_potts::baseline_mskoenz::sim::impl<L, L, L, addon::std_mt_rng> sim2(1.1, 100);
     
     sim1.thermalize();
     sim2.thermalize();
