@@ -63,6 +63,7 @@ namespace mc_potts {
                     }
                 }
             }
+            #undef CALL
         }
     };
     
