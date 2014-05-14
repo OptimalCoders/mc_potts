@@ -2,20 +2,24 @@
 // Date:    26.03.2014 20:46:58 CET
 // File:    sim.hpp
 
-#ifndef __BASELINE_GRESCHD_SIM_HEADER
-#define __BASELINE_GRESCHD_SIM_HEADER
+// features: 
+// at-the-end calculation of E & M
+// probability lookup
+
+
+#ifndef __GRESCHD_V2_SIM_HEADER
+#define __GRESCHD_V2_SIM_HEADER
 
 #include <types.hpp>
 #include <global.hpp>
 #include <alpha/baseline_impl_greschd/global.hpp>
-
 #include <algorithm>
 #include <vector>
 #include <math.h>
 
 namespace mc_potts {
     
-    struct baseline_greschd_sim {
+    struct greschd_v2_sim {
         
         template< int L1
                 , int L2
@@ -37,8 +41,21 @@ namespace mc_potts {
                         T_(T_init), 
                         system_(), 
                         energy_res_(0),
-                        magn_res_(0) {
+                        magn_res_(0),
+                        rng1_(0, L1),
+                        rng2_(0, L2),
+                        rng3_(0, L3),
+                        rngdir_(),
+                        rngprob_() {
                 clear();
+                prob_ = (double*)malloc((6 * (S - 1) + 1) *sizeof(double));
+                prob_update_();
+                
+                idx1 = rng1_();
+                idx2 = rng2_();
+                idx3 = rng3_();
+                dir1 = rngdir_();
+                r1 = rngprob_(); 
             }
             
             
@@ -46,13 +63,64 @@ namespace mc_potts {
             void thermalize() {
                 for(index_type i = 0; i < N_therm_; ++i) {
                     update();
-                }   
+                }
             }
             
             // N_update_ single spin updates
             void update() {
-                for(index_type i = 0; i < N_update_; ++i) {
-                    update_spin_();
+                
+                index_type idx4;
+                index_type idx5;
+                index_type idx6;
+                double p;
+                double r2;
+                dir_t dir2;
+                spin_ret_type temp;
+                
+                
+                for(index_type i = 0; i < N_update_ / 2; ++i) {
+                    
+                    idx4 = rng1_();
+                    idx5 = rng2_();
+                    idx6 = rng3_();
+                    dir2 = rngdir_();
+                    r2 = rngprob_(); 
+                    
+                    // choosing direction of the spin change
+                    dir1 = dir1 * 2 - 1;
+                    temp = system_.get(idx1, idx2, idx3) + dir1;
+                    
+                    //return if the new state isn't a valid state
+                    if(not(temp >= S or temp < 0)) {
+                        // acceptance step
+                        p = prob_[dir1 * (system_.get_nn(idx1, idx2, idx3) - 3 * (S - 1)) + 3 * (S - 1)];
+                        if(p > r1) {
+                            system_.set(idx1, idx2, idx3, temp);
+                        }
+                    }
+                    
+                    
+                    // second step
+                    // generating random numbers for next first step
+                    idx1 = rng1_();
+                    idx2 = rng2_();
+                    idx3 = rng3_();
+                    dir1 = rngdir_();
+                    r1 = rngprob_(); 
+                    
+                    // choosing direction of the spin change
+                    dir2 = dir2 * 2 - 1;
+                    temp = system_.get(idx4, idx5, idx6) + dir2;
+                    
+                    //return if the new state isn't a valid state
+                    if(not(temp >= S or temp < 0)) {
+                        // acceptance step
+                        p = prob_[dir2 * (system_.get_nn(idx4, idx5, idx6) - 3 * (S - 1)) + 3 * (S - 1)];
+                        if(p > r2) {
+                            system_.set(idx4, idx5, idx6, temp);
+                        }
+                    }
+                    
                 }
             }
             
@@ -73,6 +141,7 @@ namespace mc_potts {
             void set_T(double const & T) {
                 clear_res_();
                 T_ = T;
+                prob_update_();
             }
             
             void clear() {
@@ -97,6 +166,14 @@ namespace mc_potts {
         
         private:
         
+    //------------------------update probabilities----------------------//
+            void prob_update_() {
+                for(uint i = 0; i <  6 * (S - 1) + 1; ++i) {
+                    prob_[i] = exp(baseline_greschd::physical_const / T_  * (i - 6 * (S - 1) / 2.));
+                    std::cout << prob_[i] << std::endl;
+                }
+            }
+    
     //------------------------observables-------------------------------//
         
             double magn_density_() const {
@@ -138,38 +215,7 @@ namespace mc_potts {
                 
                 return res;
             }
-        
             
-        //------------------------single-spin update------------------------//
-            void update_spin_() {
-                
-                RNG<index_type> rng1(0, L1);
-                RNG<index_type> rng2(0, L2);
-                RNG<index_type> rng3(0, L3);
-                RNG<dir_t> rngdir;
-                RNG<double> rngprob;
-                
-                index_type i = rng1();
-                index_type j = rng2();
-                index_type k = rng3();
-                
-                // choosing direction of the spin change
-                dir_t dir = rngdir();
-                double r = rngprob();
-                dir = dir * 2 - 1;
-                spin_ret_type temp = system_.get(i, j, k) + dir;
-                
-                //return if the new state isn't a valid state
-                if(temp >= S or temp < 0) {
-                    return;
-                }
-                
-                // acceptance step
-                double p = exp(baseline_greschd::physical_const / T_ * dir * (system_.get_nn(i, j, k) - 6 * (S - 1) / 2.));
-                if(p > r) {
-                    system_.set(i, j, k, temp);
-                }
-            }
             
         //---------------------------clear results--------------------------//
             void clear_res_() {
@@ -194,13 +240,30 @@ namespace mc_potts {
             resvec_t energy_res_;
             resvec_t magn_res_;
             
+            // probability lookup table
+            double *prob_;
+            
+            // RNG distributions
+            RNG<index_type> rng1_;
+            RNG<index_type> rng2_;
+            RNG<index_type> rng3_;
+            RNG<dir_t> rngdir_;
+            RNG<double> rngprob_;
+            
+            // initial random numbers
+            index_type idx1;
+            index_type idx2;
+            index_type idx3;
+            dir_t dir1;
+            double r1;
+                
         }; // impl
         static std::string name() {
-            return "baseline_greschd_sim";
+            return "greschd_v2_sim";
         }
-    }; // struct baseline_greschd_sim
+    }; // struct greschd_v2_sim
     
 } // namespace mc_potts
 
 
-#endif //__BASELINE_GRESCHD_SIM_HEADER
+#endif //__GRESCHD_V2_SIM_HEADER

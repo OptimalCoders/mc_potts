@@ -74,7 +74,7 @@ namespace mc_potts {
                 class MATRIX1 = void,
                 class MATRIX2 = void>
     void validate() {
-        typedef boost::mpl::vector<boost::mpl::int_<1>, boost::mpl::int_<2>, boost::mpl::int_<4>, boost::mpl::int_<8>, boost::mpl::int_<256>>::type vec_type;
+        typedef boost::mpl::vector<boost::mpl::int_<2>, boost::mpl::int_<4>, boost::mpl::int_<8>, boost::mpl::int_<256>>::type vec_type;
         boost::mpl::for_each<vec_type>(compare<IMPL1, IMPL2, RNG, GRID1, GRID2, MATRIX1, MATRIX2>());
     }
 
