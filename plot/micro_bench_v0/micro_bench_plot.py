@@ -69,9 +69,10 @@ if __name__ == "__main__":
     
     #------------------- combinations to plot ------------------- 
     index = [ 
-              ["greschd_v2_sim", "msk_v1_pbc", "int2t_v01_matrix", "custom_mt_rng"]
-            , ["greschd_v2_sim", "msk_v1_pbc", "int2t_v01_matrix", "mkl_mt_rng"]
-            , ["greschd_v2_sim", "msk_v1_pbc", "int2t_v01_matrix", "std_mt_rng"]
+              ["msk_v0_sim", "msk_v0_pbc", "msk_v0_c_array_dynamic", "std_mt_rng"]
+            , ["msk_v1_sim", "msk_v1_pbc", "msk_v0_c_array_dynamic", "mkl_mt_rng"]
+            , ["msk_v1_sim", "msk_v1_pbc", "msk_v1_zorder", "custom_mt_rng"]
+            #~ , ["msk_v0_sim", "msk_v0_pbc", "msk_v0_c_array_dynamic", "std_mt_rng"]
             ]
     
     res = []
@@ -112,8 +113,6 @@ if __name__ == "__main__":
         if v[1] != names:
             error("names do not match for all data")
     
-    print(names)
-    
     data_orders = [names] * len(data)
 
     colors = ["r","g","b","y","gray"]
@@ -125,7 +124,6 @@ if __name__ == "__main__":
     
     for name, color in zip(names, colors):
         idx = np.where(orders == name)
-        print(idx, "---")
         value = values[idx]
         left = lefts[idx]
         

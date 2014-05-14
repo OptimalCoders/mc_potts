@@ -5,6 +5,7 @@
 #ifndef __BETA_GRID_HEADER
 #define __BETA_GRID_HEADER
 
+#include <grid/msk_v0_pbc.hpp>
 #include <grid/msk_v1_pbc.hpp>
 #include <grid/baseline_greschd_grid.hpp>
 

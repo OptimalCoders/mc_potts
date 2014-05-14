@@ -33,6 +33,9 @@ class accum_class {
         inline count_type const & count() const {
             return n_;
         }
+        inline T sum() const {
+            return sum_;
+        }
         inline void clear() {
             n_ = 0;
             sum_ = 0;

@@ -27,7 +27,7 @@ namespace mc_potts {
                 mat_.resize(L3_ * L2_ * L1_);
             }
             //------------------- z order -------------------
-            uint64_t calc_z_ord(uint16_t const & i, uint16_t const & j, uint16_t const & k) {
+            uint64_t calc_z_ord(uint16_t const & i, uint16_t const & j, uint16_t const & k) const {
                 
                 uint64_t x = i;
                 uint64_t y = j;
@@ -37,17 +37,17 @@ namespace mc_potts {
                 y = (y | (y << 16)) & 0x0000FF0000FF;
                 z = (z | (z << 16)) & 0x0000FF0000FF;
                 
-                x = (x | (x << 8)) & 0x00F00F00F00F;
-                y = (y | (y << 8)) & 0x00F00F00F00F;
-                z = (z | (z << 8)) & 0x00F00F00F00F;
+                x = (x | (x <<  8)) & 0x00F00F00F00F;
+                y = (y | (y <<  8)) & 0x00F00F00F00F;
+                z = (z | (z <<  8)) & 0x00F00F00F00F;
 
-                x = (x | (x << 4)) & 0x0C30C30C30C3;
-                y = (y | (y << 4)) & 0x0C30C30C30C3;
-                z = (z | (z << 4)) & 0x0C30C30C30C3;
+                x = (x | (x <<  4)) & 0x0C30C30C30C3;
+                y = (y | (y <<  4)) & 0x0C30C30C30C3;
+                z = (z | (z <<  4)) & 0x0C30C30C30C3;
                 
-                x = (x | (x << 2)) & 0x249249249249;
-                y = (y | (y << 2)) & 0x249249249249;
-                z = (z | (z << 2)) & 0x249249249249;
+                x = (x | (x <<  2)) & 0x249249249249;
+                y = (y | (y <<  2)) & 0x249249249249;
+                z = (z | (z <<  2)) & 0x249249249249;
 
                 return x | (y << 1) | (z << 2);
             }

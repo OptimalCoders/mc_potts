@@ -12,5 +12,6 @@
 #include <alpha/v1_int2t/sim.hpp>
 #include <alpha/baseline_impl_greschd/sim.hpp>
 #include <alpha/baseline_impl_mskoenz/sim.hpp>
+#include <alpha/baseline_count_ops/sim.hpp>
 
 #endif //__ALPHA_HEADER
