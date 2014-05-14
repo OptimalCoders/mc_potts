@@ -12,10 +12,12 @@
 
 #include <types.hpp>
 #include <global.hpp>
+#include <addon/micro_bench.hpp>
 #include <alpha/baseline_impl_greschd/global.hpp>
-#include <algorithm>
+
 #include <vector>
 #include <math.h>
+#include <algorithm>
 
 namespace mc_potts {
     
@@ -79,12 +81,15 @@ namespace mc_potts {
                 
                 
                 for(index_type i = 0; i < N_update_ / 2; ++i) {
-                    
+                    START_MICRO("step")
+                    START_MICRO("rng")
                     idx4 = rng1_();
                     idx5 = rng2_();
                     idx6 = rng3_();
                     dir2 = rngdir_();
                     r2 = rngprob_(); 
+                    
+                    NEXT_MICRO("lookup")
                     
                     // choosing direction of the spin change
                     dir1 = dir1 * 2 - 1;
@@ -92,14 +97,17 @@ namespace mc_potts {
                     
                     //return if the new state isn't a valid state
                     if(not(temp >= S or temp < 0)) {
+                        NEXT_MICRO("nn")
+                        auto nn = system_.get_nn(idx1, idx2, idx3);
                         // acceptance step
-                        p = prob_[dir1 * (system_.get_nn(idx1, idx2, idx3) - 3 * (S - 1)) + 3 * (S - 1)];
+                        NEXT_MICRO("metro")
+                        p = prob_[dir1 * (nn - 3 * (S - 1)) + 3 * (S - 1)];
                         if(p > r1) {
                             system_.set(idx1, idx2, idx3, temp);
                         }
                     }
                     
-                    
+                    NEXT_MICRO("rng")
                     // second step
                     // generating random numbers for next first step
                     idx1 = rng1_();
@@ -109,18 +117,23 @@ namespace mc_potts {
                     r1 = rngprob_(); 
                     
                     // choosing direction of the spin change
+                    NEXT_MICRO("lookup")
                     dir2 = dir2 * 2 - 1;
                     temp = system_.get(idx4, idx5, idx6) + dir2;
                     
                     //return if the new state isn't a valid state
                     if(not(temp >= S or temp < 0)) {
+                        NEXT_MICRO("nn")
+                        auto nn = system_.get_nn(idx4, idx5, idx6);
                         // acceptance step
-                        p = prob_[dir2 * (system_.get_nn(idx4, idx5, idx6) - 3 * (S - 1)) + 3 * (S - 1)];
+                        p = prob_[dir2 * (nn - 3 * (S - 1)) + 3 * (S - 1)];
+                        NEXT_MICRO("metro")
                         if(p > r2) {
                             system_.set(idx4, idx5, idx6, temp);
                         }
                     }
-                    
+                    STOP_MICRO()
+                    STOP_MICRO()
                 }
             }
             
@@ -170,7 +183,7 @@ namespace mc_potts {
             void prob_update_() {
                 for(uint i = 0; i <  6 * (S - 1) + 1; ++i) {
                     prob_[i] = exp(baseline_greschd::physical_const / T_  * (i - 6 * (S - 1) / 2.));
-                    std::cout << prob_[i] << std::endl;
+                    //~ std::cout << prob_[i] << std::endl;
                 }
             }
     

@@ -68,15 +68,18 @@ if __name__ == "__main__":
     #~ I, mkl_mt_rng, std_mt_rng, custom_mt_rng
     
     #------------------- combinations to plot ------------------- 
-    index = [ ["msk_v1_sim", "msk_v1_pbc", "int2t_v01_matrix", "custom_mt_rng"]
-            , ["msk_v1_sim", "msk_v1_pbc", "int2t_v01_matrix", "mkl_mt_rng"]
-            , ["msk_v1_sim", "msk_v1_pbc", "int2t_v01_matrix", "std_mt_rng"]
+    index = [ 
+              ["greschd_v2_sim", "msk_v1_pbc", "int2t_v01_matrix", "custom_mt_rng"]
+            , ["greschd_v2_sim", "msk_v1_pbc", "int2t_v01_matrix", "mkl_mt_rng"]
+            , ["greschd_v2_sim", "msk_v1_pbc", "int2t_v01_matrix", "std_mt_rng"]
             ]
     
     res = []
     
+    L = 20
+    
     for idx in index:
-        x = measure_micro(idx, .2, [30, 30, 30])
+        x = measure_micro(idx, .2, [L, L, L])
         
         code = str(sim_versions.index(idx[0])) + str(grid_versions.index(idx[1])) + str(matrix_versions.index(idx[2])) + str(rng_versions.index(idx[3]))
         
@@ -99,7 +102,6 @@ if __name__ == "__main__":
         key.append("rest")
         
         res.append([code, key, perc, cyc])
-    
     
     data = []
     vers = []
