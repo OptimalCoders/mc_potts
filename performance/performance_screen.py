@@ -25,7 +25,12 @@ sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["be
                                                                             , "std_mt_rng"
                                                                             , "msk_v0_c_array_static"
                                                                             , "msk_v2_static_zip"
-                                                                            , "msk_v0_std_vec"])
+                                                                            , "msk_v0_std_vec"
+                                                                            , "greschd_v2_sim"
+                                                                            , "msk_v0_sim"
+                                                                            , "msk_v1_sim"])
+                                                                            
+print(sim_versions)
 
 #-----------------------------------------------------------------------#
 
@@ -79,7 +84,7 @@ def screen_performance(T, L, H, D):
                     
                     # update opt_ variables
                     if(temp_runtime < opt_runtime):
-                        opt_idx = temp_idx
+                        opt_idx = temp_idx.copy()
                         opt_runtime = temp_runtime
                 
     print("B, " + ''.join([str(x) for x in opt_idx]) + ", " + str(N) + ", " + str(T) + ", " + str(opt_runtime))
