@@ -1,14 +1,13 @@
-// Author:  Dominik Gresch <greschd@phys.ethz.ch>
-// Date:    26.03.2014 20:46:58 CET
-// File:    sim.hpp
+// Author:  Dominik Gresch <greschd@ethz.ch>
+// Date:    15.05.2014 16:32:06 CEST
+// File:    greschd_v5_sim.hpp
 
 // features: 
 // at-the-end calculation of E & M
-// probability lookup
 
 
-#ifndef __GRESCHD_V3_SIM_HEADER
-#define __GRESCHD_V3_SIM_HEADER
+#ifndef __GRESCHD_V5_SIM_HEADER
+#define __GRESCHD_V5_SIM_HEADER
 
 #include <types.hpp>
 #include <global.hpp>
@@ -20,7 +19,7 @@
 
 namespace mc_potts {
     
-    struct greschd_v3_sim {
+    struct greschd_v5_sim {
         
         template< int L1
                 , int L2
@@ -49,14 +48,13 @@ namespace mc_potts {
                         rngdir_(),
                         rngprob_() {
                 clear();
-                prob_ = (double*)malloc((6 * (S - 1) + 1) *sizeof(double));
-                prob_update_();
                 
                 idx1 = rng1_();
                 idx2 = rng2_();
                 idx3 = rng3_();
                 dir1 = rngdir_();
                 r1 = rngprob_(); 
+                temp1 = system_.get(idx1, idx2, idx3) + dir1;
             }
             
             
@@ -76,34 +74,38 @@ namespace mc_potts {
                 double p;
                 double r2;
                 dir_t dir2;
-                spin_ret_type temp;
+                spin_ret_type temp2;
                 
-                #define RNG(IDX1, IDX2, IDX3, DIR, R)                   \
+                #define RNG(IDX1, IDX2, IDX3, DIR, R, TEMP)             \
                 IDX1 = rng1_();                                         \
                 IDX2 = rng2_();                                         \
                 IDX3 = rng3_();                                         \
                 DIR = rngdir_();                                        \
-                R = rngprob_();                                         //
+                R = rngprob_();                                         \
+                TEMP = system_.get(IDX1, IDX2, IDX3);                   // RNG
                 
-                #define STEP(IDX1, IDX2, IDX3, DIR, R)                                                  \
+                #define STEP(IDX1, IDX2, IDX3, IDX4, IDX5, IDX6, DIR, R, TEMP, TEMP2)                   \
                 DIR = DIR * 2 - 1;                                                                      \
-                temp = system_.get(IDX1, IDX2, IDX3) + DIR;                                             \
-                if(not(temp >= S or temp < 0)) {                                                        \
-                    p = prob_[DIR * (system_.get_nn(IDX1, IDX2, IDX3) - 3 * (S - 1)) + 3 * (S - 1)];    \
+                TEMP += DIR;                                                                            \
+                if(not(TEMP >= S or TEMP < 0)) {                                                        \
+                    p = exp(baseline_greschd::physical_const / T_  * DIR * (system_.get_nn(IDX1, IDX2, IDX3) - 6 * (S - 1) / 2.)); \
                     if(p > R) {                                                                         \
-                        system_.set(IDX1, IDX2, IDX3, temp);                                            \
+                        system_.set(IDX1, IDX2, IDX3, TEMP);                                            \
+                        if(IDX1 == IDX4 and IDX2 == IDX5 and IDX3 == IDX6) {                            \
+                            TEMP2 = TEMP;                                                               \
+                        }                                                                               \
                     }                                                                                   \
-                }                                                                                       //STEP
+                }                                                                                       // STEP
                 
                 
                 
                 for(index_type i = 0; i < N_update_ / 2; ++i) {
                     
-                    RNG(idx4, idx5, idx6, dir2, r2)
-                    STEP(idx1, idx2, idx3, dir1, r1)
+                    RNG(idx4, idx5, idx6, dir2, r2, temp2)
+                    STEP(idx1, idx2, idx3, idx4, idx5, idx6, dir1, r1, temp1, temp2)
                     
-                    RNG(idx1, idx2, idx3, dir1, r1)
-                    STEP(idx4, idx5, idx6, dir2, r2)
+                    RNG(idx1, idx2, idx3, dir1, r1, temp1)
+                    STEP(idx4, idx5, idx6, idx1, idx2, idx3, dir2, r2, temp2, temp1)
                     
                 }
                 
@@ -128,7 +130,6 @@ namespace mc_potts {
             void set_T(double const & T) {
                 clear_res_();
                 T_ = T;
-                prob_update_();
             }
             
             void clear() {
@@ -153,13 +154,6 @@ namespace mc_potts {
         
         private:
         
-    //------------------------update probabilities----------------------//
-            void prob_update_() {
-                for(uint i = 0; i <  6 * (S - 1) + 1; ++i) {
-                    prob_[i] = exp(baseline_greschd::physical_const / T_  * (i - 3. * (S - 1)));
-                }
-            }
-    
     //------------------------observables-------------------------------//
         
             double magn_density_() const {
@@ -226,9 +220,6 @@ namespace mc_potts {
             resvec_t energy_res_;
             resvec_t magn_res_;
             
-            // probability lookup table
-            double *prob_;
-            
             // RNG distributions
             RNG<index_type> rng1_;
             RNG<index_type> rng2_;
@@ -242,14 +233,15 @@ namespace mc_potts {
             index_type idx3;
             dir_t dir1;
             double r1;
+            spin_ret_type temp1;
                 
         }; // impl
         static std::string name() {
-            return "greschd_v3_sim";
+            return "greschd_v5_sim";
         }
-    }; // struct greschd_v3_sim
+    }; // struct greschd_v5_sim
     
 } // namespace mc_potts
 
 
-#endif //__GRESCHD_V3_SIM_HEADER
+#endif //__GRESCHD_V5_SIM_HEADER

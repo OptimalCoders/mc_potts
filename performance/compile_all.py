@@ -58,6 +58,23 @@ def idx_string(idx):
 #-----------------------------------------------------------------------#
 #                       compiles all versions                           #
 #-----------------------------------------------------------------------#
+def compile_single(sim, grid, matrix, rng, T, L, H, D, name):
+    try:
+        subprocess.call("mkdir " + build_dir.build_dir + "/performance/compiled", shell = True)
+    except:
+        pass
+    subprocess.call("cmake " + mcpath   + " -DUSE_SIM:STRING=" + sim
+                                        + " -DUSE_GRID:STRING=" + grid
+                                        + " -DUSE_MATRIX:STRING=" + matrix
+                                        + " -DUSE_RNG:STRING=" + rng
+                                        + " -DUSE_TEMP:STRING=" + str(T)
+                                        + " -DUSE_LENGTH:STRING=" + str(L)
+                                        + " -DUSE_HEIGHT:STRING=" + str(H)
+                                        + " -DUSE_DEPTH:STRING=" + str(D)
+                                        , shell = True, stdout = subprocess.DEVNULL)
+    subprocess.call("make -B perf_raw", shell = True, stdout = subprocess.DEVNULL)
+    subprocess.call("mv " + build_dir.build_dir + "/performance/perf_raw " + build_dir.build_dir + "/performance/compiled/" + name, shell = True)
+
 def compile_all(T, L, H, D):
     try:
         subprocess.call("mkdir " + build_dir.build_dir + "/performance/compiled", shell = True)
@@ -97,7 +114,8 @@ def remove_all():
 #-----------------------------------------------------------------------#
 
 if __name__ == "__main__":
-    compile_all(5, 400, 400, 400)
+    #~ compile_all(5, 400, 400, 400)
+    compile_single("greschd_v2_sim", "msk_v1_pbc", "msk_v2_dynamic_zip", "custom_mt_rng", 5, 400, 400, 400, "best_for_400")
     #~ remove_all()
     
 

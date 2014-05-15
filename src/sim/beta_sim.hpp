@@ -12,5 +12,6 @@
 #include <sim/greschd_v2_sim.hpp>
 #include <sim/greschd_v3_sim.hpp>
 #include <sim/greschd_v4_sim.hpp>
+#include <sim/greschd_v5_sim.hpp>
 
 #endif //__BETA_SIM_HEADER
