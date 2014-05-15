@@ -109,7 +109,6 @@ namespace mc_potts {
             void prob_update_() {
                 for(uint i = 0; i <  6 * (S - 1) + 1; ++i) {
                     prob_[i] = exp(baseline_greschd::physical_const / T_  * (i - 6 * (S - 1) / 2.));
-                    std::cout << prob_[i] << std::endl;
                 }
             }
     
