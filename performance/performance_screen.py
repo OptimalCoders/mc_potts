@@ -9,6 +9,7 @@
 import os
 import sys
 import glob
+import pickle
 import xtermcolor
 import subprocess
 
@@ -87,7 +88,8 @@ def screen_performance(T, L, H, D):
                         opt_idx = temp_idx.copy()
                         opt_runtime = temp_runtime
                 
-    print("B, " + ''.join([str(x) for x in opt_idx]) + ", " + str(N) + ", " + str(T) + ", " + str(opt_runtime))
+    print("B, " + ''.join([str(x) for x in opt_idx]) + ", " + str(N) + ", " + str(T) + ", " + str(opt_runtime))()
+    return (opt_idx, opt_runtime)
         
 #-----------------------------------------------------------------------#
 
@@ -101,8 +103,21 @@ if __name__ == "__main__":
     print("I, " + ', '.join(matrix_versions))
     print("I, " + ', '.join(rng_versions))
     
-    for T in T_list:
-        for N in N_list:
-            screen_performance(T, N, N, N)
+    def measure(name = "res", save = True):
+        res = []
+        for T in T_list:
+            for N in N_list:
+                res.append([T, N, screen_performance(T, N, N, N)])
+        if(save):
+            f = open(name + ".txt", "wb")
+            pickle.dump(res, f)
+            f.close()
+    
+    measure()
+    
+    def plot(name = "res"):
+        f = open(name + ".txt")
+        res = pickle.load(f)
+        f.close()
     
 
