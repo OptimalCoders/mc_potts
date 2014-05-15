@@ -3,6 +3,7 @@
 // File:    perf_screen.cpp
 
 //~ #define NO_COLOR
+//~ #define ENABLE_MICRO
 
 #include <conf.hpp>
 #include <../src/beta.hpp>

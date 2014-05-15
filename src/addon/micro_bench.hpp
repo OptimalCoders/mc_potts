@@ -116,23 +116,34 @@ namespace addon {
     } timer;
 }//end namespace addon
 
-#define START_MICRO(name)           \
-addon::clock2.stop();               \
-addon::timer.start(name);           \
-addon::clock2.start();              //
-#define STOP_MICRO()                \
-addon::clock2.stop();               \
-addon::timer.stop();                \
-addon::clock2.start();              //
-#define NEXT_MICRO(name)            \
-STOP_MICRO()                        \
-addon::clock2.stop();               \
-addon::timer.start(name);           \
-addon::clock2.start();              //
+#ifdef ENABLE_MICRO
+    #define START_MICRO(name)           \
+    addon::clock2.stop();               \
+    addon::timer.start(name);           \
+    addon::clock2.start();              //
+
+    #define STOP_MICRO()                \
+    addon::clock2.stop();               \
+    addon::timer.stop();                \
+    addon::clock2.start();              //
+
+    #define NEXT_MICRO(name)            \
+    STOP_MICRO()                        \
+    addon::clock2.stop();               \
+    addon::timer.start(name);           \
+    addon::clock2.start();              //
+#else
+    #define START_MICRO(name) ;
+    #define STOP_MICRO() ;
+    #define NEXT_MICRO(name) ;
+#endif
+
 #define P_MICRO()                   \
 addon::timer.print();               //
+
 #define CLEAR_MICRO()               \
 addon::timer.clear();               //
+
 #define RES_MICRO(parent) addon::timer.get(parent)//
 
 #endif //__MICRO_BENCH_HEADER
