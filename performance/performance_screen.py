@@ -24,12 +24,21 @@ import collect_versions as co
 
 sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["beta"
                                                                             , "std_mt_rng"
+                                                                            , "mkl_mt_rng"
+                                                                            
                                                                             , "msk_v0_c_array_static"
                                                                             , "msk_v2_static_zip"
                                                                             , "msk_v0_std_vec"
-                                                                            , "greschd_v2_sim"
+                                                                            
+                                                                            , "msk_v0_pbc"
+                                                                            
                                                                             , "msk_v0_sim"
-                                                                            , "msk_v1_sim"])
+                                                                            , "baseline_greschd_sim"
+                                                                            , "greschd_v2_sim"
+                                                                            , "greschd_v3_sim"
+                                                                            , "greschd_v4_sim"
+                                                                            , "greschd_v5_sim"
+                                                                            ])
                                                                             
 print(sim_versions)
 
@@ -81,17 +90,19 @@ def screen_performance(T, L, H, D):
                     temp_idx[3] = l
                     
                     temp_runtime = measure_wrapper(temp_idx, T, L, H, D)
-                    print("A, " + ''.join([str(x) for x in temp_idx]) + ", " + str(N) + ", " + str(T) + ", " + str(temp_runtime))
+                    print("A, " + ''.join([str(x) for x in temp_idx]) + ", " + str(L) + ", " + str(T) + ", " + str(temp_runtime))
                     
                     # update opt_ variables
                     if(temp_runtime < opt_runtime):
                         opt_idx = temp_idx.copy()
                         opt_runtime = temp_runtime
                 
-    print("B, " + ''.join([str(x) for x in opt_idx]) + ", " + str(N) + ", " + str(T) + ", " + str(opt_runtime))()
+    print("B, " + ''.join([str(x) for x in opt_idx]) + ", " + str(L) + ", " + str(T) + ", " + str(opt_runtime))
     return (opt_idx, opt_runtime)
         
 #-----------------------------------------------------------------------#
+import numpy as np
+import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     
@@ -103,7 +114,7 @@ if __name__ == "__main__":
     print("I, " + ', '.join(matrix_versions))
     print("I, " + ', '.join(rng_versions))
     
-    def measure(name = "res", save = True):
+    def run(name = "res", save = True):
         res = []
         for T in T_list:
             for N in N_list:
@@ -113,11 +124,44 @@ if __name__ == "__main__":
             pickle.dump(res, f)
             f.close()
     
-    measure()
+    run()
     
     def plot(name = "res"):
-        f = open(name + ".txt")
+        f = open(name + ".txt", "rb")
         res = pickle.load(f)
+        
         f.close()
-    
+        conf_arr = []
+        
+        print(res)
+        
+        for i in range(len(T_list)):
+            conf_arr.append([])
+            for j in range(len(N_list)):
+                conf_arr[i].append(res[i * len(N_list) + j][2][0])
+        
+        conf_arr = np.transpose(np.array(conf_arr))
+        
+        fig = plt.figure()
+        plt.clf()
+        ax = fig.add_subplot(111)
+        ax.set_aspect(1)
+        
+        res = ax.imshow(np.array(conf_arr), cmap=plt.cm.jet, interpolation='nearest')
+
+        width = len(conf_arr)
+        height = len(conf_arr[0])
+
+        for x in range(width):
+            for y in range(height):
+                ax.annotate(str(conf_arr[x][y]), xy=(y, x), 
+                            horizontalalignment='center',
+                            verticalalignment='center')
+
+        cb = fig.colorbar(res)
+        plt.xticks(range(height), T_list)
+        plt.yticks(range(width), N_list)
+        plt.savefig('matrix.png', format='png')
+        
+    #~ plot()
 
