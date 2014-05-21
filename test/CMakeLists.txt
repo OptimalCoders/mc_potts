@@ -21,3 +21,5 @@ FOREACH (name   screen_performance
     #add_default_test(${name})
 ENDFOREACH(name)
 
+add_executable(test_install test_install.cpp)
+

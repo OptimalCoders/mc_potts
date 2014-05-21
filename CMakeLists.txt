@@ -89,3 +89,5 @@ endif(BUILD_PERFORMANCE)
 if(BUILD_VALIDATION)
     add_subdirectory("validation")
 endif(BUILD_VALIDATION)
+
+add_subdirectory("install")

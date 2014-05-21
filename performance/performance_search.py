@@ -20,7 +20,19 @@ import build_dir
 import collect_versions as co
 
 
-sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["beta", "msk_v1_sim"])
+sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all([   "beta", 
+                "msk_v1_sim",
+                "greschd_v6_sim",
+                "greschd_v5_sim",
+                "greschd_v1_sim",
+                "msk_v0_sim",
+                "msk_v1_sim",
+                "std_mt_rng",
+                "baseline_greschd_grid",
+                "baseline_greschd_matrix",
+                "msk_v0_std_vec",
+                "static"
+                ])
 
 #-----------------------------------------------------------------------#
 
@@ -53,15 +65,17 @@ def idx_print(idx):
 #   L/D/H:      dimensions
 #   num_runs:   max. number of iterations in the search (# times each tpl-argument is optimized)
 
-def search_performance(T, L, H, D, num_runs):
+def search_performance(T, L, H, D, num_runs, verbose = True):
     versions_length = [len(sim_versions), len(grid_versions), len(matrix_versions), len(rng_versions)]
     opt_idx = [0, 0, 0, 0]
     
     # initial test
-    print(xtermcolor.colorize("testing:", ansi = 46))
-    idx_print(opt_idx)
+    if(verbose):
+        print(xtermcolor.colorize("testing:", ansi = 46))
+        idx_print(opt_idx)
     opt_runtime = measure_wrapper(opt_idx, T, L, H, D)
-    print(xtermcolor.colorize("runtime: " + str(opt_runtime), rgb = 0x0080FF))
+    if(verbose):
+        print(xtermcolor.colorize("runtime: " + str(opt_runtime), rgb = 0x0080FF))
     
     
     conv_flag = False
@@ -70,7 +84,8 @@ def search_performance(T, L, H, D, num_runs):
     for run in range(num_runs):
         
         if(conv_flag):
-            print(xtermcolor.colorize("search converged!", rgb = 0xFFFF00))
+            if(verbose):
+                print(xtermcolor.colorize("search converged!", rgb = 0xFFFF00))
             break
         conv_flag = True
         
@@ -84,30 +99,35 @@ def search_performance(T, L, H, D, num_runs):
                 
                 # skip version if already tested
                 if(temp_idx in tested_versions):
-                    print(xtermcolor.colorize("skipping:", ansi = 196))
-                    idx_print(temp_idx)
+                    if(verbose):
+                        print(xtermcolor.colorize("skipping:", ansi = 196))
+                        idx_print(temp_idx)
                     continue
                 tested_versions.append(temp_idx.copy())
         
                 # testing
-                print(xtermcolor.colorize("testing:", ansi = 46))
-                idx_print(temp_idx)
+                if(verbose):
+                    print(xtermcolor.colorize("testing:", ansi = 46))
+                    idx_print(temp_idx)
                 temp_runtime = measure_wrapper(temp_idx, T, L, H, D)
-                print(xtermcolor.colorize("runtime: " + str(temp_runtime), rgb = 0x0080FF))
+                if(verbose):
+                    print(xtermcolor.colorize("runtime: " + str(temp_runtime), rgb = 0x0080FF))
                 
                 # update opt_ variables
                 if(temp_runtime < opt_runtime):
                     opt_idx = temp_idx.copy()
                     opt_runtime = temp_runtime
                     conv_flag = False
-                    
-    print(xtermcolor.colorize("best estimate:", rgb = 0x00FFFF))
-    idx_print(opt_idx)
-    print(xtermcolor.colorize("with runtime:", rgb = 0x00FFFF))
-    print(opt_runtime)
-    print("amongst")
-    for version in tested_versions:
-        idx_print(version)
+    if(verbose):                
+        print(xtermcolor.colorize("best estimate:", rgb = 0x00FFFF))
+        idx_print(opt_idx)
+        print(xtermcolor.colorize("with runtime:", rgb = 0x00FFFF))
+        print(opt_runtime)
+        print("amongst")
+        for version in tested_versions:
+            idx_print(version)
+    
+    return [sim_versions[opt_idx[0]], grid_versions[opt_idx[1]],  matrix_versions[opt_idx[2]], rng_versions[opt_idx[3]]], opt_runtime
         
         
 #-----------------------------------------------------------------------#
