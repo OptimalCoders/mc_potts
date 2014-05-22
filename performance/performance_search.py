@@ -49,7 +49,10 @@ def measure(sim, grid, matrix, rng, T, L, H, D):
                                         + " -DUSE_HEIGHT:STRING=" + str(H)
                                         + " -DUSE_DEPTH:STRING=" + str(D)
                                         , shell = True, stdout = subprocess.DEVNULL)
-    subprocess.call("make -B perf", shell = True, stdout = subprocess.DEVNULL)
+    try:
+        subprocess.call("make -B perf", shell = True, stdout = subprocess.DEVNULL)
+    except:
+        return -1
     return int(list(filter(None, str(subprocess.check_output("./performance/perf")).split(" ")))[1].split("\\x1b[0m")[0])
 
 def measure_wrapper(idx, T, L, H, D):
@@ -110,6 +113,10 @@ def search_performance(T, L, H, D, num_runs, verbose = True):
                     print(xtermcolor.colorize("testing:", ansi = 46))
                     idx_print(temp_idx)
                 temp_runtime = measure_wrapper(temp_idx, T, L, H, D)
+                if(temp_runtime == -1):
+                    if(verbose):
+                        print(xtermcolor.colorize("error"), rgb = 0xFF0000)
+                    continue
                 if(verbose):
                     print(xtermcolor.colorize("runtime: " + str(temp_runtime), rgb = 0x0080FF))
                 
