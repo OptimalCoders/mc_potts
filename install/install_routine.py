@@ -23,7 +23,7 @@ if __name__ == "__main__":
     #-------------------------------------------------------------------#
     #                       installation parameters                     #
     #-------------------------------------------------------------------#
-    sizes = [10, 20, 50, 100, 200, 500]
+    sizes = [2, 6, 10, 20, 50, 70, 100, 150, 200, 350, 500, 1000, 2000]
     temperature = 5
     num_runs = 1
     search_engine = lambda t, s, r: ps.search_performance(t, s, s, s, r, verbose = False)[0]
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 #ifndef __INSTALL_HEADER\n\
 #define __INSTALL_HEADER\n\
 \n\
-#include<beta.hpp>\n\
+#include <beta.hpp>\n\
 \n\
 namespace mc_potts {\n\
     namespace install {\n\n\

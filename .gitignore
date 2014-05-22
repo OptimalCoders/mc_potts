@@ -7,3 +7,4 @@ __pycache__
 MKL_paths.txt
 MeasuringCore.lib
 install.hpp
+measuring_core.hpp

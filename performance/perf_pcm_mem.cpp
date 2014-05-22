@@ -6,7 +6,7 @@
 #include <../src/beta.hpp>
 #include <../src/addon/performance.hpp>
 
-#include <../pcm/MeasuringCore.lib>
+#include <../pcm/measuring_core.h>
 
 #include <iostream>
 
@@ -14,12 +14,13 @@ using namespace mc_potts;
 
 
 int main(int argc, char* argv[]) {
-    baseline_greschd_sim::impl<10, 10, 10, addon::std_mt_rng, baseline_greschd_grid, baseline_greschd_matrix> sim(10, 10);
+    baseline_greschd_sim::impl<LENGTH, LENGTH, LENGTH, addon::std_mt_rng, baseline_greschd_grid, baseline_greschd_matrix> sim(10, 10);
     
     sim.thermalize();
     
-    constexpr int runs = 1;
-    long * counters = [];
+    //~ uint64_t runs = 1e6/(LENGTH * LENGTH * LENGTH) + 1;
+    uint runs = 2;
+    long counters[] {0x10, 0x01, 0x10, 0x80, 0x10, 0x10, 0x11, 0x02};
     
     measurement_init(counters, 0, 0);
      
@@ -34,10 +35,3 @@ int main(int argc, char* argv[]) {
     
     return 0;
 }
-
-//~ int main(int argc, char* argv[]) {
-    //~ typename SIM_MACRO::template impl<LENGTH, LENGTH, LENGTH, addon::RNG_MACRO, GRID_MACRO, MATRIX_MACRO> sim(TEMP, 10);
-    //~ sim.thermalize();
-    //~ sim.update();        
-    //~ return 0;
-//~ }

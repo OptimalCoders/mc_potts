@@ -64,6 +64,7 @@ configure_file(
     
 #=================== include directories ===================
 include_directories("${SRC}")
+link_directories("${PROJECT_SOURCE_DIR}/pcm")
 
 #=================== added subdirs ===================
 #~ add_subdirectory("")
