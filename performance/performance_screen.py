@@ -29,6 +29,8 @@ sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["be
                                                                             , "msk_v0_c_array_static"
                                                                             , "msk_v2_static_zip"
                                                                             , "msk_v0_std_vec"
+                                                                            , "baseline_greschd_matrix"
+                                                                            #~ , "int2t_v01_matrix"
                                                                             
                                                                             , "msk_v0_pbc"
                                                                             
@@ -38,9 +40,9 @@ sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["be
                                                                             , "greschd_v3_sim"
                                                                             , "greschd_v4_sim"
                                                                             , "greschd_v5_sim"
+                                                                            , "greschd_v6_sim"
                                                                             ])
                                                                             
-print(sim_versions)
 
 #-----------------------------------------------------------------------#
 
@@ -106,8 +108,8 @@ import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     
-    T_list = [1, 5, 10, 50, 100]
-    N_list = [2, 4, 8, 15, 30, 60, 120, 240]
+    T_list = [1, 5, 10]
+    N_list = [8, 15, 30, 60, 120, 250, 500, 900]
     
     print("I, " + ', '.join(sim_versions))
     print("I, " + ', '.join(grid_versions))
@@ -124,7 +126,6 @@ if __name__ == "__main__":
             pickle.dump(res, f)
             f.close()
     
-    run()
     
     def plot(name = "res"):
         f = open(name + ".txt", "rb")
@@ -133,14 +134,15 @@ if __name__ == "__main__":
         f.close()
         conf_arr = []
         
-        print(res)
         
         for i in range(len(T_list)):
             conf_arr.append([])
             for j in range(len(N_list)):
-                conf_arr[i].append(res[i * len(N_list) + j][2][0])
+                #~ conf_arr[i].append(int("".join([str(i) for i in res[i * len(N_list) + j][2][0]])))
+                conf_arr[i].append(res[i * len(N_list) + j][2][1])
         
         conf_arr = np.transpose(np.array(conf_arr))
+        print(conf_arr)
         
         fig = plt.figure()
         plt.clf()
@@ -154,14 +156,16 @@ if __name__ == "__main__":
 
         for x in range(width):
             for y in range(height):
-                ax.annotate(str(conf_arr[x][y]), xy=(y, x), 
-                            horizontalalignment='center',
-                            verticalalignment='center')
-
+                ax.annotate(str(conf_arr[x][y]), xy=(y, x)
+                            , horizontalalignment='center'
+                            , verticalalignment='center'
+                            )
+        
         cb = fig.colorbar(res)
         plt.xticks(range(height), T_list)
         plt.yticks(range(width), N_list)
         plt.savefig('matrix.png', format='png')
         
+    run()
     #~ plot()
 

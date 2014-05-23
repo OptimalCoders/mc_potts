@@ -8,6 +8,7 @@
 #include <matrix/msk_v1_zorder.hpp>
 #include <matrix/msk_v0_std_vec.hpp>
 #include <matrix/int2t_v01_matrix.hpp>
+#include <matrix/msk_v3_zip_order.hpp>
 #include <matrix/msk_v2_static_zip.hpp>
 #include <matrix/msk_v2_dynamic_zip.hpp>
 #include <matrix/msk_v0_c_array_static.hpp>
