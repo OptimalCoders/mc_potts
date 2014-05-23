@@ -14,7 +14,7 @@ namespace mc_potts {
     
     namespace detail_int2t_v01 {
         
-        template<int N>
+        template<unsigned int N>
         class int2t_vec {
         public:
             int2t_vec(): vec_() {};
@@ -37,9 +37,9 @@ namespace mc_potts {
 
     struct int2t_v01_matrix {
         
-        template<int L1, int L2, int L3>
+        template<unsigned int L1, unsigned int L2, unsigned int L3>
         class impl {
-            template<int N>
+            template<unsigned int N>
             using int2t_vec = detail_int2t_v01::int2t_vec<N>;
         public:
             impl(): mat_() {};

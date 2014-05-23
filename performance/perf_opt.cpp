@@ -11,9 +11,10 @@
 using namespace mc_potts;
 
 int main(int argc, char* argv[]) {
-    potts_model<LENGTH> sim(TEMP, 10, 2e6);
-    //~ sim.thermalize();
-    MEASURE_DIV(sim.update(), "", 2e6)
+    const int N = 50;
+    potts_model<LENGTH> sim(TEMP, 10, N);
+    sim.thermalize();
+    MEASURE_DIV(sim.update(), "", N)
     P_RESULTS()
     return 0;
 }

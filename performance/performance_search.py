@@ -140,6 +140,7 @@ def search_performance(T, L, H, D, num_runs, verbose = True):
 #-----------------------------------------------------------------------#
 
 if __name__ == "__main__":
-    search_performance(5, 1000, 1000, 1000, 3)
+    size = 500
+    search_performance(5, size, size, size, 3)
     
 
