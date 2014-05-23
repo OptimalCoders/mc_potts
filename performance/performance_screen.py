@@ -24,7 +24,7 @@ import collect_versions as co
 
 sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["beta"
                                                                             , "std_mt_rng"
-                                                                            , "mkl_mt_rng"
+                                                                            #~ , "mkl_mt_rng"
                                                                             
                                                                             , "msk_v0_c_array_static"
                                                                             , "msk_v2_static_zip"
@@ -40,7 +40,7 @@ sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["be
                                                                             , "greschd_v3_sim"
                                                                             , "greschd_v4_sim"
                                                                             , "greschd_v5_sim"
-                                                                            , "greschd_v6_sim"
+                                                                            #~ , "greschd_v6_sim"
                                                                             ])
                                                                             
 
@@ -108,8 +108,8 @@ import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     
-    T_list = [1, 5, 10]
-    N_list = [8, 15, 30, 60, 120, 250, 500, 900]
+    T_list = [1, 5, 10, 50]
+    N_list = [8, 15, 30, 60, 120, 250, 500, 700, 900]
     
     print("I, " + ', '.join(sim_versions))
     print("I, " + ', '.join(grid_versions))
@@ -138,10 +138,10 @@ if __name__ == "__main__":
         for i in range(len(T_list)):
             conf_arr.append([])
             for j in range(len(N_list)):
-                #~ conf_arr[i].append(int("".join([str(i) for i in res[i * len(N_list) + j][2][0]])))
-                conf_arr[i].append(res[i * len(N_list) + j][2][1])
+                conf_arr[i].append(int("".join([str(i) for i in res[i * len(N_list) + j][2][0]])))
+                #~ conf_arr[i].append(res[i * len(N_list) + j][2][1])
         
-        conf_arr = np.transpose(np.array(conf_arr))
+        #~ conf_arr = np.transpose(np.array(conf_arr))
         print(conf_arr)
         
         fig = plt.figure()
@@ -162,8 +162,8 @@ if __name__ == "__main__":
                             )
         
         cb = fig.colorbar(res)
-        plt.xticks(range(height), T_list)
-        plt.yticks(range(width), N_list)
+        plt.yticks(range(width), T_list)
+        plt.xticks(range(height), N_list)
         plt.savefig('matrix.png', format='png')
         
     run()
