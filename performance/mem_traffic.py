@@ -72,25 +72,27 @@ def pcm(T, N, sim, rng, grid, matrix):
 def pcm_measure_opt(temp, sizes, verbose = False):
     traffic = []
     if(verbose):
+        print("measuring data traffic:")
         print("sizes:")
         print(sizes)
         print("currently at:")
     for s in sizes:
         if(verbose):
             sys.stdout.write("\r" + str(s))
-        traffic.append(sum(pcm_opt(temp, s)) / float(s**3))
+        traffic.append(sum(pcm_opt(temp, s)) / float(2e6))
     return sizes, traffic
     
 def pcm_measure(temp, sizes, sim, rng, grid, matrix, verbose = False):
     traffic = []
     if(verbose):
+        print("measuring data traffic:")
         print("sizes:")
         print(sizes)
         print("currently at:")
     for s in sizes:
         if(verbose):
             sys.stdout.write("\r" + str(s))
-        traffic.append(sum(pcm(temp, s, sim, rng, grid, matrix)) / float(s**3))
+        traffic.append(sum(pcm(temp, s, sim, rng, grid, matrix)) / float(2e6))
     return sizes, traffic
     
 

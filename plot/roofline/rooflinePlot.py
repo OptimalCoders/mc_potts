@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+# Author:  Dominik Gresch <greschd@ethz.ch>
+# Date:    23.05.2014 07:41:07 CEST
+# File:    rooflinePlot.py
 
 import os
 import sys
@@ -37,7 +40,7 @@ def to_roofline_dir():
     
 
 def measure_run_opt(T, sizes, name = "runtime_opt"):
-    sizes, runtime = ro.measure_opt(T, sizes)
+    sizes, runtime = ro.measure_opt(T, sizes, verbose = True)
 
     to_roofline_dir()
     f = open(name + ".txt", "wb")
@@ -53,7 +56,7 @@ def measure_mem_opt(T, sizes, name = "traffic_opt"):
     f.close()
     
 def measure_run(T, sizes, sim, rng, grid, matrix, name = "runtime"):
-    sizes, runtime = ro.measure(T, sizes, sim, rng, grid, matrix)
+    sizes, runtime = ro.measure(T, sizes, sim, rng, grid, matrix, verbose = True)
     
     to_roofline_dir()
     f = open(name + ".txt", "wb")
@@ -140,7 +143,7 @@ def plot(sizes, performance, op_intensity, labels):
     ax.axis([X_MIN,X_MAX,Y_MIN,Y_MAX])
     
     for i in range(len(performance)):
-        ax.plot(performance[i], op_intensity[i], 'o-', label = labels[i])
+        ax.plot(performance[i], op_intensity[i], 'o-', label = labels[i], linewidth = 0.5, markersize = 2)
     
     ax.legend(loc = 'lower right')
 
@@ -154,7 +157,7 @@ def plot(sizes, performance, op_intensity, labels):
         for i, s in enumerate(sizes):
             ax.annotate(str(s),
                      xy=(performance[j][i], op_intensity[j][i]), xycoords='data',
-                     xytext=(+6, -3), textcoords='offset points', fontsize=10)
+                     xytext=(+2, -0), textcoords='offset points', fontsize=4)
 
     #Peak performance line and text
     ax.axhline(y=PEAK_PERF, linewidth=1, color='black')
@@ -184,7 +187,7 @@ if __name__ == "__main__":
 #-----------------------------------------------------------------------#
 #                          input variables                              #
 #-----------------------------------------------------------------------#
-    sizes = [2, 4, 10, 20, 30, 50, 100, 200, 300, 400, 500]
+    sizes = [2, 4, 10, 20, 30, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
     T = 5
     flops_per_step = 3.947946 + 25 * 0.657991
     measure = True
@@ -193,15 +196,18 @@ if __name__ == "__main__":
     if(measure):
         measure_run_opt(T, sizes)
         measure_mem_opt(T, sizes)
-        measure_run(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v0_c_array_dynamic", name = "run_carray")
-        measure_mem(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v0_c_array_dynamic", name = "mem_carray")
-        measure_run(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v2_dynamic_zip", name = "run_zip")
-        measure_mem(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v2_dynamic_zip", name = "mem_zip")
+        #~ measure_run(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v0_c_array_dynamic", name = "run_carray")
+        #~ measure_mem(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v0_c_array_dynamic", name = "mem_carray")
+        #~ measure_run(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v2_dynamic_zip", name = "run_zip")
+        #~ measure_mem(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v2_dynamic_zip", name = "mem_zip")
+        #~ measure_run(T, sizes, "baseline_greschd_sim", "std_mt_rng", "baseline_greschd_grid", "baseline_greschd_matrix", name = "run_baseline")
+        #~ measure_mem(T, sizes, "baseline_greschd_sim", "std_mt_rng", "baseline_greschd_grid", "baseline_greschd_matrix", name = "mem_baseline")
     sizes1, runtime1, traffic1 = read_pickle()
     sizes2, runtime2, traffic2 = read_pickle("run_carray", "mem_carray")
     sizes3, runtime3, traffic3 = read_pickle("run_zip", "mem_zip")
-    performance = [[flops_per_step / time for time in runtime] for runtime in [runtime1, runtime2, runtime3]]
-    op_intensity = [[flops_per_step / mem for mem in traffic] for traffic in [traffic1, traffic2, traffic3]]
-    plot(sizes, performance, op_intensity, ["opt", "carray", "zip"])
+    sizes4, runtime4, traffic4 = read_pickle("run_baseline", "mem_baseline")
+    performance = [[flops_per_step / time for time in runtime] for runtime in [runtime1, runtime2, runtime3, runtime4]]
+    op_intensity = [[flops_per_step / mem for mem in traffic] for traffic in [traffic1, traffic2, traffic3, traffic4]]
+    plot(sizes, performance, op_intensity, ["opt", "carray", "zip", "baseline"])
     print("rooflinePlot.py")
     

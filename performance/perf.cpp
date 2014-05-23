@@ -11,9 +11,9 @@
 using namespace mc_potts;
 
 int main(int argc, char* argv[]) {
-    typename SIM_MACRO::template impl<LENGTH, LENGTH, LENGTH, addon::RNG_MACRO, GRID_MACRO, MATRIX_MACRO> sim(TEMP, 10);
+    typename SIM_MACRO::template impl<LENGTH, LENGTH, LENGTH, addon::RNG_MACRO, GRID_MACRO, MATRIX_MACRO> sim(TEMP, 10, 2e6);
     //~ sim.thermalize();
-    MEASURE_DIV(sim.update(), "", LENGTH*LENGTH*LENGTH)
+    MEASURE_DIV(sim.update(), "", 2e6)
     P_RESULTS()
     return 0;
 }

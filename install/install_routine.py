@@ -28,7 +28,7 @@ if __name__ == "__main__":
     #-------------------------------------------------------------------#
     #                       installation parameters                     #
     #-------------------------------------------------------------------#
-    sizes = [2, 4, 5]
+    sizes = [2, 5, 10, 20, 50, 70, 100, 150, 200, 350, 500, 1000]
     temperature = 5
     num_runs = 1
     search_engine = lambda t, s, r: ps.search_performance(t, s, s, s, r, verbose = False)[0]
@@ -87,7 +87,7 @@ namespace mc_potts {\n\
     
     string_sizes = "        constexpr int num_sizes = " + str(len(sizes)) + ";\n"
     string_sizes += "        constexpr int sizes[] {"
-    for s in sizes[:-2]:
+    for s in sizes[:-1]:
         string_sizes += str(s) + ", "
     string_sizes += str(sizes[-1]) + "};\n\n"
     

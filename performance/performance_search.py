@@ -21,18 +21,18 @@ import collect_versions as co
 
 
 sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all([   "beta", 
-                "msk_v1_sim",
-                "greschd_v6_sim",
-                "greschd_v5_sim",
-                "greschd_v1_sim",
-                "msk_v0_sim",
-                "msk_v1_sim",
-                "std_mt_rng",
-                "baseline_greschd_grid",
-                "baseline_greschd_matrix",
-                "msk_v0_std_vec",
-                "static"
-                ])
+                                                                                "msk_v1_sim",
+                                                                                "greschd_v6_sim",
+                                                                                "greschd_v5_sim",
+                                                                                "greschd_v1_sim",
+                                                                                "msk_v0_sim",
+                                                                                "msk_v1_sim",
+                                                                                "std_mt_rng",
+                                                                                "baseline_greschd_grid",
+                                                                                "baseline_greschd_matrix",
+                                                                                "msk_v0_std_vec",
+                                                                                "static"
+                                                                                ])
 
 #-----------------------------------------------------------------------#
 
@@ -140,6 +140,6 @@ def search_performance(T, L, H, D, num_runs, verbose = True):
 #-----------------------------------------------------------------------#
 
 if __name__ == "__main__":
-    search_performance(5, 240, 240, 240, 3)
+    search_performance(5, 1000, 1000, 1000, 3)
     
 

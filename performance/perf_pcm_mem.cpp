@@ -13,17 +13,11 @@ using namespace mc_potts;
 
 
 int main(int argc, char* argv[]) {
-    typename SIM_MACRO::template impl<LENGTH, LENGTH, LENGTH, addon::RNG_MACRO, GRID_MACRO, MATRIX_MACRO> sim(TEMP, 10);
+    typename SIM_MACRO::template impl<LENGTH, LENGTH, LENGTH, addon::RNG_MACRO, GRID_MACRO, MATRIX_MACRO> sim(TEMP, 10, 2e6);
     
     sim.thermalize();
     
-    uint64_t runs;
-    if(LENGTH <= 100) {
-        runs = 1e6/(LENGTH * LENGTH * LENGTH) + 1;
-    }
-    else {
-        runs = 1;
-    }
+    uint64_t runs = 1;
     
     long counters[] {0x10, 0x01, 0x10, 0x80, 0x10, 0x10, 0x11, 0x02};
     

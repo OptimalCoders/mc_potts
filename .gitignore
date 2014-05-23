@@ -5,6 +5,6 @@
 __pycache__
 /addons_python/build_dir.py
 MKL_paths.txt
-MeasuringCore.lib
+libMeasuringCore.a
 install.hpp
-measuring_core.hpp
+measuring_core.h

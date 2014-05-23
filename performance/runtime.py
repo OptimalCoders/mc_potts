@@ -33,16 +33,30 @@ def run_opt():
     os.chdir(build_dir.build_dir + "/performance")
     return int(list(filter(None, str(subprocess.check_output("./perf_opt")).split(" ")))[1].split("\\x1b[0m")[0])
     
-def measure_opt(T, sizes):
+def measure_opt(T, sizes, verbose = False):
     runtimes = []
+    if(verbose):
+        print("measuring runtime")
+        print("sizes:")
+        print(sizes)
+        print("currently at:")
     for s in sizes:
+        if(verbose):
+            sys.stdout.write("\r" + str(s))
         compile_opt(T, s)
         runtimes.append(run_opt())
     return sizes, runtimes
     
-def measure(T, sizes, sim, rng, grid, matrix):
+def measure(T, sizes, sim, rng, grid, matrix, verbose = False):
     runtimes = []
+    if(verbose):
+        print("measuring runtime")
+        print("sizes:")
+        print(sizes)
+        print("currently at:")
     for s in sizes:
+        if(verbose):
+            sys.stdout.write("\r" + str(s))
         runtimes.append(ps.measure(sim, grid, matrix, rng, T, s, s, s))
     return sizes, runtimes
 
