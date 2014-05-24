@@ -23,24 +23,36 @@ import collect_versions as co
 
 
 sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["beta"
-                                                                            , "std_mt_rng"
-                                                                            #~ , "mkl_mt_rng"
-                                                                            
-                                                                            , "msk_v0_c_array_static"
-                                                                            , "msk_v2_static_zip"
-                                                                            , "msk_v0_std_vec"
-                                                                            , "baseline_greschd_matrix"
-                                                                            #~ , "int2t_v01_matrix"
-                                                                            
-                                                                            , "msk_v0_pbc"
-                                                                            
+                                                                            # SIMS
                                                                             , "msk_v0_sim"
+                                                                            , "msk_v1_sim"
                                                                             , "baseline_greschd_sim"
+                                                                            , "greschd_v1_sim"
                                                                             , "greschd_v2_sim"
-                                                                            , "greschd_v3_sim"
-                                                                            , "greschd_v4_sim"
+                                                                            #~ , "greschd_v3_sim"
+                                                                            #~ , "greschd_v4_sim"
                                                                             , "greschd_v5_sim"
                                                                             #~ , "greschd_v6_sim"
+                                                                            
+                                                                            # RNGS
+                                                                            , "std_mt_rng"
+                                                                            #~ , "custom_mt_rng"
+                                                                            #~ , "mkl_mt_rng"
+                                                                            
+                                                                            # GRIDS
+                                                                            , "msk_v0_pbc"
+                                                                            #~ , "msk_v1_pbc"
+                                                                            , "baseline_greschd_grid"
+                                                                            
+                                                                            # MATRICES
+                                                                            , "baseline_greschd_matrix"
+                                                                            , "int2t_v01_matrix"
+                                                                            , "msk_v0_std_vec"
+                                                                            , "static"
+                                                                            #~ , "msk_v0_c_array_dynamic"
+                                                                            , "msk_v1_zorder"
+                                                                            #~ , "msk_v2_dynamic_zip"
+                                                                            , "msk_v3_zip_order"
                                                                             ])
                                                                             
 
@@ -156,16 +168,15 @@ if __name__ == "__main__":
 
         for x in range(width):
             for y in range(height):
-                ax.annotate(str(conf_arr[x][y]), xy=(y, x)
+                ax.annotate(str(conf_arr[x][y]).zfill(4), xy=(y, x)
                             , horizontalalignment='center'
                             , verticalalignment='center'
                             )
-        
         cb = fig.colorbar(res)
         plt.yticks(range(width), T_list)
         plt.xticks(range(height), N_list)
         plt.savefig('matrix.png', format='png')
         
-    run()
-    #~ plot()
+    #~ run()
+    plot()
 
