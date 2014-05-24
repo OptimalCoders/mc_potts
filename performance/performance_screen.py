@@ -28,7 +28,7 @@ sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["be
                                                                             , "msk_v1_sim"
                                                                             , "baseline_greschd_sim"
                                                                             , "greschd_v1_sim"
-                                                                            , "greschd_v2_sim"
+                                                                            #~ , "greschd_v2_sim"
                                                                             #~ , "greschd_v3_sim"
                                                                             #~ , "greschd_v4_sim"
                                                                             , "greschd_v5_sim"
@@ -36,23 +36,23 @@ sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["be
                                                                             
                                                                             # RNGS
                                                                             , "std_mt_rng"
-                                                                            #~ , "custom_mt_rng"
+                                                                            , "custom_mt_rng"
                                                                             #~ , "mkl_mt_rng"
                                                                             
                                                                             # GRIDS
                                                                             , "msk_v0_pbc"
                                                                             #~ , "msk_v1_pbc"
-                                                                            , "baseline_greschd_grid"
+                                                                            #~ , "baseline_greschd_grid"
                                                                             
                                                                             # MATRICES
                                                                             , "baseline_greschd_matrix"
                                                                             , "int2t_v01_matrix"
-                                                                            , "msk_v0_std_vec"
+                                                                            #~ , "msk_v0_std_vec"
                                                                             , "static"
                                                                             #~ , "msk_v0_c_array_dynamic"
-                                                                            , "msk_v1_zorder"
+                                                                            #~ , "msk_v1_zorder"
                                                                             #~ , "msk_v2_dynamic_zip"
-                                                                            , "msk_v3_zip_order"
+                                                                            #~ , "msk_v3_zip_order"
                                                                             ])
                                                                             
 
@@ -121,7 +121,7 @@ import matplotlib.pyplot as plt
 if __name__ == "__main__":
     
     T_list = [1, 5, 10, 50]
-    N_list = [8, 15, 30, 60, 120, 250, 500, 700, 900]
+    N_list = [10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 500, 750, 1000]
     
     print("I, " + ', '.join(sim_versions))
     print("I, " + ', '.join(grid_versions))
