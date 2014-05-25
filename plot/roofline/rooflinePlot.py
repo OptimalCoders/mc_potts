@@ -152,21 +152,21 @@ def plot(sizes, performance, op_intensity, labels, to_annotate):
     #Percentile boxes
     #ax.boxplot((x[0,],y[0,]))
 
-    annotate_dirs = [[(-4, +20), (-4, 20)] for i in range(len(sizes))]
-    annotate_dirs[15][0] = (-4, -20)
+    #~ annotate_dirs = [[(-4, +20), (-4, 20)] for i in range(len(sizes))]
+    #~ annotate_dirs[15][0] = (-4, -20)
     #~ annotate_dirs[15][1] = (-15, 20)
-    annotate_dirs[0][1] = (+4, -20)
-    annotate_dirs[4][1] = (-4, -20)
-    annotate_dirs[5][1] = (-4, -20)
-    annotate_dirs[9][1] = (-4, +15)
+    #~ annotate_dirs[0][1] = (+4, -20)
+    #~ annotate_dirs[4][1] = (-4, -20)
+    #~ annotate_dirs[5][1] = (-4, -20)
+    #~ annotate_dirs[9][1] = (-4, +15)
 
     #Anotate 
-    for j in range(len(performance)):
-        for i, s in enumerate(sizes):
-            if(s in to_annotate):
-                ax.annotate(str(s),
-                         xy=(op_intensity[j][i], performance[j][i]), xycoords='data',
-                         xytext=annotate_dirs[i][j], textcoords='offset points', fontsize=8, color = colors[j], horizontalalignment = 'bottom', verticalalignment = 'middle', arrowprops=dict(facecolor = 'black', arrowstyle = 'wedge', alpha = 0.5))
+    #~ for j in range(len(performance)):
+        #~ for i, s in enumerate(sizes):
+            #~ if(s in to_annotate):
+                #~ ax.annotate(str(s),
+                         #~ xy=(op_intensity[j][i], performance[j][i]), xycoords='data',
+                         #~ xytext=annotate_dirs[i][j], textcoords='offset points', fontsize=8, color = colors[j], horizontalalignment = 'bottom', verticalalignment = 'middle', arrowprops=dict(facecolor = 'black', arrowstyle = 'wedge', alpha = 0.5))
 
     #Peak performance line and text
     #~ ax.axhline(y=PEAK_PERF, linewidth=1, color='black')
@@ -237,10 +237,10 @@ if __name__ == "__main__":
         traffic.append(traffic_new)
         names.append(name)
         
-    read_wrapper("optimized")
+    #~ read_wrapper("optimized")
     #~ read_wrapper("C array", "run_carray", "mem_carray")
     #~ read_wrapper("compressed", "run_zip", "mem_zip")
-    read_wrapper("baseline", "run_baseline", "mem_baseline")
+    #~ read_wrapper("baseline", "run_baseline", "mem_baseline")
     #~ read_wrapper("ziporder", "run_ziporder", "mem_ziporder")
     #~ read_wrapper("full", "run_full", "mem_full")
     performance = [[flops_per_step / time for time in rtval] for rtval in runtime]

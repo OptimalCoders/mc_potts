@@ -13,6 +13,9 @@ import xtermcolor
 import subprocess
 import numpy as np
 from matplotlib import pyplot as plt
+#~ from matplotlib import rc
+#~ rc('font',**{'family':'sans-serif','sans-serif':['Gill Sans MT']})
+#~ rc('text', usetex=True)
 
 #------------------import from the addons folder------------------------#
 
@@ -159,6 +162,7 @@ if __name__ == "__main__":
         plt.legend(loc="best", bbox_to_anchor=(1.0, 1.00))
         plt.xlim((0,max_cycles))
         plt.xlabel('cycles / single spin update')
+        
         plt.subplots_adjust(right=0.85)
         #~ plt.show()
         plt.gcf().set_size_inches(14, 2 * len(index));
