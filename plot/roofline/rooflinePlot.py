@@ -39,16 +39,16 @@ def to_roofline_dir():
     os.chdir("./roofline")
     
 
-def measure_run_opt(T, sizes, name = "runtime_opt"):
-    sizes, runtime = ro.measure_opt(T, sizes, verbose = True)
+def measure_run_opt(T, sizes, name = "runtime_opt", full = False):
+    sizes, runtime = ro.measure_opt(T, sizes, verbose = True, full = full)
 
     to_roofline_dir()
     f = open(name + ".txt", "wb")
     pickle.dump([sizes, runtime], f)
     f.close()
     
-def measure_mem_opt(T, sizes, name = "traffic_opt"):
-    sizes, traffic = mt.pcm_measure_opt(T, sizes, verbose = True)
+def measure_mem_opt(T, sizes, name = "traffic_opt", full = False):
+    sizes, traffic = mt.pcm_measure_opt(T, sizes, verbose = True, full = full)
     
     to_roofline_dir()
     f = open(name + ".txt", "wb")
@@ -196,18 +196,24 @@ if __name__ == "__main__":
     if(measure):
         measure_run_opt(T, sizes)
         measure_mem_opt(T, sizes)
-        #~ measure_run(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v0_c_array_dynamic", name = "run_carray")
-        #~ measure_mem(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v0_c_array_dynamic", name = "mem_carray")
-        #~ measure_run(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v2_dynamic_zip", name = "run_zip")
-        #~ measure_mem(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v2_dynamic_zip", name = "mem_zip")
-        #~ measure_run(T, sizes, "baseline_greschd_sim", "std_mt_rng", "baseline_greschd_grid", "baseline_greschd_matrix", name = "run_baseline")
-        #~ measure_mem(T, sizes, "baseline_greschd_sim", "std_mt_rng", "baseline_greschd_grid", "baseline_greschd_matrix", name = "mem_baseline")
+        measure_run_opt(T, sizes, name = "run_full", full = True)
+        measure_mem_opt(T, sizes, name = "mem_full", full = True)
+        measure_run(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v0_c_array_dynamic", name = "run_carray")
+        measure_mem(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v0_c_array_dynamic", name = "mem_carray")
+        measure_run(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v2_dynamic_zip", name = "run_zip")
+        measure_mem(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v2_dynamic_zip", name = "mem_zip")
+        measure_run(T, sizes, "baseline_greschd_sim", "std_mt_rng", "baseline_greschd_grid", "baseline_greschd_matrix", name = "run_baseline")
+        measure_mem(T, sizes, "baseline_greschd_sim", "std_mt_rng", "baseline_greschd_grid", "baseline_greschd_matrix", name = "mem_baseline")
+        measure_run(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v3_zip_order", name = "run_ziporder")
+        measure_mem(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v3_zip_order", name = "mem_ziporder")
     sizes1, runtime1, traffic1 = read_pickle()
     sizes2, runtime2, traffic2 = read_pickle("run_carray", "mem_carray")
     sizes3, runtime3, traffic3 = read_pickle("run_zip", "mem_zip")
     sizes4, runtime4, traffic4 = read_pickle("run_baseline", "mem_baseline")
-    performance = [[flops_per_step / time for time in runtime] for runtime in [runtime1, runtime2, runtime3, runtime4]]
-    op_intensity = [[flops_per_step / mem for mem in traffic] for traffic in [traffic1, traffic2, traffic3, traffic4]]
-    plot(sizes, performance, op_intensity, ["opt", "carray", "zip", "baseline"])
+    sizes5, runtime5, traffic5 = read_pickle("run_ziporder", "mem_ziporder")
+    sizes6, runtime6, traffic6 = read_pickle("run_full", "mem_full")
+    performance = [[flops_per_step / time for time in runtime] for runtime in [runtime1, runtime2, runtime3, runtime4, runtime5, runtime6]]
+    op_intensity = [[flops_per_step / mem for mem in traffic] for traffic in [traffic1, traffic2, traffic3, traffic4, traffic5, traffic6]]
+    plot(sizes, performance, op_intensity, ["opt", "carray", "zip", "baseline", "ziporder", "full"])
     print("rooflinePlot.py")
     

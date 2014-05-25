@@ -30,8 +30,8 @@ if __name__ == "__main__":
     #-------------------------------------------------------------------#
     sizes = [2, 5, 10, 20, 50, 70, 100, 150, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
     temperature = 5
-    num_runs = 3
-    search_engine = lambda t, s, r: ps.search_performance(t, s, s, s, r, verbose = False)[0]
+    num_runs = 5
+    search_engine = lambda t, s, r: ps.search_performance(t, s, s, s, r, verbose = False, full = False)[0]
     #-------------------------------------------------------------------#
     sizes = list(sorted(sizes))
 

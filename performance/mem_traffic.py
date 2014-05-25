@@ -21,12 +21,15 @@ import collect_versions as co
 #change folder so that cmake happens in the right place
 os.chdir(build_dir.build_dir)
 
-def compile_pcm_opt(T, N):
+def compile_pcm_opt(T, N, full = False):
     os.chdir(build_dir.build_dir)
     subprocess.call("cmake " + mcpath   + " -DUSE_TEMP:STRING=" + str(T)
                                         + " -DUSE_LENGTH:STRING=" + str(N)
                                         , shell = True, stdout = subprocess.DEVNULL)
-    subprocess.call("make -B perf_pcm_mem_opt", shell = True, stdout = subprocess.DEVNULL)
+    if(full):
+        subprocess.call("make -B perf_pcm_mem_opt_full", shell = True, stdout = subprocess.DEVNULL)
+    else:
+        subprocess.call("make -B perf_pcm_mem_opt", shell = True, stdout = subprocess.DEVNULL)
     
 def compile_pcm(T, N, sim, rng, grid, matrix):
     os.chdir(build_dir.build_dir)
@@ -61,15 +64,18 @@ def run_pcm(name = "perf_pcm_mem_opt", folder = "pcm_files_opt"):
     f2.close()
     return read, write
     
-def pcm_opt(T, N):
-    compile_pcm_opt(T, N)
-    return run_pcm()
+def pcm_opt(T, N, full = False):
+    compile_pcm_opt(T, N, full = full)
+    if(full):
+        return run_pcm(name = "perf_pcm_mem_opt_full")
+    else:
+        return run_pcm()
     
 def pcm(T, N, sim, rng, grid, matrix):
     compile_pcm(T, N, sim, rng, grid, matrix)
     return run_pcm(name = "perf_pcm_mem", folder = "pcm_files")
     
-def pcm_measure_opt(temp, sizes, verbose = False):
+def pcm_measure_opt(temp, sizes, verbose = False, full = False):
     traffic = []
     if(verbose):
         print("measuring data traffic:")
@@ -79,7 +85,7 @@ def pcm_measure_opt(temp, sizes, verbose = False):
     for s in sizes:
         if(verbose):
             sys.stdout.write("\r" + str(s))
-        traffic.append(sum(pcm_opt(temp, s)) / float(2e6))
+        traffic.append(sum(pcm_opt(temp, s, full = full)) / float(2e6))
     return sizes, traffic
     
 def pcm_measure(temp, sizes, sim, rng, grid, matrix, verbose = False):

@@ -46,7 +46,7 @@ sim_versions, grid_versions, matrix_versions, rng_versions = co.collect_all(["be
                                                                             
                                                                             # MATRICES
                                                                             , "baseline_greschd_matrix"
-                                                                            , "int2t_v01_matrix"
+                                                                            #~ , "int2t_v01_matrix"
                                                                             #~ , "msk_v0_std_vec"
                                                                             , "static"
                                                                             #~ , "msk_v0_c_array_dynamic"
@@ -87,7 +87,7 @@ def idx_print(idx):
 #   L/D/H:      dimensions
 #   num_runs:   max. number of iterations in the search (# times each tpl-argument is optimized)
 
-def screen_performance(T, L, H, D):
+def screen_performance(T, L, H, D, verbose = True):
     versions_length = [len(sim_versions), len(grid_versions), len(matrix_versions), len(rng_versions)]
     opt_idx = [0, 0, 0, 0]
     temp_idx = [0, 0, 0, 0]
@@ -104,14 +104,15 @@ def screen_performance(T, L, H, D):
                     temp_idx[3] = l
                     
                     temp_runtime = measure_wrapper(temp_idx, T, L, H, D)
-                    print("A, " + ''.join([str(x) for x in temp_idx]) + ", " + str(L) + ", " + str(T) + ", " + str(temp_runtime))
+                    if(verbose):
+                        print("A, " + ''.join([str(x) for x in temp_idx]) + ", " + str(L) + ", " + str(T) + ", " + str(temp_runtime))
                     
                     # update opt_ variables
                     if(temp_runtime < opt_runtime):
                         opt_idx = temp_idx.copy()
                         opt_runtime = temp_runtime
-                
-    print("B, " + ''.join([str(x) for x in opt_idx]) + ", " + str(L) + ", " + str(T) + ", " + str(opt_runtime))
+    if(verbose):            
+        print("B, " + ''.join([str(x) for x in opt_idx]) + ", " + str(L) + ", " + str(T) + ", " + str(opt_runtime))
     return (opt_idx, opt_runtime)
         
 #-----------------------------------------------------------------------#
@@ -171,6 +172,7 @@ if __name__ == "__main__":
                 ax.annotate(str(conf_arr[x][y]).zfill(4), xy=(y, x)
                             , horizontalalignment='center'
                             , verticalalignment='center'
+                            , fontsize = 10
                             )
         cb = fig.colorbar(res)
         plt.yticks(range(width), T_list)
