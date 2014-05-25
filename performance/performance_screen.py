@@ -151,8 +151,8 @@ if __name__ == "__main__":
         for i in range(len(T_list)):
             conf_arr.append([])
             for j in range(len(N_list)):
-                conf_arr[i].append(int("".join([str(i) for i in res[i * len(N_list) + j][2][0]])))
-                #~ conf_arr[i].append(res[i * len(N_list) + j][2][1])
+                #~ conf_arr[i].append(int("".join([str(i) for i in res[i * len(N_list) + j][2][0]])))
+                conf_arr[i].append(res[i * len(N_list) + j][2][1])
         
         #~ conf_arr = np.transpose(np.array(conf_arr))
         print(conf_arr)

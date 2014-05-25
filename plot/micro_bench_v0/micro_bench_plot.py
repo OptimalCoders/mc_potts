@@ -69,7 +69,8 @@ if __name__ == "__main__":
     #~ I, mkl_mt_rng, std_mt_rng, custom_mt_rng
     
     plot = 4
-    L = 20
+    L = 1000
+    max_cycles = 1000
     
     for i in range(plot):
         #------------------- combinations to plot ------------------- 
@@ -156,7 +157,7 @@ if __name__ == "__main__":
                     color=color, orientation="horizontal", label=name)
         plt.yticks(bottoms+0.4, ["\n".join(t).replace("_", " ").replace("msk", "") for t in index])
         plt.legend(loc="best", bbox_to_anchor=(1.0, 1.00))
-        plt.xlim((0,1700))
+        plt.xlim((0,max_cycles))
         plt.xlabel('cycles / single spin update')
         plt.subplots_adjust(right=0.85)
         #~ plt.show()
