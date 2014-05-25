@@ -13,9 +13,17 @@ import xtermcolor
 import subprocess
 import numpy as np
 from matplotlib import pyplot as plt
-#~ from matplotlib import rc
-#~ rc('font',**{'family':'sans-serif','sans-serif':['Gill Sans MT']})
-#~ rc('text', usetex=True)
+
+from matplotlib.pyplot import rc
+rc('text', usetex=True) # this is if you want to use latex to print text. If you do you can create strings that go on labels or titles like this for example (with an r in front): r"$n=$ " + str(int(n))
+from pylab import *
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import rc
+
+rc('text', usetex=True)
+
+rc('text.latex', preamble=r'\usepackage{cmbright}')
+rc('mathtext', fontset='stixsans')
 
 #------------------import from the addons folder------------------------#
 
@@ -72,28 +80,37 @@ if __name__ == "__main__":
     #~ I, mkl_mt_rng, std_mt_rng, custom_mt_rng
     
     plot = 4
-    L = 1000
-    max_cycles = 1000
+    #~ L = 300
+    #~ max_cycles = 1500
+    L = 20
+    max_cycles = 650
     
     for i in range(plot):
         #------------------- combinations to plot ------------------- 
         if i == 0:
             index = [ 
                   ["msk_v0_sim", "msk_v0_pbc", "msk_v0_c_array_dynamic", "mkl_mt_rng"]
+                , ["msk_v0_sim", "msk_v0_pbc", "msk_v0_c_array_dynamic", "custom_mt_rng"]
                 , ["msk_v0_sim", "msk_v0_pbc", "msk_v0_c_array_dynamic", "std_mt_rng"]
                 ]
+            highlight = 3
+            modopt = "RNG"
             #~ continue
         elif i == 1:
             index = [ 
                   ["msk_v0_sim", "msk_v1_pbc", "msk_v0_c_array_dynamic", "mkl_mt_rng"]
                 , ["msk_v0_sim", "msk_v0_pbc", "msk_v0_c_array_dynamic", "mkl_mt_rng"]
                 ]
+            highlight = 1
+            modopt = "Boundary Condition"
             #~ continue
         elif i == 2:
             index = [ 
                   ["msk_v1_sim", "msk_v1_pbc", "msk_v0_c_array_dynamic", "mkl_mt_rng"]
                 , ["msk_v0_sim", "msk_v1_pbc", "msk_v0_c_array_dynamic", "mkl_mt_rng"]
                 ]
+            highlight = 0
+            modopt = "Metropolis"
             #~ continue
         elif i == 3:
             index = [ 
@@ -102,9 +119,12 @@ if __name__ == "__main__":
                 #~ , ["msk_v1_sim", "msk_v1_pbc", "msk_v1_zorder", "mkl_mt_rng"]
                 , ["msk_v1_sim", "msk_v1_pbc", "msk_v0_c_array_dynamic", "mkl_mt_rng"]
                 ]
+            highlight = 2
+            modopt = "Storage"
+            #~ continue
         else:
             continue
-            
+        
         res = []
         
         
@@ -133,6 +153,7 @@ if __name__ == "__main__":
             
             res.append([code, key, perc, cyc])
         
+        
         data = []
         vers = []
         names = res[0][1]
@@ -151,6 +172,9 @@ if __name__ == "__main__":
         orders = np.array(data_orders)
         bottoms = np.arange(len(data_orders))
         
+        for t in index:
+            t[highlight] = "\\textbf{"+ t[highlight] + "}"
+        
         for name, color in zip(names, colors):
             idx = np.where(orders == name)
             value = values[idx]
@@ -159,12 +183,12 @@ if __name__ == "__main__":
             plt.bar(left=left, height=0.8, width=value, bottom=bottoms, 
                     color=color, orientation="horizontal", label=name)
         plt.yticks(bottoms+0.4, ["\n".join(t).replace("_", " ").replace("msk", "") for t in index])
-        plt.legend(loc="best", bbox_to_anchor=(1.0, 1.00))
+        plt.legend(loc="best", bbox_to_anchor=(1.0, 1.0/len(index)))
         plt.xlim((0,max_cycles))
-        plt.xlabel('cycles / single spin update')
-        
+        plt.xlabel('Cycles / Single Spin Update')
+        plt.title("Module Optimization: " + modopt + ", N = " + str(L), size = 20)
         plt.subplots_adjust(right=0.85)
         #~ plt.show()
-        plt.gcf().set_size_inches(14, 2 * len(index));
-        plt.savefig("plot" + str(i) + ".png", format='png')
+        plt.gcf().set_size_inches(12, 2 * len(index));
+        plt.savefig("plot" + str(i) + ".pdf", dpi=250,  bbox_inches='tight')
         plt.clf()

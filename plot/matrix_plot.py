@@ -24,17 +24,21 @@ import collect_versions as co
 os.chdir(build_dir.build_dir)
 
 #-----------------------------------------------------------------------#
-import numpy as np
+from matplotlib.pyplot import rc
+rc('text', usetex=True) # this is if you want to use latex to print text. If you do you can create strings that go on labels or titles like this for example (with an r in front): r"$n=$ " + str(int(n))
+from pylab import *
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import rc
 
-#~ rc('font',**{'family':'sans-serif','sans-serif':['Gill Sans MT']})
-#~ rc('text', usetex=True)
+rc('text', usetex=True)
+
+rc('text.latex', preamble=r'\usepackage{cmbright}')
+rc('mathtext', fontset='stixsans')
 
 T_list = [1, 5, 10, 50]
 N_list = [10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 500, 750, 1000]
 
-def plot(name = "res"):
+def plot(name, specs):
         f = open(name + ".txt", "rb")
         res = pickle.load(f)
         
@@ -66,26 +70,61 @@ def plot(name = "res"):
                             , horizontalalignment='center'
                             , verticalalignment='center'
                             , fontsize = 10
-                            , color = ["white", "black"][y > 5]
+                            , color = ["white", "black"][y > 6]
                             )
         cb = fig.colorbar(res)
         plt.yticks(range(width), T_list)
         plt.xticks(range(height), N_list)
-        plt.xlabel('size N (N³ particles)')
-        plt.ylabel('temperature T', rotation = "horizontal", horizontalalignment = "left", verticalalignment="top")
+        plt.xlabel(r'Size N (N\textsuperscript{3} Particles)')
+        plt.ylabel('Temperature T', rotation = "horizontal", horizontalalignment = "left", verticalalignment="top")
+        plt.title("Runtime Screening", size=20)
         ax.yaxis.set_label_coords(x = 0, y = 1.1)
+        
+        
+        flags = '-Wall -std=c++11 -O3 -DNDEBUG -march=core-avx2'
+        ax.text(0,-0.55, specs + flags, bbox=dict(facecolor='white', alpha=1, boxstyle = 'round'), transform = ax.transAxes)
         plt.gcf().set_size_inches(10, 3);
-        plt.savefig('matrix.png', format='png')
-def plot_modules(name = "res"):
+        fig.savefig("matrix.pdf", dpi=250,  bbox_inches='tight')
+        
+def plot_modules(name, specs):
         f = open(name + ".txt", "rb")
         res = pickle.load(f)
-        
         f.close()
         
+        #------------------- import decode list ------------------- 
+        name2 = "/".join(name.split("/")[:-1]) + "/data.txt"
+        f = open(name2, "r")
+        mods = f.readlines()[:4]
+        f.close()
+        
+        for i in range(len(mods)):
+            mods[i] = (mods[i].split("\n")[0]).split(", ")[1:]
+            mods[i] = [[mods[i][j], j, 0] for j in range(len(mods[i]))]
+            
+        #------------------- setup colors equidistant ------------------- 
         cnt = dict()
         
         for r in res:
+            for i in range(len(r[2][0])):
+                mods[i][r[2][0][i]][-1] = 1
+            
             cnt["".join([str(i) for i in r[2][0]])] = 1
+        
+        #------------------- clear unused ------------------- 
+        for i in range(len(mods)):
+            for mm in mods[i]:
+                if mm[-1] == 0:
+                    mods[i].remove(mm)
+        
+        mod_text = ''
+        #------------------- create mod text ------------------- 
+        for i in range(len(mods)):
+            for mm in mods[i]:
+                mod_text += str(mm[1]) + ": " + mm[0]
+                if mm != mods[i][-1]:
+                    mod_text += " / "
+            mod_text += "\n"
+        mod_text = mod_text.replace("_", " ")
         
         i = 0
         for key in sorted(cnt.keys()):
@@ -95,6 +134,7 @@ def plot_modules(name = "res"):
         conf_arr = []
         corr_arr = []
         
+        #------------------- prepare plot ------------------- 
         for i in range(len(T_list)):
             conf_arr.append([])
             corr_arr.append([])
@@ -125,17 +165,26 @@ def plot_modules(name = "res"):
         cb = fig.colorbar(res)
         plt.yticks(range(width), T_list)
         plt.xticks(range(height), N_list)
-        plt.xlabel('size N (N particles)')
-        plt.ylabel('temperature T', rotation = "horizontal", horizontalalignment = "left", verticalalignment="top")
+        plt.xlabel(r'Size N (N\textsuperscript{3} Particles)')
+        plt.ylabel('Temperature T', rotation = "horizontal", horizontalalignment = "left", verticalalignment="top")
+        plt.title("Optimal Modules", size=20)
         ax.yaxis.set_label_coords(x = 0, y = 1.1)
-        plt.gcf().set_size_inches(10, 3);
-        plt.savefig('modules.png', format = "png")
+        
+        flags = '-Wall -std=c++11 -O3 -DNDEBUG -march=core-avx2'
+        #~ ax.text(0,-0.55, specs + flags, bbox=dict(facecolor='white', alpha=1, boxstyle = 'round'), transform = ax.transAxes)
+        
+        ax.text(0,-0.65, mod_text[:-1], bbox=dict(facecolor='white', alpha=1, boxstyle = 'round'), transform = ax.transAxes)
+        
+        fig.delaxes(fig.axes[1]) 
+        plt.gcf().set_size_inches(10, 3)
+        fig.savefig("module.pdf", dpi=250,  bbox_inches='tight')
 
 if __name__ == "__main__":
-    plot("../mc_potts/plot/mskoenz_plots/full_screen_msk")
-    #~ plot("../mc_potts/plot/greschd_plots/full_screen_dg")
-    plot_modules("../mc_potts/plot/mskoenz_plots/full_screen_msk")
-    
-    #~ plot_modules("../mc_potts/plot/greschd_plots/full_screen_dg")
+    dg  = "system: Ubuntu 13.10 on Intel Core i7 (Haswell) @2.4 GHz\ncompiler: gcc v4.8.1\nflags: "
+    msk = "system: Ubuntu 14.04 on Intel Core 2 (Wolfdale) @2.4 GHz\ncompiler: gcc v4.8.1\nflags: "
+    #~ plot("../mc_potts/plot/mskoenz_plots/full_screen_msk", msk)
+    #~ plot_modules("../mc_potts/plot/mskoenz_plots/full_screen_msk", msk)
+    plot("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
+    plot_modules("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
     
     
