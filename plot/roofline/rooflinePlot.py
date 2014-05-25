@@ -106,8 +106,8 @@ def plot(sizes, performance, op_intensity, labels, to_annotate):
     rc('font',**{'family':'sans-serif', 'sans-serif':['Gill Sans MT']})
 
 
-    matplotlib.pylab.rc('text.latex', preamble=r'\usepackage{cmbright}')
-    matplotlib.pylab.rc('mathtext', fontset='stixsans')
+    rc('text.latex', preamble=r'\usepackage{cmbright}')
+    rc('mathtext', fontset='stixsans')
 
     X_MIN=8e-4
     X_MAX=8e-2
@@ -152,25 +152,21 @@ def plot(sizes, performance, op_intensity, labels, to_annotate):
     #Percentile boxes
     #ax.boxplot((x[0,],y[0,]))
 
-    #~ annotate_dirs = [[(-4, +20), (-4, 20)] for i in range(len(sizes))]
-    #~ annotate_dirs[15][0] = (-4, -20)
-    #~ annotate_dirs[15][1] = (-15, 20)
-    #~ annotate_dirs[0][1] = (+4, -20)
-    #~ annotate_dirs[4][1] = (-4, -20)
-    #~ annotate_dirs[5][1] = (-4, -20)
-    #~ annotate_dirs[9][1] = (-4, +15)
+    annotate_dirs = [[(-4, +20), (-4, 20)] for i in range(len(sizes))]
+    annotate_dirs[15][0] = (-4, -20)
+    annotate_dirs[15][1] = (-15, 20)
+    annotate_dirs[0][1] = (+4, -20)
+    annotate_dirs[4][1] = (-4, -20)
+    annotate_dirs[5][1] = (-4, -20)
+    annotate_dirs[9][1] = (-4, +15)
 
     #Anotate 
-    #~ for j in range(len(performance)):
-        #~ for i, s in enumerate(sizes):
-            #~ if(s in to_annotate):
-                #~ ax.annotate(str(s),
-                         #~ xy=(op_intensity[j][i], performance[j][i]), xycoords='data',
-                         #~ xytext=annotate_dirs[i][j], textcoords='offset points', fontsize=8, color = colors[j], horizontalalignment = 'bottom', verticalalignment = 'middle', arrowprops=dict(facecolor = 'black', arrowstyle = 'wedge', alpha = 0.5))
-
-    #Peak performance line and text
-    #~ ax.axhline(y=PEAK_PERF, linewidth=1, color='black')
-    #~ ax.text(X_MAX/10.0, PEAK_PERF+0.15, "Peak Performance ("+str(PEAK_PERF)+" F/C)", fontsize=10)
+    for j in range(len(performance)):
+        for i, s in enumerate(sizes):
+            if(s in to_annotate):
+                ax.annotate(str(s),
+                         xy=(op_intensity[j][i], performance[j][i]), xycoords='data',
+                         xytext=annotate_dirs[i][j], textcoords='offset points', fontsize=8, color = colors[j], horizontalalignment = 'bottom', verticalalignment = 'middle', arrowprops=dict(facecolor = 'black', arrowstyle = 'wedge', alpha = 0.5))
 
 
     #BW line and text

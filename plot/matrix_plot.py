@@ -24,12 +24,15 @@ import collect_versions as co
 os.chdir(build_dir.build_dir)
 
 #-----------------------------------------------------------------------#
-import numpy as np
+from matplotlib.pyplot import rc
+rc('text', usetex=True) # this is if you want to use latex to print text. If you do you can create strings that go on labels or titles like this for example (with an r in front): r"$n=$ " + str(int(n))
+from pylab import *
 import matplotlib.pyplot as plt
-import matplotlib
 
-#~ matplotlib.rc('font',**{'family':'sans-serif','sans-serif':['Gill Sans MT']})
-#~ rc('text', usetex=True)
+rc('text', usetex=True)
+
+rc('text.latex', preamble=r'\usepackage{cmbright}')
+rc('mathtext', fontset='stixsans')
 
 if __name__ == "__main__":
     
@@ -73,13 +76,13 @@ if __name__ == "__main__":
         cb = fig.colorbar(res)
         plt.yticks(range(width), T_list)
         plt.xticks(range(height), N_list)
-        plt.xlabel('size N (N³ particles)')
+        plt.xlabel(r'size N (N\textsuperscript{3} particles)')
         plt.ylabel('temperature T', rotation = "horizontal", horizontalalignment = "left", verticalalignment="top")
         ax.yaxis.set_label_coords(x = 0, y = 1.1)
         plt.gcf().set_size_inches(10, 3);
-        plt.savefig('matrix.png', format='png')
+        fig.savefig("matrix_plot.pdf", dpi=250,  bbox_inches='tight')
         
     #~ run()
     #~ plot("../mc_potts/plot/mskoenz_plots/full_screen_msk")
-    plot("../mc_potts/plot/greschd_plots/full_screen_dg")
+    plot("../plot/greschd_plots/full_screen_dg")
 
