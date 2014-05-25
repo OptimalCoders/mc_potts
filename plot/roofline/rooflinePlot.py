@@ -88,7 +88,7 @@ def read_pickle(name_run = "runtime_opt", name_mem = "traffic_opt"):
     
     return sizes_run, runtime, traffic
 
-def plot(sizes, performance, op_intensity, labels):
+def plot(sizes, performance, op_intensity, labels, to_annotate):
     background_color = '#eeeeee' 
     grid_color = 'white' #FAFAF7'
     rc('axes', facecolor = background_color)
@@ -109,10 +109,10 @@ def plot(sizes, performance, op_intensity, labels):
     matplotlib.pylab.rc('text.latex', preamble=r'\usepackage{cmbright}')
     matplotlib.pylab.rc('mathtext', fontset='stixsans')
 
-    X_MIN=0.01
-    X_MAX=1
-    Y_MIN=0.01
-    Y_MAX=5.0
+    X_MIN=8e-4
+    X_MAX=8e-2
+    Y_MIN=8e-4
+    Y_MAX=8e-2
     # 
     PEAK_PERF=3.0
     PEAK_BW=5.2
@@ -125,6 +125,7 @@ def plot(sizes, performance, op_intensity, labels):
     # Returns the Axes instance
     ax = fig.add_subplot(111, aspect = ASPECT_RATIO)
     ax.tick_params(labelsize = 10)
+    colors = ['r', 'b', 'g', 'o']
 
     #Log scale
     if LOG_Y: ax.set_yscale('log')
@@ -132,8 +133,8 @@ def plot(sizes, performance, op_intensity, labels):
 
     #formatting:
     ax.set_title(r"\textbf{Roofline Plot}",fontsize=15, position = (0.5, 1.1))
-    ax.set_xlabel("Operational Intensity [Flop/Byte]", fontsize=12, horizontalalignment = "right")
-    ax.set_ylabel("Performance [Flop/Cycle]", fontsize=12, rotation = "horizontal", horizontalalignment = "left")
+    ax.set_xlabel("Inverse Memory Traffic [Steps/Byte]", fontsize=12, horizontalalignment = "right")
+    ax.set_ylabel("Inverse Runtime [Steps/Cycle]", fontsize=12, rotation = "horizontal", horizontalalignment = "left")
 
     ax.yaxis.set_label_coords(0, 1.05)
     ax.xaxis.set_label_coords(1, -0.09)
@@ -143,7 +144,7 @@ def plot(sizes, performance, op_intensity, labels):
     ax.axis([X_MIN,X_MAX,Y_MIN,Y_MAX])
     
     for i in range(len(performance)):
-        ax.plot(performance[i], op_intensity[i], 'o-', label = labels[i], linewidth = 0.5, markersize = 2)
+        ax.plot(op_intensity[i], performance[i], 'o-', label = labels[i], linewidth = 0.5, markersize = 2, color = colors[i])
     
     ax.legend(loc = 'lower right')
 
@@ -151,17 +152,25 @@ def plot(sizes, performance, op_intensity, labels):
     #Percentile boxes
     #ax.boxplot((x[0,],y[0,]))
 
+    annotate_dirs = [[(-4, +20), (-4, 20)] for i in range(len(sizes))]
+    annotate_dirs[15][0] = (-4, -20)
+    #~ annotate_dirs[15][1] = (-15, 20)
+    annotate_dirs[0][1] = (+4, -20)
+    annotate_dirs[4][1] = (-4, -20)
+    annotate_dirs[5][1] = (-4, -20)
+    annotate_dirs[9][1] = (-4, +15)
 
     #Anotate 
     for j in range(len(performance)):
         for i, s in enumerate(sizes):
-            ax.annotate(str(s),
-                     xy=(performance[j][i], op_intensity[j][i]), xycoords='data',
-                     xytext=(+2, -0), textcoords='offset points', fontsize=4)
+            if(s in to_annotate):
+                ax.annotate(str(s),
+                         xy=(op_intensity[j][i], performance[j][i]), xycoords='data',
+                         xytext=annotate_dirs[i][j], textcoords='offset points', fontsize=8, color = colors[j], horizontalalignment = 'bottom', verticalalignment = 'middle', arrowprops=dict(facecolor = 'black', arrowstyle = 'wedge', alpha = 0.5))
 
     #Peak performance line and text
-    ax.axhline(y=PEAK_PERF, linewidth=1, color='black')
-    ax.text(X_MAX/10.0, PEAK_PERF+0.15, "Peak Performance ("+str(PEAK_PERF)+" F/C)", fontsize=10)
+    #~ ax.axhline(y=PEAK_PERF, linewidth=1, color='black')
+    #~ ax.text(X_MAX/10.0, PEAK_PERF+0.15, "Peak Performance ("+str(PEAK_PERF)+" F/C)", fontsize=10)
 
 
     #BW line and text
@@ -171,13 +180,15 @@ def plot(sizes, performance, op_intensity, labels):
 
 
     l2 = array((0.01,0.01))
-    angle = 45*(ASPECT_RATIO+0.4)
-    trans_angle = gca().transData.transform_angles(array((angle,)),
-                                                   l2.reshape((1,2)))[0]
+    angle = np.arctan(ASPECT_RATIO) * 180 / np.pi
 
-    ax.text(X_MIN,X_MIN*PEAK_BW + 0.09 ,'MemLoad ('+str(PEAK_BW)+' B/C)',fontsize=10,
-               rotation=trans_angle)
+    ax.text(X_MIN*1.1,(X_MIN*1.1*PEAK_BW)*1.1 ,'MemLoad ('+str(PEAK_BW)+' B/C)',fontsize=10,
+               rotation=angle , verticalalignment ='bottom' )
 
+    
+    flags = '-Wall -std=c++11 -O3 -DNDEBUG -march=core-avx2'
+    ax.text(0,-0.3, "system: Ubuntu 13.10 on Intel Core i7 (Haswell) @2.4 GHz\ncompiler: gcc v4.8.1\nflags: " + flags, bbox=dict(facecolor='white', alpha=1, boxstyle = 'round'), transform = ax.transAxes)
+    fig.subplots_adjust(bottom = 0.25, top = 0.85)
 
 
     #save file
@@ -187,12 +198,16 @@ if __name__ == "__main__":
 #-----------------------------------------------------------------------#
 #                          input variables                              #
 #-----------------------------------------------------------------------#
-    sizes = [2, 4, 10, 20, 30, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+    sizes = [5, 10, 25, 50, 100, 200, 250, 300, 350, 400, 500, 600, 700, 800, 900, 1000]
     T = 5
-    flops_per_step = 3.947946 + 25 * 0.657991
-    measure = True
+    #~ flops_per_step = (3.947946 + 25 * 0.657991)
+    flops_per_step = 1
+    measure = False
+    to_annotate = [5, 100, 200, 400, 1000]
+    #~ to_annotate = [300]
 #-----------------------------------------------------------------------#
     to_roofline_dir()
+    
     if(measure):
         measure_run_opt(T, sizes)
         measure_mem_opt(T, sizes)
@@ -206,14 +221,30 @@ if __name__ == "__main__":
         measure_mem(T, sizes, "baseline_greschd_sim", "std_mt_rng", "baseline_greschd_grid", "baseline_greschd_matrix", name = "mem_baseline")
         measure_run(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v3_zip_order", name = "run_ziporder")
         measure_mem(T, sizes, "greschd_v3_sim", "mkl_mt_rng", "msk_v1_pbc", "msk_v3_zip_order", name = "mem_ziporder")
-    sizes1, runtime1, traffic1 = read_pickle()
-    sizes2, runtime2, traffic2 = read_pickle("run_carray", "mem_carray")
-    sizes3, runtime3, traffic3 = read_pickle("run_zip", "mem_zip")
-    sizes4, runtime4, traffic4 = read_pickle("run_baseline", "mem_baseline")
-    sizes5, runtime5, traffic5 = read_pickle("run_ziporder", "mem_ziporder")
-    sizes6, runtime6, traffic6 = read_pickle("run_full", "mem_full")
-    performance = [[flops_per_step / time for time in runtime] for runtime in [runtime1, runtime2, runtime3, runtime4, runtime5, runtime6]]
-    op_intensity = [[flops_per_step / mem for mem in traffic] for traffic in [traffic1, traffic2, traffic3, traffic4, traffic5, traffic6]]
-    plot(sizes, performance, op_intensity, ["opt", "carray", "zip", "baseline", "ziporder", "full"])
+    
+    sizes = []
+    runtime = []
+    traffic = []
+    names = []
+    def read_wrapper(name, *args):
+        sizes_new, runtime_new, traffic_new = read_pickle(*args)
+        if(sizes == []):
+            sizes.extend(sizes_new)
+        else:
+            if(sizes_new != sizes):
+                raise ValueError("Sizes do not match")
+        runtime.append(runtime_new)
+        traffic.append(traffic_new)
+        names.append(name)
+        
+    read_wrapper("optimized")
+    #~ read_wrapper("C array", "run_carray", "mem_carray")
+    #~ read_wrapper("compressed", "run_zip", "mem_zip")
+    read_wrapper("baseline", "run_baseline", "mem_baseline")
+    #~ read_wrapper("ziporder", "run_ziporder", "mem_ziporder")
+    #~ read_wrapper("full", "run_full", "mem_full")
+    performance = [[flops_per_step / time for time in rtval] for rtval in runtime]
+    op_intensity = [[flops_per_step / mem for mem in trval] for trval in traffic]
+    plot(sizes, performance, op_intensity, names, to_annotate)
     print("rooflinePlot.py")
     
