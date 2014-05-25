@@ -46,7 +46,7 @@ namespace mc_potts {
                     int const k = rngL3_();
                     int shift = rngUD_();
                     
-                    NEXT_MICRO("lookup")
+                    NEXT_MICRO("spin_access")
                     auto a = grid_.get(i, j, k);
                     
                     if(shift == 0) {
@@ -63,11 +63,11 @@ namespace mc_potts {
                             return;
                         }
                     }
-                    NEXT_MICRO("nn")
+                    NEXT_MICRO("stencil")
                     
                     auto n = grid_.get_nn(i, j, k);
                     
-                    NEXT_MICRO("metro")
+                    NEXT_MICRO("metropolis")
                     shift = 2 * shift - 1;
                     if(std::min(1.0, std::exp(eunit_ / T_ * shift * (n - 6 * (S - 1) / 2.0))) > rngp_()) {
                         grid_.set(i, j, k, a + shift);

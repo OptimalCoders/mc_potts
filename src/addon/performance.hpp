@@ -6,6 +6,7 @@
 #define __PERFORMACE_HEADER
 
 #include <chrono>
+#include <iostream>
 #include "debug.hpp"
 
 namespace addon {
@@ -108,7 +109,8 @@ namespace addon {
         
         void print_results() {
             for(auto & p : perf_measure) {
-                std::cout << GREENB << std::setw(7) << std::lround(p.second) << NONE << " --> "
+                //~ std::cout << GREENB << std::setw(7) << std::lround(p.second) << NONE << " --> "
+                std::cout << GREENB << std::setw(7) << p.second << NONE << " --> "
                              GREEN << p.first << NONE << std::endl;
             }
         }

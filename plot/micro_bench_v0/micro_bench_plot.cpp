@@ -5,6 +5,8 @@
 //~ #define NO_COLOR
 //~ #define ENABLE_MICRO
 
+#define ENABLE_MICRO
+
 #include <conf.hpp>
 #include <../src/beta.hpp>
 #include <../src/addon/performance.hpp>
