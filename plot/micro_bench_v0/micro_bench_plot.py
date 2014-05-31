@@ -9,6 +9,7 @@
 import os
 import sys
 import glob
+import pickle
 import xtermcolor
 import subprocess
 import numpy as np
@@ -62,28 +63,16 @@ def idx_print(idx):
 def screen_performance(T, L, H, D):
     temp_runtime = measure_wrapper(temp_idx, T, L, H, D)
     print(temp_runtime)
-        
-#-----------------------------------------------------------------------#
-
-if __name__ == "__main__":
     
-    
-    print("I, " + ', '.join(sim_versions))
-    print("I, " + ', '.join(grid_versions))
-    print("I, " + ', '.join(matrix_versions))
-    print("I, " + ', '.join(rng_versions))
-    
-    #------------------- output ------------------- 
-    #~ I, msk_v1_sim, greschd_v1_sim, baseline_greschd_sim
-    #~ I, baseline_greschd_grid, msk_v1_pbc
-    #~ I, msk_v2_dynamic_zip, msk_v0_std_vec, msk_v1_zorder, msk_v0_c_array_dynamic, baseline_greschd_matrix,msk_v0_c_array_static, msk_v2_static_zip, int2t_v01_matrix
-    #~ I, mkl_mt_rng, std_mt_rng, custom_mt_rng
-    
+def run(name):
     plot = 4
-    #~ L = 300
-    #~ max_cycles = 1500
-    L = 20
-    max_cycles = 650
+    L = 300
+   
+    #~ L = 1000
+    #~ max_cycles = 700
+    #~ L = 20
+    #~ max_cycles = 650
+    pickle_data = []
     
     for i in range(plot):
         #------------------- combinations to plot ------------------- 
@@ -174,6 +163,23 @@ if __name__ == "__main__":
         
         for t in index:
             t[highlight] = "\\textbf{"+ t[highlight] + "}"
+            
+        pickle_data.append([index, highlight, modopt, res, data, names, values, lefts, orders, bottoms])
+    
+    f = open(name + ".txt", "wb")
+    pickle.dump([plot, L, pickle_data], f)
+    f.close()
+    
+def plot(name):
+    f = open(name + ".txt", "rb")
+    plot, L, pickle_data = pickle.load(f)
+    f.close()
+    
+    colors = ["r","g","b","orange","gray"]
+    max_cycles = 600
+    
+    for i in range(plot):
+        index, highlight, modopt, res, data, names, values, lefts, orders, bottoms = pickle_data[i]
         
         for name, color in zip(names, colors):
             idx = np.where(orders == name)
@@ -192,3 +198,23 @@ if __name__ == "__main__":
         plt.gcf().set_size_inches(12, 2 * len(index));
         plt.savefig("plot" + str(i) + ".pdf", dpi=250,  bbox_inches='tight')
         plt.clf()
+        
+#-----------------------------------------------------------------------#
+
+if __name__ == "__main__":
+    
+    
+    print("I, " + ', '.join(sim_versions))
+    print("I, " + ', '.join(grid_versions))
+    print("I, " + ', '.join(matrix_versions))
+    print("I, " + ', '.join(rng_versions))
+    
+    #------------------- output ------------------- 
+    #~ I, msk_v1_sim, greschd_v1_sim, baseline_greschd_sim
+    #~ I, baseline_greschd_grid, msk_v1_pbc
+    #~ I, msk_v2_dynamic_zip, msk_v0_std_vec, msk_v1_zorder, msk_v0_c_array_dynamic, baseline_greschd_matrix,msk_v0_c_array_static, msk_v2_static_zip, int2t_v01_matrix
+    #~ I, mkl_mt_rng, std_mt_rng, custom_mt_rng
+    
+    #~ run("micro_bench")
+    plot("micro_bench")
+        
