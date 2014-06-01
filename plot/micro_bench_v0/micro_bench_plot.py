@@ -83,7 +83,6 @@ def run(name):
                 , ["msk_v0_sim", "msk_v0_pbc", "msk_v0_c_array_dynamic", "std_mt_rng"]
                 ]
             highlight = 3
-            modopt = "RNG"
             #~ continue
         elif i == 1:
             index = [ 
@@ -91,7 +90,6 @@ def run(name):
                 , ["msk_v0_sim", "msk_v0_pbc", "msk_v0_c_array_dynamic", "mkl_mt_rng"]
                 ]
             highlight = 1
-            modopt = "Boundary Condition"
             #~ continue
         elif i == 2:
             index = [ 
@@ -99,7 +97,6 @@ def run(name):
                 , ["msk_v0_sim", "msk_v1_pbc", "msk_v0_c_array_dynamic", "mkl_mt_rng"]
                 ]
             highlight = 0
-            modopt = "Metropolis"
             #~ continue
         elif i == 3:
             index = [ 
@@ -109,7 +106,6 @@ def run(name):
                 , ["msk_v1_sim", "msk_v1_pbc", "msk_v0_c_array_dynamic", "mkl_mt_rng"]
                 ]
             highlight = 2
-            modopt = "Storage"
             #~ continue
         else:
             continue
@@ -157,42 +153,66 @@ def run(name):
         colors = ["r","g","b","orange","gray"]
         
         values = np.array(data)
-        lefts = np.insert(np.cumsum(values, axis=1), 0, 0, axis=1)[:, :-1]
+        bottoms = np.insert(np.cumsum(values, axis=1), 0, 0, axis=1)[:, :-1]
         orders = np.array(data_orders)
-        bottoms = np.arange(len(data_orders))
+        lefts = np.arange(len(data_orders))
         
         for t in index:
             t[highlight] = "\\textbf{"+ t[highlight] + "}"
             
-        pickle_data.append([index, highlight, modopt, res, data, names, values, lefts, orders, bottoms])
+        pickle_data.append([index, highlight,  res, data, names, values, lefts, orders, bottoms])
     
     f = open(name + ".txt", "wb")
     pickle.dump([plot, L, pickle_data], f)
     f.close()
     
-def plot(name):
+def plot(name, modopts, labels, module_numbers):
+    background_color = '#eeeeee' 
+    grid_color = 'white' #FAFAF7'
+    rc('axes', facecolor = background_color)
+    rc('axes', edgecolor = grid_color)
+    rc('axes', linewidth = 1.2)
+    rc('axes', axisbelow = True)
+    rc('grid',color = grid_color)
+    rc('grid',linestyle='-' )
+    rc('grid',linewidth=0.7 )
+    rc('xtick.major',size =0 )
+    rc('xtick.minor',size =0 )
+    rc('ytick.major',size =0 )
+    rc('ytick.minor',size =0 )
+    rc('font',**{'family':'sans-serif', 'sans-serif':['Gill Sans MT']})
+    
     f = open(name + ".txt", "rb")
     plot, L, pickle_data = pickle.load(f)
     f.close()
     
-    colors = ["r","g","b","orange","gray"]
+    colors = ["#6688FF","#66DD66","#DD6666","#DD66CC","#AAAAAA"]
     max_cycles = 600
     
     for i in range(plot):
-        index, highlight, modopt, res, data, names, values, lefts, orders, bottoms = pickle_data[i]
-        
-        for name, color in zip(names, colors):
+        index, highlight, res, data, names, values, lefts, orders, bottoms = pickle_data[i]
+        modopt = modopts[i]
+        part_labels = ["SIM", "RNG", "GRID/MATRIX (s.s.)", "GRID/MATRIX (n.n.)", "rest"]
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        lefts = lefts[::-1]
+        for j, (name, color) in enumerate(zip(names, colors)):
             idx = np.where(orders == name)
             value = values[idx]
-            left = lefts[idx]
-            
-            plt.bar(left=left, height=0.8, width=value, bottom=bottoms, 
-                    color=color, orientation="horizontal", label=name)
-        plt.yticks(bottoms+0.4, ["\n".join(t).replace("_", " ").replace("msk", "") for t in index])
+            bottom = bottoms[idx]
+            plt.bar(left=lefts, height=value, width=0.5, bottom=bottom, 
+                    color=color, label=part_labels[j], edgecolor = "none")
+                    
+        current_labels = [r"\textbf{" + labels[i][j] + "}\n(" + module_numbers[i][j] + ")" for j in range(len(index))]
+        plt.xticks(lefts+0.25, current_labels)
         plt.legend(loc="best", bbox_to_anchor=(1.0, 1.0/len(index)))
-        plt.xlim((0,max_cycles))
-        plt.xlabel('Cycles / Single Spin Update')
-        plt.title("Module Optimization: " + modopt + ", N = " + str(L), size = 20)
+        plt.ylim((0,max_cycles))
+        plt.xlim(-0.5, 3)
+        ax.yaxis.grid(True)
+        ax.set_ylabel('Cycles / Single Spin Update', fontsize=12, rotation = "horizontal", horizontalalignment = "left")
+        ax.yaxis.set_label_coords(0, 1.05)
+        #~ plt.xlabel('Cycles / Single Spin Update')
+        plt.title(r"\textbf{Module Optimization: " + modopt + ", N = " + str(L)+"}",fontsize=15, position = (0.0, 1.1), horizontalalignment = "left")
         plt.subplots_adjust(right=0.85)
         #~ plt.show()
         plt.gcf().set_size_inches(12, 2 * len(index));
@@ -204,10 +224,10 @@ def plot(name):
 if __name__ == "__main__":
     
     
-    print("I, " + ', '.join(sim_versions))
-    print("I, " + ', '.join(grid_versions))
-    print("I, " + ', '.join(matrix_versions))
-    print("I, " + ', '.join(rng_versions))
+    #~ print("I, " + ', '.join(sim_versions))
+    #~ print("I, " + ', '.join(grid_versions))
+    #~ print("I, " + ', '.join(matrix_versions))
+    #~ print("I, " + ', '.join(rng_versions))
     
     #------------------- output ------------------- 
     #~ I, msk_v1_sim, greschd_v1_sim, baseline_greschd_sim
@@ -216,5 +236,6 @@ if __name__ == "__main__":
     #~ I, mkl_mt_rng, std_mt_rng, custom_mt_rng
     
     #~ run("micro_bench")
-    plot("micro_bench")
+    module_numbers = [["5123","7345","4579"],["1363","1236"],["2346","8456"],["1346","5478","1234"]]
+    plot("micro_bench",["RNG", "GRID", "SIM", "MATRIX"],[["economic use \& MKL", "economic use", "std::mt"],["precompute b.c.", "baseline"],["precompute exp", "baseline"],["compressed \& Z-order", "compressed", "C array"]], module_numbers)
         
