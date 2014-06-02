@@ -1,7 +1,7 @@
 I, greschd_v6_sim, greschd_v2_sim, greschd_v4_sim, greschd_v3_sim
 I, baseline_greschd_grid, msk_v1_pbc
 I, msk_v2_dynamic_zip, msk_v0_std_vec, msk_v1_zorder, msk_v0_c_array_dynamic, msk_v3_zip_order
-I, mkl_mt_rng
+I, mkl_mt_rng, std_mt, custom_mt
 A, 0000, 10, 1, 129
 A, 0010, 10, 1, 124
 A, 0020, 10, 1, 171

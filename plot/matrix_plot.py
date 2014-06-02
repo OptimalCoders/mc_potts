@@ -75,9 +75,10 @@ def plot(name, specs):
         cb = fig.colorbar(res)
         plt.yticks(range(width), T_list)
         plt.xticks(range(height), N_list)
-        plt.xlabel(r'Size N (N\textsuperscript{3} Particles)')
+        
+        plt.xlabel(r'Size N (N\textsuperscript{3} Particles)', horizontalalignment = "right", x = 1, y = 0)
         plt.ylabel('Temperature T', rotation = "horizontal", horizontalalignment = "left", verticalalignment="top")
-        plt.title("Runtime Screening", size=20)
+        plt.title(r"\textbf{Runtime Screening}", size=16, x = 0, y = 1.15, horizontalalignment = "left")
         ax.yaxis.set_label_coords(x = 0, y = 1.1)
         
         
@@ -91,19 +92,17 @@ def plot_modules(name, specs):
         res = pickle.load(f)
         f.close()
         
+        dg_msk_mapping = [[0, 3, 2, 1], [1, 0], [3, 2, 1, 4, 0], [0, 1, 2]]
+        msk_report_mapping = [[3, 2, 3, 2, 4], [0, 1], [2, 0, 3, 1, 4], [2, 0, 1]]
+        
+        #~ mapping = dg_msk_mapping
+        mapping = lambda idx, x: msk_report_mapping[idx][x]
+        #~ mapping = lambda idx, x: msk_report_mapping[idx][dg_msk_mapping[idx][x]]
+        
         def remap(m, idx):
-            if idx == 0:
-                remap_sim = [0, 3, 2, 1]
-                m = remap_sim[m]
-            elif idx == 1:
-                remap_grid = [1, 0]
-                m = remap_grid[m]
-            elif idx == 2:
-                remap_mat = [3, 2, 1, 4, 0]
-                m = remap_mat[m]
-            elif idx == 3:
-                pass
+            m = mapping(idx, m)
             return m
+            
         def remap_l(m):
             for i in range(len(m)):
                 m[i] = remap(m[i], i)
@@ -188,9 +187,9 @@ def plot_modules(name, specs):
         cb = fig.colorbar(res)
         plt.yticks(range(width), T_list)
         plt.xticks(range(height), N_list)
-        plt.xlabel(r'Size N (N\textsuperscript{3} Particles)')
+        plt.xlabel(r'Size N (N\textsuperscript{3} Particles)', horizontalalignment = "right", x = 1, y = 0)
         plt.ylabel('Temperature T', rotation = "horizontal", horizontalalignment = "left", verticalalignment="top")
-        plt.title("Optimal Modules", size=20)
+        plt.title(r"\textbf{Optimal Modules}", size=16, x = 0, y = 1.15, horizontalalignment = "left")
         ax.yaxis.set_label_coords(x = 0, y = 1.1)
         
         flags = '-Wall -std=c++11 -O3 -DNDEBUG -march=core-avx2'
@@ -206,7 +205,8 @@ if __name__ == "__main__":
     msk = "system: Ubuntu 14.04 on Intel Core 2 (Wolfdale) @2.4 GHz\ncompiler: gcc v4.8.1\nflags: "
     #~ plot("../mc_potts/plot/mskoenz_plots/full_screen_msk", msk)
     #~ plot_modules("../mc_potts/plot/mskoenz_plots/full_screen_msk", msk)
-    #~ plot("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
-    plot_modules("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
+    
+    plot("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
+    #~ plot_modules("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
     
     
