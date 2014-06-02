@@ -96,8 +96,8 @@ def plot_modules(name, specs):
         msk_report_mapping = [[3, 2, 3, 2, 4], [0, 1], [2, 0, 3, 1, 4], [2, 0, 1]]
         
         #~ mapping = dg_msk_mapping
-        mapping = lambda idx, x: msk_report_mapping[idx][x]
-        #~ mapping = lambda idx, x: msk_report_mapping[idx][dg_msk_mapping[idx][x]]
+        #~ mapping = lambda idx, x: msk_report_mapping[idx][x]
+        mapping = lambda idx, x: msk_report_mapping[idx][dg_msk_mapping[idx][x]]
         
         def remap(m, idx):
             m = mapping(idx, m)
@@ -187,6 +187,14 @@ def plot_modules(name, specs):
         cb = fig.colorbar(res)
         plt.yticks(range(width), T_list)
         plt.xticks(range(height), N_list)
+        ax.yaxis.set_ticks_position("none")
+        ax.xaxis.set_ticks_position("none")
+        
+        ax.set_yticks([i + 0.5 for i in range(len(T_list))] , minor = True)
+        ax.set_xticks([i + 0.5 for i in range(len(N_list))] , minor = True)
+        
+        plt.grid(True, color = "gray", linestyle = "-", which = "minor")
+        
         plt.xlabel(r'Size N (N\textsuperscript{3} Particles)', horizontalalignment = "right", x = 1, y = 0)
         plt.ylabel('Temperature T', rotation = "horizontal", horizontalalignment = "left", verticalalignment="top")
         plt.title(r"\textbf{Optimal Modules}", size=16, x = 0, y = 1.15, horizontalalignment = "left")
@@ -206,7 +214,7 @@ if __name__ == "__main__":
     #~ plot("../mc_potts/plot/mskoenz_plots/full_screen_msk", msk)
     #~ plot_modules("../mc_potts/plot/mskoenz_plots/full_screen_msk", msk)
     
-    plot("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
-    #~ plot_modules("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
+    #~ plot("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
+    plot_modules("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
     
     
