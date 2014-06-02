@@ -9,3 +9,5 @@ libMeasuringCore.a
 install.hpp
 install*.hpp
 measuring_core.h
+report.*
+report

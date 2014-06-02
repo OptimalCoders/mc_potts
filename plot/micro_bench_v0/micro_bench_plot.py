@@ -64,9 +64,8 @@ def screen_performance(T, L, H, D):
     temp_runtime = measure_wrapper(temp_idx, T, L, H, D)
     print(temp_runtime)
     
-def run(name):
+def run(name, L):
     plot = 4
-    L = 300
    
     #~ L = 1000
     #~ max_cycles = 700
@@ -166,7 +165,7 @@ def run(name):
     pickle.dump([plot, L, pickle_data], f)
     f.close()
     
-def plot(name, modopts, labels, module_numbers):
+def plot(filename, modopts, labels, module_numbers, max_cycles):
     background_color = '#eeeeee' 
     grid_color = 'white' #FAFAF7'
     rc('axes', facecolor = background_color)
@@ -182,12 +181,11 @@ def plot(name, modopts, labels, module_numbers):
     rc('ytick.minor',size =0 )
     rc('font',**{'family':'sans-serif', 'sans-serif':['Gill Sans MT']})
     
-    f = open(name + ".txt", "rb")
+    f = open(filename + ".txt", "rb")
     plot, L, pickle_data = pickle.load(f)
     f.close()
     
-    colors = ["#6688FF","#66DD66","#DD6666","#DD66CC","#AAAAAA"]
-    max_cycles = 600
+    colors = ["#DD6666","#6688FF","#66DD66","#FFFF66","#AAAAAA"]
     
     for i in range(plot):
         index, highlight, res, data, names, values, lefts, orders, bottoms = pickle_data[i]
@@ -204,19 +202,21 @@ def plot(name, modopts, labels, module_numbers):
                     color=color, label=part_labels[j], edgecolor = "none")
                     
         current_labels = [r"\textbf{" + labels[i][j] + "}\n(" + module_numbers[i][j] + ")" for j in range(len(index))]
-        plt.xticks(lefts+0.25, current_labels)
-        plt.legend(loc="best", bbox_to_anchor=(1.0, 1.0/len(index)))
+        plt.xticks(lefts+0.25, current_labels, fontsize = 14)
+        plt.yticks(fontsize = 14)
+        plt.legend(loc="best", bbox_to_anchor=(1.0, 1.0), fontsize = 12)
         plt.ylim((0,max_cycles))
-        plt.xlim(-0.5, 3)
+        plt.xlim(-0.2, 2.7)
         ax.yaxis.grid(True)
-        ax.set_ylabel('Cycles / Single Spin Update', fontsize=12, rotation = "horizontal", horizontalalignment = "left")
+        ax.set_ylabel('Cycles / Single Spin Update', fontsize=14, rotation = "horizontal", horizontalalignment = "left")
         ax.yaxis.set_label_coords(0, 1.05)
         #~ plt.xlabel('Cycles / Single Spin Update')
         plt.title(r"\textbf{Module Optimization: " + modopt + ", N = " + str(L)+"}",fontsize=15, position = (0.0, 1.1), horizontalalignment = "left")
         plt.subplots_adjust(right=0.85)
         #~ plt.show()
-        plt.gcf().set_size_inches(12, 2 * len(index));
-        plt.savefig("plot" + str(i) + ".pdf", dpi=250,  bbox_inches='tight')
+        scale = 0.7
+        plt.gcf().set_size_inches(scale * 12, scale * 2 * len(index));
+        plt.savefig("plot" + str(i) + "_" + filename + ".pdf", dpi=250,  bbox_inches='tight')
         plt.clf()
         
 #-----------------------------------------------------------------------#
@@ -235,7 +235,9 @@ if __name__ == "__main__":
     #~ I, msk_v2_dynamic_zip, msk_v0_std_vec, msk_v1_zorder, msk_v0_c_array_dynamic, baseline_greschd_matrix,msk_v0_c_array_static, msk_v2_static_zip, int2t_v01_matrix
     #~ I, mkl_mt_rng, std_mt_rng, custom_mt_rng
     
-    #~ run("micro_bench")
-    module_numbers = [["5123","7345","4579"],["1363","1236"],["2346","8456"],["1346","5478","1234"]]
-    plot("micro_bench",["RNG", "GRID", "SIM", "MATRIX"],[["economic use \& MKL", "economic use", "std::mt"],["precompute b.c.", "baseline"],["precompute exp", "baseline"],["compressed \& Z-order", "compressed", "C array"]], module_numbers)
+    run("msk_20", 20)
+    run("msk_1000", 1000)
+    #~ module_numbers = [["0012","0011","0010"],["0112","0012"],["1112","0112"],["1142","1122","1112"]]
+    #~ plot("20",["RNG", "GRID", "SIM", "MATRIX"],[["economic MKL mt", "economic STL mt", "STL mt"],["boundary lookup table", "baseline"],["probability precomputation", "baseline"],["compressed Z-order", "compressed", "C array"]], module_numbers, 500)
+    #~ plot("1000",["RNG", "GRID", "SIM", "MATRIX"],[["economic MKL mt", "economic STL mt", "STL mt"],["boundary lookup table", "baseline"],["probability precomputation", "baseline"],["compressed Z-order", "compressed", "C array"]], module_numbers, 600)
         
