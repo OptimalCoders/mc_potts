@@ -69,7 +69,7 @@ def plot(name, specs):
                 ax.annotate(str(conf_arr[x][y]), xy=(y, x)
                             , horizontalalignment='center'
                             , verticalalignment='center'
-                            , fontsize = 10
+                            , fontsize = 12
                             , color = ["white", "black"][y > 6]
                             )
         cb = fig.colorbar(res)
@@ -82,8 +82,8 @@ def plot(name, specs):
         
         
         flags = '-Wall -std=c++11 -O3 -DNDEBUG -march=core-avx2'
-        ax.text(0,-0.55, specs + flags, bbox=dict(facecolor='white', alpha=1, boxstyle = 'round'), transform = ax.transAxes)
-        plt.gcf().set_size_inches(10, 3);
+        #~ ax.text(0,-0.55, specs + flags, bbox=dict(facecolor='white', alpha=1, boxstyle = 'round'), transform = ax.transAxes)
+        plt.gcf().set_size_inches(8, 2);
         fig.savefig("matrix.pdf", dpi=250,  bbox_inches='tight')
         
 def plot_modules(name, specs):
@@ -116,7 +116,6 @@ def plot_modules(name, specs):
         f = open(name2, "r")
         mods = f.readlines()[:4]
         f.close()
-        
         
         for i in range(len(mods)):
             mods[i] = (mods[i].split("\n")[0]).split(", ")[1:]
@@ -183,8 +182,8 @@ def plot_modules(name, specs):
                 ax.annotate(conf_arr[x][y], xy=(y, x)
                             , horizontalalignment='center'
                             , verticalalignment='center'
-                            , fontsize = 10
-                            , color = ["white", "black"][corr_arr[x][y] > len(cnt)/2.0 - 3]
+                            , fontsize = 12
+                            , color = ["white", "black"][(corr_arr[x][y] > len(cnt)/2.0 - 3) and (corr_arr[x][y] < (len(cnt)-1))]
                             )
         cb = fig.colorbar(res)
         plt.yticks(range(width), T_list)
@@ -195,12 +194,11 @@ def plot_modules(name, specs):
         ax.yaxis.set_label_coords(x = 0, y = 1.1)
         
         flags = '-Wall -std=c++11 -O3 -DNDEBUG -march=core-avx2'
-        #~ ax.text(0,-0.55, specs + flags, bbox=dict(facecolor='white', alpha=1, boxstyle = 'round'), transform = ax.transAxes)
         
-        ax.text(0,-0.65, mod_text[:-1], bbox=dict(facecolor='white', alpha=1, boxstyle = 'round'), transform = ax.transAxes)
+        #~ ax.text(0,-0.65, mod_text[:-1], bbox=dict(facecolor='white', alpha=1, boxstyle = 'round'), transform = ax.transAxes)
         
         fig.delaxes(fig.axes[1]) 
-        plt.gcf().set_size_inches(10, 3)
+        plt.gcf().set_size_inches(8, 2)
         fig.savefig("module.pdf", dpi=250,  bbox_inches='tight')
 
 if __name__ == "__main__":
