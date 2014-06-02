@@ -235,9 +235,9 @@ if __name__ == "__main__":
     #~ I, msk_v2_dynamic_zip, msk_v0_std_vec, msk_v1_zorder, msk_v0_c_array_dynamic, baseline_greschd_matrix,msk_v0_c_array_static, msk_v2_static_zip, int2t_v01_matrix
     #~ I, mkl_mt_rng, std_mt_rng, custom_mt_rng
     
-    run("msk_20", 20)
+    #~ run("msk_20", 20)
     #~ run("msk_300", 300)
     module_numbers = [["0012","0011","0010"],["0112","0012"],["1112","0112"],["1142","1122","1112"]]
-    plot("msk_20",["RNG", "GRID", "SIM", "MATRIX"],[["economic MKL mt", "economic STL mt", "STL mt"],["boundary lookup table", "baseline"],["probability precomputation", "baseline"],["compressed Z-order", "compressed", "C array"]], module_numbers, 400)
-    #~ plot("msk_300",["RNG", "GRID", "SIM", "MATRIX"],[["economic MKL mt", "economic STL mt", "STL mt"],["boundary lookup table", "baseline"],["probability precomputation", "baseline"],["compressed Z-order", "compressed", "C array"]], module_numbers, 1000)
+    plot("msk_20",["RNG", "GRID", "SIM", "MATRIX"],[["economic MKL mt", "economic STL mt", "STL mt"],["boundary lookup table", "baseline"],["probability precomputation", "baseline"],["compressed Z-order", "compressed", "C array"]], module_numbers, 300)
+    plot("msk_300",["RNG", "GRID", "SIM", "MATRIX"],[["economic MKL mt", "economic STL mt", "STL mt"],["boundary lookup table", "baseline"],["probability precomputation", "baseline"],["compressed Z-order", "compressed", "C array"]], module_numbers, 1100)
         
