@@ -236,7 +236,7 @@ if __name__ == "__main__":
     #~ I, mkl_mt_rng, std_mt_rng, custom_mt_rng
     
     run("msk_20", 20)
-    run("msk_1000", 1000)
+    run("msk_300", 300)
     #~ module_numbers = [["0012","0011","0010"],["0112","0012"],["1112","0112"],["1142","1122","1112"]]
     #~ plot("20",["RNG", "GRID", "SIM", "MATRIX"],[["economic MKL mt", "economic STL mt", "STL mt"],["boundary lookup table", "baseline"],["probability precomputation", "baseline"],["compressed Z-order", "compressed", "C array"]], module_numbers, 500)
     #~ plot("1000",["RNG", "GRID", "SIM", "MATRIX"],[["economic MKL mt", "economic STL mt", "STL mt"],["boundary lookup table", "baseline"],["probability precomputation", "baseline"],["compressed Z-order", "compressed", "C array"]], module_numbers, 600)

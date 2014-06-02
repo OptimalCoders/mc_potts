@@ -91,16 +91,39 @@ def plot_modules(name, specs):
         res = pickle.load(f)
         f.close()
         
+        def remap(m, idx):
+            if idx == 0:
+                remap_sim = [0, 3, 2, 1]
+                m = remap_sim[m]
+            elif idx == 1:
+                remap_grid = [1, 0]
+                m = remap_grid[m]
+            elif idx == 2:
+                remap_mat = [3, 2, 1, 4, 0]
+                m = remap_mat[m]
+            elif idx == 3:
+                pass
+            return m
+        def remap_l(m):
+            for i in range(len(m)):
+                m[i] = remap(m[i], i)
+                
+        for r in res:
+            remap_l(r[2][0])
+        
         #------------------- import decode list ------------------- 
         name2 = "/".join(name.split("/")[:-1]) + "/data.txt"
         f = open(name2, "r")
         mods = f.readlines()[:4]
         f.close()
         
+        
         for i in range(len(mods)):
             mods[i] = (mods[i].split("\n")[0]).split(", ")[1:]
-            mods[i] = [[mods[i][j], j, 0] for j in range(len(mods[i]))]
-            
+            mods[i] = [[mods[i][j], remap(j, i), 0] for j in range(len(mods[i]))]
+            mods[i] = sorted(mods[i], key=lambda x: x[1])
+        
+        print(mods)
         #------------------- setup colors equidistant ------------------- 
         cnt = dict()
         
@@ -133,6 +156,7 @@ def plot_modules(name, specs):
         
         conf_arr = []
         corr_arr = []
+        
         
         #------------------- prepare plot ------------------- 
         for i in range(len(T_list)):
@@ -184,7 +208,7 @@ if __name__ == "__main__":
     msk = "system: Ubuntu 14.04 on Intel Core 2 (Wolfdale) @2.4 GHz\ncompiler: gcc v4.8.1\nflags: "
     #~ plot("../mc_potts/plot/mskoenz_plots/full_screen_msk", msk)
     #~ plot_modules("../mc_potts/plot/mskoenz_plots/full_screen_msk", msk)
-    plot("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
+    #~ plot("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
     plot_modules("../mc_potts/plot/greschd_plots/full_screen_dg", dg)
     
     
