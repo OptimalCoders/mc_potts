@@ -12,6 +12,7 @@
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{units}
+\usepackage{float}
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
@@ -173,9 +174,29 @@ struct size_helper {
 };
 \end{lstlisting}
 \section{Experimental Results}\label{sec:exp}
-
-\subsection{List of Modules}
-The exact configuration of modules used in a measurement is noted using a four - digit index corresponding to (SIM, GRID, MATRIX, RNG) according to the following list of modules (with optimisations described in section \ref{sec:yourmethod}):
+This section describes the different measurements that were performed and their results. After introducing the platforms that were used and some notation, the impact each optimisation has on runtime is studied. Finally, the results of screening all module combinations and the performance of the auto - tuned code is shown.
+\subsection{Experimental setup} \label{exp:setup}
+The two platforms used are shown in Table \ref{platforms}. 
+\begin{table}[h]
+\begin{tabular}{lll}
+ & \textbf{Haswell} & \textbf{Wolfdale}\\\hline
+\textbf{Architecture} & Intel Core i7 & Intel Core 2\\\hline
+\textbf{Frequency} & $\unit[2.4]{GHz}$ & $\unit[2.4]{GHz}$\\\hline
+\textbf{OS} & Ubuntu 13.10 & Ubuntu 14.04\\\hline
+\textbf{Compiler} & gcc 4.8.1 & gcc 4.8.1\\\hline
+ & -std=c++11  & -std=c++11  \\
+\textbf{Flags}& -DNDEBUG & -DNDEBUG \\
+& -O3  &  -O3 \\
+& -march=core-avx2 & -march=core2 \\
+\end{tabular}
+\caption{Platforms used for the measurements}
+\label{platforms}
+\end{table}
+\newline For all measurements, the rdtsc command was used to determine the runtime. In the roofline measurements, the memory traffic was measured with perfplot \cite{PERFPLOT}. Additionally, VTune, perf and gprof were used for profiling during development.
+also used.\newline
+Measurements showing the splitting of runtime amongst the different modules is achieved by starting / stopping the time measurement between different tasks in the algorithm. This may to some extent influence the total runtime by inhibiting out-of-order computation.\newline
+Runtime of \texttt{GRID} and \texttt{MATRIX} is measured together, but split into accessing selected spin itself (single spin, s.s.) and accessing its nearest neighbours (n.n.). \newline
+The exact configuration of modules used in a measurement is noted using a four - digit index corresponding to (SIM, GRID, MATRIX, RNG) as listed in Table \ref{modlist} (with optimisations as described in Sec. \ref{sec:yourmethod}):
 \begin{table}[h]
 \begin{tabular}{ll|l}
 & \textbf{index} & \textbf{optimisations} \\\cline{2-3}
@@ -198,65 +219,58 @@ The exact configuration of modules used in a measurement is noted using a four -
 & \textbf{1} & economic use \\\cline{2-3}
 & \textbf{2} & 1 \& MKL engine\\\cline{2-3}
 \end{tabular}
+\caption{List of Modules}
+\label{modlist}
 \end{table}
-
-\subsection{Experimental setup} 
-
-The two platforms used are shown in the following table:\newline
-\begin{table}[h]
-\begin{tabular}{l|l|l}
- & \textbf{Haswell} & \textbf{Wolfdale}\\\hline\hline
-\textbf{Architecture} & Intel Core i7 & Intel Core 2\\\hline
-\textbf{Frequency} & $\unit[2.4]{GHz}$ & $\unit[2.4]{GHz}$\\\hline
-\textbf{OS} & Ubuntu 13.10 & Ubuntu 14.04\\\hline
-\textbf{Compiler} & gcc 4.8.1 & gcc 4.8.1\\\hline
- & -std=c++11  & -std=c++11  \\
-\textbf{Flags}& -DNDEBUG & -DNDEBUG \\
-& -O3  &  -O3 \\
-& -march=core-avx2 & -march=core2 \\
-\end{tabular}\newline
-\end{table}
-For all final measurements the rdtsc command and perfplot \cite{PERFPLOT} was
-used. During profiling and development VTune, perf and gprof were
-also used.
 \subsection{Results: SIM optimization}
-Figures \ref{SIM:Wolf:20} and \ref{SIM:Has:20} show the runtime partition of the single spin update. All modules except SIM are the same. The baseline-module computes the Boltzmann factors each time, while the second module precomputes these probabillities. The amount of cycles needed for the SIM part is reduced on both systems. On Haswell, this shows a $2$x speedup.
-	\begin{figure}[h]\centering
+Figures \ref{SIM:Wolf:20} and \ref{SIM:Has:20} show the runtime partition of the single spin update. All modules except SIM are the same. The baseline-module computes the Boltzmann factors each time, while the second module precomputes these probabillities. The amount of cycles needed for the SIM part is reduced on both systems. On Haswell, this shows a $2$x speedup for a system with side length $N = 20$.
+	\begin{figure}[H]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_20_2.pdf}
-	  \caption{N = 20, SIM, Wolfdale}
+	  \caption{Speedup by probability precomputation, on Wolfdale}
 	  \label{SIM:Wolf:20}
 	\end{figure}
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/dg_20_2.pdf}
-	  \caption{N = 20, SIM, Haswell}
+	  \caption{Speedup by probability precomputation, on Haswell}
 	  \label{SIM:Has:20}
 	\end{figure}
 \subsection{Results: GRID optimization}
+Storing the boundary condition in a lookup table doesn't show a very significant speedup in terms of total runtime. However, nearest neighbour access - the part that is influenced most by the improvement - is sped up by roughly $2$x for sidelength $N = 20$ (see Fig. \ref{GRID:Wolf:20} and \ref{GRID:Has:20}).
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_20_1.pdf}
-	  \caption{N = 20, GRID, Wolfdale}
+	  \caption{Influence on runtime by using a boundary lookup table (\texttt{GRID} optimisation), on Wolfdale}
+	  \label{GRID:Wolf:20}
 	\end{figure}
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/dg_20_1.pdf}
-	  \caption{N = 20, GRID, Haswell}
+	  \caption{Influence on runtime by using a boundary lookup table (\texttt{GRID} optimisation), on Haswell}
+	  \label{GRID:Has:20}
 	\end{figure}
 \subsection{Results: MATRIX optimization}
+The impact compression and Z-order have on the runtime is clearly size - dependent: For a small system ($N = 20$, $8000$ spins, on Wolfdale), the influence of compression is negligible and the overhead for using Z - order is larger than the gain (see Fig. \ref{MATRIX:Wolf:20}).
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_20_3.pdf}
-	  \caption{N = 20, MATRIX, Wolfdale}
-	\end{figure}
+	  \caption{Different \texttt{MATRIX} optimisations for $N = 20$, on Wolfdale}
+	  \label{MATRIX:Wolf:20}
+	\end{figure}\newline
+At larger sizes, as the impact of accessing the spins increases, compresssion and Z-order both become significant improvements (see Fig. \ref{MATRIX:Wolf:300}). This improvement is most noticeable when the system starts running out of last level cache. At those sizes, the compressed version might still fit into LLC and hence perform much better.
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_300_3.pdf}
-	  \caption{N = 300, MATRIX, Wolfdale}
-	\end{figure}
+	  \caption{Different \texttt{MATRIX} optimisations for $N = 300$, on Wolfdale}
+	  \label{MATRIX:Wolf:300}
+	\end{figure}\newline
+On Haswell, it can be observed that even for large sizes ($N=1000$, $10^9$ spins), accessing the nearest neighbours takes next to no time (see Fig. \ref{MATRIX:Has:1000}). This might be due to the prefetching in Haswell, which could load the neighbours into Cache as soon as the position of the single spin is known. However, this would still cost memory bandwidth, but go undetected by this measuring scheme since it happens out-of-order (see Sec. \ref{exp:setup}). 
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/dg_1000_3.pdf}
-	  \caption{N = 1000, MATRIX, Haswell}
+	  \caption{Different \texttt{MATRIX} optimisations for $N = 1000$, on Haswell}
+	  \label{MATRIX:Has:1000}
 	\end{figure}
 \subsection{Results: RNG optimization}
+Economic use of the random numbers shows significant impact ($>2$x for small sizes). Using the MKL engine however shows some speedup, but not a negligible one (see Fig. \ref{RNG:Has:20}).
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/dg_20_0.pdf}
-	  \caption{N = 20, RNG, Haswell}
+	  \caption{Runtime using different \texttt{RNG} modules, on Haswell}
+	  \label{RNG:Has:20}
 	\end{figure}
 \subsection{Results: Autotuning}
 	\begin{figure}[h]\centering
