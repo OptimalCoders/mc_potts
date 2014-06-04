@@ -13,6 +13,7 @@
 \usepackage{hyperref}
 \usepackage{units}
 \usepackage{float}
+\usepackage[skip = 5pt]{caption}
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
@@ -133,7 +134,7 @@ The following section describes the implementation of the Potts model, specifica
 \subsection{Modular Structure} Splitting the implementation into four modules (with their respective interfaces) allowed for an efficient workflow. It became possible to optimize parts of the implementation completely independently, which is a great benefit when working in a team. The four modules are as follows:
 \begin{itemize}[noitemsep, topsep = 0pt]
 \item \textbf{\texttt{SIM}:} Contains the high-level aspects of the metropolis algorithm: Computing probabilities, accepting or rejecting an update, and also calls to the other modules (i.e. requesting random numbers or getting / setting spins).
-\item \textbf{\texttt{GRID}:} Takes care of the boundary conditions, i.e. it computes the nearest neighbours of a selected spin.
+\item \textbf{\texttt{GRID}:} Takes care of the boundary conditions, i.e. it computes the nearest neighbours of a selected spin and interfaces to the \texttt{MATRIX} module.
 \item \textbf{\texttt{MATRIX}:} Contains the explicit data format  of the system (e.g. \texttt{std::vector} or \texttt{C array}).
 \item \textbf{\texttt{RNG}:} Provides the random numbers. All implementations use a mersenne twister engine.
 \end{itemize}
@@ -155,10 +156,11 @@ In the following parts, the different optimazation techniques used for each modu
 \item \textbf{Economic use:} Since many of the random numbers used only are a few \texttt{bits} long, the \texttt{std::mt19937} implementation (which uses $32 \mathtt{bit}$ for each random number at least) can be optimized greatly by using all the bits in each generated random number (with some overhead for splitting up the random numbers).
 \item \textbf{MKL:} The underlying Mersenne twister engine was exchanged for the MKL implementation \cite{MKL} (whilst still using the method of economic use described before).
 \end{itemize}
-\subsection{Autotuning}
-Many of the optimizations seen in sections \ref{opt:sim} - \ref{opt:rng} perform well only under certain conditions (i.e. at certain system sizes and temperatures). For example, using Z - order might be great at large sizes, but the overhead for computing the index is too large for smaller ones. \\
-The modular structure of the code provides the ideal grounds for tackling this problem using an autotuning approach:\\
-For a fixed number of sizes, the optimized combination of modules is searched (either by doing a full sweep over all the combinations, or - much faster - by iteratively exchanging one module whilst keeping the others fixed). This installation routine creates a header file (\texttt{install.hpp}) containing template specialisations, as seen in Listing \ref{listing1}.
+\subsection{Autotuning}\label{opt:autotuning}
+Many of the optimisations seen in sections \ref{opt:sim} - \ref{opt:rng} perform well only under \textbf{certain conditions} (i.e. at certain system sizes and temperatures). For example, using Z - order might be great at large sizes, but the overhead for computing the index is too large for smaller ones. \newline
+The modular structure of the code provides the ideal grounds for tackling this problem using an \textbf{autotuning} approach:\newline
+For a fixed number of sizes, the optimized combination of modules is searched either by doing a full sweep over all the combinations, or - much faster - by \textbf{iteratively exchanging} one module whilst keeping the others fixed.\newline That means one starts with a certain combination of modules and then tries all possible combinations by only exchanging the first one. The fastest version amongst those is kept for the next step, in which the second module is being exchanged, and so on.\newline This process is repeated until convergence is reached, that is until a full iteration (trying to exchange each modules) does not yield any faster combinations. However, this does \textbf{not guarantee} that the process has found the \textbf{global minimum}, since it might be stuck at a local one.\newline 
+This installation routine creates a header file containing template specialisations describing the best combination for each measured size. Listing \ref{listing1} shows a snippet of this header.\newline
 \begin{lstlisting}[caption = {example for a template specialisation}, label = listing1]
 template<>
 struct opt<150> {
@@ -173,10 +175,11 @@ struct size_helper {
     static constexpr int size = size_helper<S, N - 1, S >= (sizes[N] + sizes[N - 1])/ 2 >::size;
 };
 \end{lstlisting}
+Making an installation that also varies according to temperature was also discussed, but dismissed because the temperature of the system may be varied during one measurement cycle. This could lead to a large overhead for switching between versions.
 \section{Experimental Results}\label{sec:exp}
 This section describes the different measurements that were performed and their results. After introducing the platforms that were used and some notation, the impact each optimisation has on runtime is studied. Finally, the results of screening all module combinations and the performance of the auto - tuned code is shown.
 \subsection{Experimental setup} \label{exp:setup}
-The two platforms used are shown in Table \ref{platforms}. 
+The two platforms used for measurements are shown in Table \ref{platforms}. They will be referenced by their architecture codename (Wolfdale / Haswell).
 \begin{table}[h]
 \begin{tabular}{lll}
  & \textbf{Haswell} & \textbf{Wolfdale}\\\hline
@@ -192,14 +195,16 @@ The two platforms used are shown in Table \ref{platforms}.
 \caption{Platforms used for the measurements}
 \label{platforms}
 \end{table}
-\newline For all measurements, the rdtsc command was used to determine the runtime. In the roofline measurements, the memory traffic was measured with perfplot \cite{PERFPLOT}. Additionally, VTune, perf and gprof were used for profiling during development.
+\newline For all measurements, the \textbf{rdtsc} command was used to determine the runtime. In the roofline measurements, the memory traffic was measured with \textbf{perfplot} \cite{PERFPLOT}. Additionally, VTune, perf and gprof were used for profiling during development.
 also used.\newline
-Measurements showing the splitting of runtime amongst the different modules is achieved by starting / stopping the time measurement between different tasks in the algorithm. This may to some extent influence the total runtime by inhibiting out-of-order computation.\newline
+Measurements showing the \textbf{splitting} of runtime amongst the different \textbf{modules} is achieved by starting / stopping the time measurement between different tasks in the algorithm. This may to some extent influence the total runtime by inhibiting out-of-order computation.\newline
+In the following sections, combinations of modules where one module is being exchanged will be discussed. For those measurements, one can look at both decrease in total runtime and decrease in \textbf{runtime caused} by that \textbf{specific module}. However, the former is always influenced by the choice of all the other modules, which makes the latter a better measure for the effectivity of an optimisation.\newline
 Runtime of \texttt{GRID} and \texttt{MATRIX} is measured together, but split into accessing selected spin itself (single spin, s.s.) and accessing its nearest neighbours (n.n.). \newline
-The exact configuration of modules used in a measurement is noted using a four - digit index corresponding to (SIM, GRID, MATRIX, RNG) as listed in Table \ref{modlist} (with optimisations as described in Sec. \ref{sec:yourmethod}):
+The exact configuration of modules used in a measurement is noted using a \textbf{four - digit index} corresponding to (SIM, GRID, MATRIX, RNG) as listed in Table \ref{modlist} (with optimisations as described in Sec. \ref{sec:yourmethod}).\newline
+As an example, (0132) would correspond to a baseline \texttt{SIM} with boundary lookup table in \texttt{GRID}, Z-order \texttt{MATRIX} and economic use \& MKL \texttt{RNG}. 
 \begin{table}[h]
 \begin{tabular}{ll|l}
-& \textbf{index} & \textbf{optimisations} \\\cline{2-3}
+& \textbf{digit} & \textbf{optimisations} \\\cline{2-3}
 \textbf{SIM:} \\\hline
 & \textbf{0} & baseline \\\cline{2-3}
 & \textbf{1} & probability precomputation\\\cline{2-3}
@@ -222,8 +227,8 @@ The exact configuration of modules used in a measurement is noted using a four -
 \caption{List of Modules}
 \label{modlist}
 \end{table}
-\subsection{Results: SIM optimization}
-Figures \ref{SIM:Wolf:20} and \ref{SIM:Has:20} show the runtime partition of the single spin update. All modules except SIM are the same. The baseline-module computes the Boltzmann factors each time, while the second module precomputes these probabillities. The amount of cycles needed for the SIM part is reduced on both systems. On Haswell, this shows a $2$x speedup for a system with side length $N = 20$.
+\subsection{Results: SIM optimization} \label{res:SIM}
+Figures \ref{SIM:Wolf:20} and \ref{SIM:Has:20} show the runtime partition of the single spin update. All modules except SIM are the same. The baseline-module computes the Boltzmann factors each time, while the second module precomputes these probabillities. The amount of cycles needed for the SIM part is reduced on both systems. On Haswell, this shows an overall speedup of $2$x for a system with side length $N = 20$. Considering only the part of the runtime caused by the \texttt{SIM} module, however, the speedup is roughly $6$x.
 	\begin{figure}[H]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_20_2.pdf}
 	  \caption{Speedup by probability precomputation, on Wolfdale}
@@ -259,48 +264,61 @@ At larger sizes, as the impact of accessing the spins increases, compresssion an
 	  \caption{Different \texttt{MATRIX} optimisations for $N = 300$, on Wolfdale}
 	  \label{MATRIX:Wolf:300}
 	\end{figure}\newline
+This effect can be observed directly in Fig. \ref{roof:storage}, comparing C array and compressed \texttt{MATRIX} modules. Whilst the two modules are along the same line in the roofline plot, the system size at which the performance starts dropping is different (C array: $N \approx 100$, compressed: $N \approx 200$). 
+	\begin{figure}[h]\centering
+	\includegraphics[width = 8.36cm]{plots/roofline_1.pdf}
+	\caption{Performance of C array and compressed \texttt{MATRIX} modules, for various sizes, on Haswell}
+	\label{roof:storage}
+	\end{figure}\newline
 On Haswell, it can be observed that even for large sizes ($N=1000$, $10^9$ spins), accessing the nearest neighbours takes next to no time (see Fig. \ref{MATRIX:Has:1000}). This might be due to the prefetching in Haswell, which could load the neighbours into Cache as soon as the position of the single spin is known. However, this would still cost memory bandwidth, but go undetected by this measuring scheme since it happens out-of-order (see Sec. \ref{exp:setup}). 
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/dg_1000_3.pdf}
 	  \caption{Different \texttt{MATRIX} optimisations for $N = 1000$, on Haswell}
 	  \label{MATRIX:Has:1000}
 	\end{figure}
-\subsection{Results: RNG optimization}
-Economic use of the random numbers shows significant impact ($>2$x for small sizes). Using the MKL engine however shows some speedup, but not a negligible one (see Fig. \ref{RNG:Has:20}).
+\subsection{Results: RNG optimization}\label{res:RNG}
+The impact of economic use of random numbers and the MKL Mersenne - twister engine (as explained in Sec. \ref{opt:rng}) are shown in Fig. \ref{RNG:Has:20}. \newline
+It can be seen that the main speedup comes from economic use, whilst changing to the MKL engine has virtually no effect on runtime. \newline
+For a system of size $N = 20$ ($8000$ spins), these optimisations amount to an overall speedup of roughly $2 - 2.5$x (on Haswell). Considering only the part of total runtime caused by the \texttt{RNG} module, the speedup is roughly $6$x, and hence similar to the speedup seen for \texttt{SIM}.
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/dg_20_0.pdf}
 	  \caption{Runtime using different \texttt{RNG} modules, on Haswell}
 	  \label{RNG:Has:20}
 	\end{figure}
 \subsection{Results: Autotuning}
+A full screen of all the runtimes of all the module combinations has been done to determine which perform best at various sizes and temperatures. The runtimes achieved by the fastest version can be seen in Fig. \ref{screen:Wolf} (Wolfdale) and \ref{screen:Has} (Haswell), wich clearly shows the speedup between Wolfdale and Haswell (close to $2$x).
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/matrix_msk.pdf}
-	  \caption{Performance Screen, Wolfdale}
+	  \caption{Runtime of the fastest module combinations, on Wolfdale}
+	  \label{screen:Wolf}
 	\end{figure}
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/matrix_dg.pdf}
-	  \caption{Performance Screen, Haswell}
-	\end{figure}
+	  \caption{Runtime of the fastest module combinations, on Haswell}
+	  \label{screen:Has}
+	\end{figure}\newline
+Fig. \ref{mod:Wolf} and \ref{mod,Has} show which module combination performed best, using the indexing introduced in Sec. \ref{exp:setup}. A few points are worth noting: \newline
+Firstly, the module combinations used on the two platforms are sometimes quite different from each other and do not have too much of a pattern. This indicates that it might be quite difficult to actually predict which module works best. \newline
+Secondly, it has to be noted that for some sizes, the difference between fastest and second - fastest module combinations is very small - sometimes even within measurement error. So it might be possible to construct a neater arrangement of modules by allowing those second - best combinations.\newline
+Thirdly, whilst the temperature does have some inpact on which module is used, the dominant factor seems to be the size. This justifies not optimising w.r.t. temperature in the installation procedure (see Sec. \ref{opt:autotuning}).\newline
+Lastly, the region $N \in [150,400]$ (on Wolfdale) / $N \in [200,400]$ (on Haswell) is of particular interest. This region corresponds to the system size running out of LLC. Accordingly, the \texttt{MATRIX} module used in this region is the compressed version (third digit of the index $=2$).
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/module_msk2.pdf}
-	  \caption{Modules, Wolfdale}
+	  \caption{Best - performing modules (marked by index) for different sizes and temperatures, on Wolfdale}
+	  \label{mod:Wolf}
 	\end{figure}
-	
 	\begin{figure}[h]\centering
 		  \includegraphics[width = 8.36cm]{plots/module_dg2.pdf}
-		  \caption{Modules, Haswell}
-	\end{figure}
-	
-
-\subsection{Results: Performance}
+		  \caption{Best - performing modules (marked by index) for different sizes and temperatures, on Haswell}
+		  \label{mod,Has}
+	\end{figure}\newline
+The performance of the final version, using the fast installation procedure described in Sec. \ref{opt:autotuning}, is shown in Fig. \ref{roof:optvsbase}. Compared to the baseline implementation, the overall speedup ranges between $2 - 5$x, depending on system size. The speedup tends to be bigger for smaller sizes, where the vastly improved \texttt{SIM} and \texttt{RNG} modules takes up a significant part of the runtime. 
 	\begin{figure}[h]\centering
 		  \includegraphics[width = 8.36cm]{plots/roofline_0.pdf}
-		  \caption{Roofline, opt. vs baseline, Haswell}
+		  \caption{Final (installed) version of the code vs.  baseline implementation, on Haswell}
+		  \label{roof:optvsbase}
 	\end{figure}
-	\begin{figure}[h]\centering
-		  \includegraphics[width = 8.36cm]{plots/roofline_1.pdf}
-		  \caption{Roofline, C array and compressed, Haswell}
-	\end{figure}
+
 
 \section{Conclusions}
 
