@@ -87,49 +87,50 @@
 
 \section{Introduction}\label{sec:intro}
 \subsection{Motivation} 
+By studying the Potts model, questions about ferromagentic as well as other phenomena of a solid state can be investigated. The Potts model is a generalisation of the Ising model. It is not just used in statistical physics, but also in electrical engineering (signal processing) and in biology (neural networks). Our goal is to investigate numerous optimization techniques for the 4-state 3D Potts model and provide a framework with the optimal implementation. 
 \subsection{Related work}
 \section{Background: Potts Model and the Metropolis Algorithm}\label{sec:background}
+This section briefly describes the Potts model and introduces the Metropolis Algorithm, which can be used to simulate a Potts system.
 \subsection{Potts Model}
-The $n$-state Potts model ensemble of spins on a lattice. $n$ different
+The $n$-state Potts model describes an ensemble of spins on a lattice, where $n$ different
 states are available for each spin. These spins interact only with
 their nearest neighbors. The energy of the entire system is given
 by:
 \[
-E=J\sum_{<i,j>}\sigma_{i}^{z}\sigma_{j}^{z}
+E=J\sum_{\langle i,j \rangle}\sigma_{i}^{z}\sigma_{j}^{z}
 \]
-where $J$ is an interaction constant, $\sigma_{i}^{z}$ the z-component
-spin at lattice site i and $<i,j>$ the set of all neighbor-pairs.
-If $J<0$ the spins align preferable aligned. The $2$-state Potts
-model on a 2D square lattice is identical with the classical Ising
+where $J$ is an interaction constant, $\sigma_{i}^{z}$ the z-component of the
+spin at lattice site i and $\langle i,j \rangle$ the set of all nearest-neighbor-pairs.
+If $J<0$ the spins tend to order ferromagnetically (i.e. they are preferrably aligned). The $2$-state Potts model on a 2D square lattice is identical to the famous Ising
 model. For this work the 4-states Potts model on an 3D cubic lattice
-with periodic boundary conditions was chosen. The mean properties
-of the model can be measured in the following way:
+with periodic boundary conditions was chosen.\newline The mean properties of an observable $A$
+(e.g. energy or magnetisation) can be measured in the following way:
 \[
-\bar{A}=\sum_{\omega\in\Omega}A(\omega)*p(\omega)
+\langle A\rangle_\Omega=\sum_{\omega\in\Omega}A(\omega)\cdot p(\omega)
 \]
-where $\Omega$ denotes the configuration space, $p(\omega)=e^{-\frac{E(\omega)}{k_{b}T}}$
+where $\Omega$ denotes the configuration space and \[p(\omega)=\exp{\left(-\frac{E(\omega)}{k_{b}T}\right)}\]
 the canonical probability to find a certain configuration $\omega$
-in $\Omega$ and $A$ and observable like energy or magnetization.
+in $\Omega$. 
 Due to the large configuration space (increases exponentially with
 the number of spins) this sum cannot be calculated directly in a fast
-manner. Therefor one needs the metropolis algorithm.
+manner. For this reason, one needs the metropolis algorithm.
 \subsection{Metropolis Algorithm}
 The metropolis algorithm is a Markov chain Monte Carlo method \cite{MC} that
 allows the calculation of expectation values without having to generate
 all configurations $\omega$. After generating a starting state $\omega_{0}$
 one does many local spin updates to change the system and generate
-the next state $\omega_{1}$. One has make sure that the states are
-not correlated, otherwise the error estimations is too small. For
-the Potts model, the algorithm consists of following steps:
+the next state $\omega_{1}$. One has make sure that successive states are
+not correlated, otherwise the error estimation is too small.\footnote{A common method is to keep some correlation between successive states, because complete decorrelation is difficult to achieve without wasting steps. This can, however, be corrected in a post-processing step (see \cite{Jackknife} for possible methods).} For
+the Potts model, the algorithm consists of the following steps:
 \begin{enumerate}[noitemsep, topsep = 0pt]
 \item Select a random spin $\sigma_{i}^{z}$ from the current configuration
 $\omega_{s}$ and change it randomly by $\Delta\sigma_{i}^{z}=\pm1$
-to the configuration $\omega_{s}^{*}$
-\item Calculate the energy difference $\Delta E_{i}$ and \\ $\frac{p(\omega_{s}^{*})}{p(\omega_{s})}=e^{-\frac{\Delta E_{i}}{k_{b}T}}$
+to obtain the configuration $\omega_{s}^{*}$
+\item Calculate the energy difference $\Delta E_{i}$ between the two states and  $\frac{p(\omega_{s}^{*})}{p(\omega_{s})}=\exp{\left(-\frac{\Delta E_{i}}{k_{b}T}\right)}$
 \item Accept the new configuration with the probability
 \\ $p_{accept}=min(1,\frac{p(\omega_{s}*)}{p(\omega_{s})})$
 \item Repeat step 1 to 3 $m$ times until $\omega_{s}$ and $\omega_{s+m}$
-are decorrelated
+are (somewhat) decorrelated
 \item Measure functions of interest on the state $\omega_{s+m}$
 \item If the error in the measurements is too large, repeat from step 1\end{enumerate}
 \section{Modular Optimizations and Autotuning}\label{sec:yourmethod}
@@ -144,7 +145,7 @@ The following section describes the implementation of the Potts model, specifica
 In the following parts, the different optimazation techniques used for each module will briefly be mentioned.
 \subsection{\texttt{SIM} optimizations}\label{opt:sim}
 \begin{itemize}[noitemsep, topsep = 0pt]
-\item \textbf{Probability Precomputation:} Since there is a finite number of possible energy differences $\Delta E$, the probability $p_i = \exp{\left(-\frac{\Delta E_i}{k_B T}\right)}$ of accepting a spin change is precomputed. This may increase memory usage, but gets rid of any floating point computation.
+\item \textbf{Probability Precomputation:} Since there is a finite number of possible energy differences $\Delta E$, the probabilities $p_i = \exp{\left(-\frac{\Delta E_i}{k_B T}\right)}$ of accepting a spin change are precomputed. This may increase memory usage, but gets rid of any floating point computation.
 \item \textbf{Interleaving:} The calls to the random number generator (picking the spin location) and the actual computation is interleaved amongst two steps. This allows prefetching, i.e. the data for the next step can be loaded during the current step.
 \item \textbf{Explicit Prefetching:} Instead of leaving it up to the Compiler and/or Hardware, the prefetching is done explicitly. 
 \end{itemize}
@@ -171,8 +172,13 @@ struct opt<150> {
     using impl = greschd_v3_sim::impl<S, S, S, addon::mkl_mt_rng, msk_v1_pbc, msk_v2_dynamic_zip>; 
 };
 \end{lstlisting}
-For an arbitrary size $N$, the implementation will then choose the appropriate specialisation (that is, the one with size closest to $N$) by use of type traits, as indicated in Listing \ref{sizehelper}.
-\begin{lstlisting}[label = sizehelper, caption = {size\_helper, part of the type traits}]
+For an arbitrary size $N$, the implementation will then choose the appropriate specialisation (that is, the one with size closest to $N$) by use of type traits, as indicated in Listing \ref{sizehelper} (\texttt{sizes} is a \texttt{constexpr} array containing all measured sizes; for brevity some edge cases are not shown).
+\begin{lstlisting}[label = sizehelper, caption = {size\_helper (partial), part of the type traits}]
+template<int S, int N>
+struct size_helper<S, N, true> {
+    static constexpr int size = sizes[N + 1];
+};
+
 template<int S, int N, bool B>
 struct size_helper {
     static constexpr int size = size_helper<S, N - 1, S >= (sizes[N] + sizes[N - 1])/ 2 >::size;
@@ -180,7 +186,7 @@ struct size_helper {
 \end{lstlisting}
 Making an installation that also varies according to temperature was also discussed, but dismissed because the temperature of the system may be varied during one measurement cycle. This could lead to a large overhead for switching between versions.
 \section{Experimental Results}\label{sec:exp}
-This section describes the different measurements that were performed and their results. After introducing the platforms that were used and some notation, the impact each optimisation has on runtime is studied. Finally, the results of screening all module combinations and the performance of the auto - tuned code is shown.
+This section describes the different measurements that were performed and their results. After introducing the platforms that were used and some notation, the impact on runtime for each optimisation is being studied. Finally, the results of screening all module combinations and the performance of the autotuned code is shown.
 \subsection{Experimental setup} \label{exp:setup}
 The two platforms used for measurements are shown in Table \ref{platforms}. They will be referenced by their architecture codename (Wolfdale / Haswell).
 \begin{table}[h]
@@ -198,8 +204,7 @@ The two platforms used for measurements are shown in Table \ref{platforms}. They
 \caption{Platforms used for the measurements}
 \label{platforms}
 \end{table}
-\newline For all measurements, the \textbf{rdtsc} command was used to determine the runtime. In the roofline measurements, the memory traffic was measured with \textbf{perfplot} \cite{PERFPLOT}. Additionally, VTune, perf and gprof were used for profiling during development.
-also used.\newline
+\newline For all measurements, the \textbf{rdtsc} command was used to determine the runtime. In the roofline measurements, the memory traffic was measured with \textbf{perfplot} \cite{PERFPLOT}. Additionally, VTune, perf and gprof were used for profiling during development.\newline
 Measurements showing the \textbf{splitting} of runtime amongst the different \textbf{modules} is achieved by starting / stopping the time measurement between different tasks in the algorithm. This may to some extent influence the total runtime by inhibiting out-of-order computation.\newline
 In the following sections, combinations of modules where one module is being exchanged will be discussed. For those measurements, one can look at both decrease in total runtime and decrease in \textbf{runtime caused} by that \textbf{specific module}. However, the former is always influenced by the choice of all the other modules, which makes the latter a better measure for the effectivity of an optimisation.\newline
 Runtime of \texttt{GRID} and \texttt{MATRIX} is measured together, but split into accessing selected spin itself (single spin, s.s.) and accessing its nearest neighbours (n.n.). \newline
@@ -301,7 +306,7 @@ A full screen of all the runtimes of all the module combinations has been done t
 	  \label{screen:Has}
 	\end{figure}\newline
 Fig. \ref{mod:Wolf} and \ref{mod,Has} show which module combination performed best, using the indexing introduced in Sec. \ref{exp:setup}. A few points are worth noting: \newline
-Firstly, the module combinations used on the two platforms are sometimes quite different from each other and do not have too much of a pattern. This indicates that it might be quite \textbf{difficult to} actually \textbf{predict} which module works best. \newline
+Firstly, the module combinations used on the two platforms are sometimes quite different from each other and do not have too much of a pattern. This indicates that it might be quite \textbf{difficult} to actually \textbf{predict} which module works best. \newline
 Secondly, it has to be noted that for some sizes, the \textbf{difference} between fastest and second - fastest module combinations is very \textbf{small} - sometimes even within measurement error. So it might be possible to construct a neater arrangement of modules by allowing those second - best combinations.\newline
 Thirdly, whilst the temperature does have some inpact on which module is used, the \textbf{dominant factor} seems to be the \textbf{size}. This justifies not optimising w.r.t. temperature in the installation procedure (see Sec. \ref{opt:autotuning}).\newline
 Lastly, the region $N \in [150,400]$ (on Wolfdale) / $N \in [200,400]$ (on Haswell) is of particular interest. This region corresponds to the system size \textbf{running out of LLC}. Accordingly, the \texttt{MATRIX} module used in this region is the compressed version (third digit of the index $=2$).
@@ -315,7 +320,7 @@ Lastly, the region $N \in [150,400]$ (on Wolfdale) / $N \in [200,400]$ (on Haswe
 		  \caption{Best - performing modules (marked by index) for different sizes and temperatures, on Haswell}
 		  \label{mod,Has}
 	\end{figure}\newline
-The performance of the final version, using the \textbf{fast autotuning procedure} described in Sec. \ref{opt:autotuning}, is shown in Fig. \ref{roof:optvsbase}. Compared to the baseline implementation, the overall \textbf{speedup} ranges between \textbf{$\mathbf{2 - 5}$x}, depending on system size. The speedup tends to be \textbf{bigger for smaller sizes}, where the vastly improved \texttt{SIM} and \texttt{RNG} modules takes up a significant part of the runtime. 
+The performance of the final version, using the \textbf{fast autotuning procedure} described in Sec. \ref{opt:autotuning}, is shown in Fig. \ref{roof:optvsbase}. Compared to the baseline implementation, the overall \textbf{speedup} ranges between \textbf{$\mathbf{2 - 5}$x}, depending on system size. The speedup tends to be \textbf{bigger} for \textbf{smaller sizes}, where the vastly improved \texttt{SIM} and \texttt{RNG} modules takes up a significant part of the runtime. 
 	\begin{figure}[h]\centering
 		  \includegraphics[width = 8.36cm]{plots/roofline_0.pdf}
 		  \caption{Final (installed) version of the code vs.  baseline implementation, on Haswell}
