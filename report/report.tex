@@ -17,6 +17,9 @@
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{darkblue}{rgb}{0,0,.5}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\hypersetup{pdfborder={0 0 0},colorlinks=true,linkcolor=darkblue,citecolor=darkgreen, urlcolor=darkblue}
 
 \lstset{frame=tb,
   language=C++,
@@ -28,7 +31,7 @@
   numbers=none,
   numberstyle=\tiny\color{gray},
   keywordstyle=\color{blue},
-  commentstyle=\color{dkgreen},
+  commentstyle=\color{darkgreen},
   stringstyle=\color{mauve},
   breaklines=true,
   breakatwhitespace=true
@@ -228,7 +231,7 @@ As an example, (0132) would correspond to a baseline \texttt{SIM} with boundary 
 \label{modlist}
 \end{table}
 \subsection{Results: SIM optimization} \label{res:SIM}
-Figures \ref{SIM:Wolf:20} and \ref{SIM:Has:20} show the runtime partition of the single spin update. All modules except SIM are the same. The baseline-module computes the Boltzmann factors each time, while the second module precomputes these probabillities. The amount of cycles needed for the SIM part is reduced on both systems. On Haswell, this shows an overall speedup of $2$x for a system with side length $N = 20$. Considering only the part of the runtime caused by the \texttt{SIM} module, however, the speedup is roughly $6$x.
+Figures \ref{SIM:Wolf:20} and \ref{SIM:Has:20} show the runtime partition of the single spin update. All modules except \texttt{SIM} are the same in both configurations. The baseline-module computes the \textbf{Boltzmann factors} each time, while the second module \textbf{precomputes} these probabillities. The amount of cycles needed for the SIM part is reduced on both systems. On Haswell, this shows an overall speedup of $2$x for a system with side length $N = 20$. Considering only the part of the runtime caused by the \texttt{SIM} module, however, the speedup is \textbf{roughly $\mathbf{6}$x}.
 	\begin{figure}[H]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_20_2.pdf}
 	  \caption{Speedup by probability precomputation, on Wolfdale}
@@ -240,7 +243,7 @@ Figures \ref{SIM:Wolf:20} and \ref{SIM:Has:20} show the runtime partition of the
 	  \label{SIM:Has:20}
 	\end{figure}
 \subsection{Results: GRID optimization}
-Storing the boundary condition in a lookup table doesn't show a very significant speedup in terms of total runtime. However, nearest neighbour access - the part that is influenced most by the improvement - is sped up by roughly $2$x for sidelength $N = 20$ (see Fig. \ref{GRID:Wolf:20} and \ref{GRID:Has:20}).
+Storing the boundary condition in a lookup table \textbf{doesn't show} a \textbf{very significant speedup} in terms of total runtime. However, nearest neighbour access - the part that is influenced most by the improvement - is sped up by roughly $2$x for sidelength $N = 20$ (see Fig. \ref{GRID:Wolf:20} and \ref{GRID:Has:20}).
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_20_1.pdf}
 	  \caption{Influence on runtime by using a boundary lookup table (\texttt{GRID} optimisation), on Wolfdale}
@@ -252,13 +255,13 @@ Storing the boundary condition in a lookup table doesn't show a very significant
 	  \label{GRID:Has:20}
 	\end{figure}
 \subsection{Results: MATRIX optimization}
-The impact compression and Z-order have on the runtime is clearly size - dependent: For a small system ($N = 20$, $8000$ spins, on Wolfdale), the influence of compression is negligible and the overhead for using Z - order is larger than the gain (see Fig. \ref{MATRIX:Wolf:20}).
+The impact compression and Z-order have on the runtime is clearly \textbf{size - dependent}: For a small system ($N = 20$, $8000$ spins, on Wolfdale), the influence of compression is negligible and the overhead for using Z - order is larger than the gain (see Fig. \ref{MATRIX:Wolf:20}).
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_20_3.pdf}
 	  \caption{Different \texttt{MATRIX} optimisations for $N = 20$, on Wolfdale}
 	  \label{MATRIX:Wolf:20}
 	\end{figure}\newline
-At larger sizes, as the impact of accessing the spins increases, compresssion and Z-order both become significant improvements (see Fig. \ref{MATRIX:Wolf:300}). This improvement is most noticeable when the system starts running out of last level cache. At those sizes, the compressed version might still fit into LLC and hence perform much better.
+At larger sizes, as the runtime for accessing the spins increases, compresssion and Z-order both become \textbf{significant improvements} (see Fig. \ref{MATRIX:Wolf:300}). This improvement is most noticeable when the system starts running \textbf{out of last level cache}. At those sizes, the compressed version might still fit into LLC and hence perform much better.
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_300_3.pdf}
 	  \caption{Different \texttt{MATRIX} optimisations for $N = 300$, on Wolfdale}
@@ -270,7 +273,7 @@ This effect can be observed directly in Fig. \ref{roof:storage}, comparing C arr
 	\caption{Performance of C array and compressed \texttt{MATRIX} modules, for various sizes, on Haswell}
 	\label{roof:storage}
 	\end{figure}\newline
-On Haswell, it can be observed that even for large sizes ($N=1000$, $10^9$ spins), accessing the nearest neighbours takes next to no time (see Fig. \ref{MATRIX:Has:1000}). This might be due to the prefetching in Haswell, which could load the neighbours into Cache as soon as the position of the single spin is known. However, this would still cost memory bandwidth, but go undetected by this measuring scheme since it happens out-of-order (see Sec. \ref{exp:setup}). 
+On Haswell, it can be observed that even for large sizes ($N=1000$, $10^9$ spins), accessing the nearest neighbours takes next to no time (see Fig. \ref{MATRIX:Has:1000}). This might be due to the \textbf{prefetching} in Haswell, which could load the neighbours into Cache as soon as the position of the single spin is known. However, this would still \textbf{cost} memory bandwidth, but go \textbf{undetected} by this measuring scheme since it happens out-of-order (see Sec. \ref{exp:setup}). 
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/dg_1000_3.pdf}
 	  \caption{Different \texttt{MATRIX} optimisations for $N = 1000$, on Haswell}
@@ -278,8 +281,8 @@ On Haswell, it can be observed that even for large sizes ($N=1000$, $10^9$ spins
 	\end{figure}
 \subsection{Results: RNG optimization}\label{res:RNG}
 The impact of economic use of random numbers and the MKL Mersenne - twister engine (as explained in Sec. \ref{opt:rng}) are shown in Fig. \ref{RNG:Has:20}. \newline
-It can be seen that the main speedup comes from economic use, whilst changing to the MKL engine has virtually no effect on runtime. \newline
-For a system of size $N = 20$ ($8000$ spins), these optimisations amount to an overall speedup of roughly $2 - 2.5$x (on Haswell). Considering only the part of total runtime caused by the \texttt{RNG} module, the speedup is roughly $6$x, and hence similar to the speedup seen for \texttt{SIM}.
+It can be seen that the \textbf{main speedup} comes from \textbf{economic use}, whilst changing to the MKL engine has virtually no effect on runtime. \newline
+For a system of size $N = 20$ ($8000$ spins), these optimisations amount to an overall speedup of roughly $2 - 2.5$x (on Haswell). Considering only the part of total runtime caused by the \texttt{RNG} module, the speedup is \textbf{roughly $\mathbf{6}$x}, and hence similar to the speedup seen for \texttt{SIM}.
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/dg_20_0.pdf}
 	  \caption{Runtime using different \texttt{RNG} modules, on Haswell}
@@ -298,10 +301,10 @@ A full screen of all the runtimes of all the module combinations has been done t
 	  \label{screen:Has}
 	\end{figure}\newline
 Fig. \ref{mod:Wolf} and \ref{mod,Has} show which module combination performed best, using the indexing introduced in Sec. \ref{exp:setup}. A few points are worth noting: \newline
-Firstly, the module combinations used on the two platforms are sometimes quite different from each other and do not have too much of a pattern. This indicates that it might be quite difficult to actually predict which module works best. \newline
-Secondly, it has to be noted that for some sizes, the difference between fastest and second - fastest module combinations is very small - sometimes even within measurement error. So it might be possible to construct a neater arrangement of modules by allowing those second - best combinations.\newline
-Thirdly, whilst the temperature does have some inpact on which module is used, the dominant factor seems to be the size. This justifies not optimising w.r.t. temperature in the installation procedure (see Sec. \ref{opt:autotuning}).\newline
-Lastly, the region $N \in [150,400]$ (on Wolfdale) / $N \in [200,400]$ (on Haswell) is of particular interest. This region corresponds to the system size running out of LLC. Accordingly, the \texttt{MATRIX} module used in this region is the compressed version (third digit of the index $=2$).
+Firstly, the module combinations used on the two platforms are sometimes quite different from each other and do not have too much of a pattern. This indicates that it might be quite \textbf{difficult to} actually \textbf{predict} which module works best. \newline
+Secondly, it has to be noted that for some sizes, the \textbf{difference} between fastest and second - fastest module combinations is very \textbf{small} - sometimes even within measurement error. So it might be possible to construct a neater arrangement of modules by allowing those second - best combinations.\newline
+Thirdly, whilst the temperature does have some inpact on which module is used, the \textbf{dominant factor} seems to be the \textbf{size}. This justifies not optimising w.r.t. temperature in the installation procedure (see Sec. \ref{opt:autotuning}).\newline
+Lastly, the region $N \in [150,400]$ (on Wolfdale) / $N \in [200,400]$ (on Haswell) is of particular interest. This region corresponds to the system size \textbf{running out of LLC}. Accordingly, the \texttt{MATRIX} module used in this region is the compressed version (third digit of the index $=2$).
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/module_msk2.pdf}
 	  \caption{Best - performing modules (marked by index) for different sizes and temperatures, on Wolfdale}
@@ -312,7 +315,7 @@ Lastly, the region $N \in [150,400]$ (on Wolfdale) / $N \in [200,400]$ (on Haswe
 		  \caption{Best - performing modules (marked by index) for different sizes and temperatures, on Haswell}
 		  \label{mod,Has}
 	\end{figure}\newline
-The performance of the final version, using the fast installation procedure described in Sec. \ref{opt:autotuning}, is shown in Fig. \ref{roof:optvsbase}. Compared to the baseline implementation, the overall speedup ranges between $2 - 5$x, depending on system size. The speedup tends to be bigger for smaller sizes, where the vastly improved \texttt{SIM} and \texttt{RNG} modules takes up a significant part of the runtime. 
+The performance of the final version, using the \textbf{fast autotuning procedure} described in Sec. \ref{opt:autotuning}, is shown in Fig. \ref{roof:optvsbase}. Compared to the baseline implementation, the overall \textbf{speedup} ranges between \textbf{$\mathbf{2 - 5}$x}, depending on system size. The speedup tends to be \textbf{bigger for smaller sizes}, where the vastly improved \texttt{SIM} and \texttt{RNG} modules takes up a significant part of the runtime. 
 	\begin{figure}[h]\centering
 		  \includegraphics[width = 8.36cm]{plots/roofline_0.pdf}
 		  \caption{Final (installed) version of the code vs.  baseline implementation, on Haswell}
