@@ -135,8 +135,8 @@ to obtain the configuration $\omega_{s}^{*}$
 are (somewhat) decorrelated
 \item Measure functions of interest on the state $\omega_{s+m}$
 \item If the error in the measurements is too large, repeat from step 1\end{enumerate}
-\section{Modular Optimisations and Autotuning}\label{sec:yourmethod}
-The following section describes the implementation of the Potts model, specifically the splitting into four modules, optimisations performed on those modules and finally autotuning to select the best-performing modules.
+\section{Modular Optimisations and Auto-tuning}\label{sec:yourmethod}
+The following section describes the implementation of the Potts model, specifically the splitting into four modules, optimisations performed on those modules and finally auto-tuning to select the best-performing modules.
 \subsection{Modular Structure} Splitting the implementation into four modules (with their respective interfaces) allowed for an efficient workflow. It became possible to optimize parts of the implementation completely independently, which is a great benefit when working in a team. The four modules are as follows:
 \begin{itemize}[noitemsep, topsep = 0pt]
 \item \textbf{\texttt{SIM}:} Contains the high-level aspects of the metropolis algorithm: Computing probabilities, accepting or rejecting an update, and also calls to the other modules (i.e. requesting random numbers or getting / setting spins).
@@ -164,7 +164,7 @@ In the following parts, the different optimisation techniques used for each modu
 \end{itemize}
 \subsection{Autotuning}\label{opt:autotuning}
 Many of the optimisations seen in sections \ref{opt:sim} - \ref{opt:rng} perform well only under \textbf{certain conditions} (i.e. at certain system sizes and temperatures). For example, using Z - order might be great at large sizes, but the overhead for computing the index is too large for smaller ones. \newline
-The modular structure of the code provides the ideal grounds for tackling this problem using an \textbf{autotuning} approach:\newline
+The modular structure of the code provides the ideal grounds for tackling this problem using an \textbf{auto-tuning} approach:\newline
 For a fixed number of sizes, the optimized combination of modules is searched either by doing a full sweep over all the combinations, or - much faster - by \textbf{iteratively exchanging} one module whilst keeping the others fixed.\newline That means one starts with a certain combination of modules and then tries all possible combinations by only exchanging the first one. The fastest version amongst those is kept for the next step, in which the second module is being exchanged, and so on.\newline This process is repeated until convergence is reached, that is until a full iteration (trying to exchange each modules) does not yield any faster combinations. However, this does \textbf{not guarantee} that the process has found the \textbf{global minimum}, since it might be stuck at a local one.\newline 
 This installation routine creates a header file containing template specialisations describing the best combination for each measured size. Listing \ref{listing1} shows a snippet of this header.\newline
 \begin{lstlisting}[caption = {example for a template specialisation}, label = listing1]
@@ -323,7 +323,7 @@ Lastly, the region $N \in [150,400]$ (on Wolfdale) / $N \in [200,400]$ (on Haswe
 		  \caption{Best - performing modules (marked by index) for different sizes and temperatures, on Haswell}
 		  \label{mod,Has}
 	\end{figure}\newline
-The performance of the final version, using the \textbf{fast autotuning procedure} described in Sec. \ref{opt:autotuning}, is shown in Fig. \ref{roof:optvsbase}. Compared to the baseline implementation, the overall \textbf{speedup} ranges between \textbf{$\mathbf{2 - 5}$x}, depending on system size. The speedup tends to be \textbf{bigger} for \textbf{smaller sizes}, where the vastly improved \texttt{SIM} and \texttt{RNG} modules takes up a significant part of the runtime. 
+The performance of the final version, using the \textbf{fast auto-tuning procedure} described in Sec. \ref{opt:autotuning}, is shown in Fig. \ref{roof:optvsbase}. Compared to the baseline implementation, the overall \textbf{speedup} ranges between \textbf{$\mathbf{2 - 5}$x}, depending on system size. The speedup tends to be \textbf{bigger} for \textbf{smaller sizes}, where the vastly improved \texttt{SIM} and \texttt{RNG} modules takes up a significant part of the runtime. 
 	\begin{figure}[h]\centering
 		  \includegraphics[width = 8.36cm]{plots/roofline_0.pdf}
 		  \caption{Final (installed) version of the code vs.  baseline implementation, on Haswell}
@@ -332,7 +332,7 @@ The performance of the final version, using the \textbf{fast autotuning procedur
 
 
 \section{Conclusions}
-The modular interface and autotuning routine help the pro-ject to remain expandable. It is possible to write additional modules and run the installation again with little effort. The most successful optimisation techniques were precompuation, economic use of random bits and data compression for both platforms. There are a few open questions worth investigating: What is the runtime penalty for the modular interface? How exactly does Haswell manage to reduce the lookup runtime of the nearest neighbours even at large sizes (see Fig. \ref{MATRIX:Has:1000})? Where could one use SSE/AVX for the project (we used SSE for Z-order index computation, but measured no speedup there)? The project was a valuable experience in optimisation and teamwork. 
+The modular interface and auto-tuning routine help the pro-ject to remain expandable. It is possible to write additional modules and run the installation again with little effort. The most successful optimisation techniques were precompuation, economic use of random bits and data compression for both platforms. There are a few open questions worth investigating: What is the runtime penalty for the modular interface? How exactly does Haswell manage to reduce the lookup runtime of the nearest neighbours even at large sizes (see Fig. \ref{MATRIX:Has:1000})? Where could one use SSE/AVX for the project (we used SSE for Z-order index computation, but measured no speedup there)? The project was a valuable experience in optimisation and teamwork. 
 
 \bibliographystyle{IEEEbib}
 \bibliography{bibl_conf}
