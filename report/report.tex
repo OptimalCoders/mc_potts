@@ -48,7 +48,7 @@
 
 % Title.
 % ------
-\title{Optimization of the Metropolis Algorithm for a Potts Model}
+\title{Optimisation of the Metropolis Algorithm for a Potts Model}
 %
 % Single address.
 % ---------------
@@ -83,26 +83,26 @@
 
 
 \begin{abstract}
-In this project, a fast implementation of the metropolis algorithm for the 4-states Potts model on a 3D cubic lattice was written. The algorithm was split into independent 4 modules. For each of these modules, multiple optimizations were applied, resulting in up to $6$x speedup. On top of the modules a install-time search routine was implemented to auto tune the module-composition for different sizes. The measurements were performed on two different processors (Intel Core i7 Haswell / Intel Core 2 Wolfdale). 
+In this project, a fast implementation of the metropolis algorithm for the 4-states Potts model on a 3D cubic lattice was written. The algorithm was split into four independent modules. For each of these modules, multiple optimisations were applied, resulting in up to $5$x speedup. On top of the modules a install-time search routine was implemented to auto tune the module-composition for different sizes. The measurements were performed on two different processors (Intel Core i7 Haswell / Intel Core 2 Wolfdale). 
 \end{abstract}
 
 \section{Introduction}\label{sec:intro}
 \subsection{Motivation} 
-By studying the Potts model, questions about ferromagentic as well as other phenomena of a solid state can be investigated. The Potts model is a generalisation of the Ising model. It is not just used in statistical physics, but also in electrical engineering (signal processing) and in biology (neural networks). Our goal is to investigate numerous optimization techniques for the 4-state 3D Potts model and provide a framework with the optimal implementation. 
+By studying the Potts model, questions about ferromagentic as well as other phenomena of a solid state can be investigated. The Potts model is a generalisation of the Ising model. It is not just used in statistical physics, but also in electrical engineering (signal processing) and in biology (neural networks). Our goal is to investigate numerous optimisation techniques for the 4-state 3D Potts model and provide a framework with the optimal implementation. 
 \subsection{Related work}
-The Potts model is a very well - studied problem. It was defined by Renfrey Potts in 1951 and thus named Potts model, even though equivalent models were studies already earlier (Ashkin - Teller, 1943). Today (06.2014) google scolar lists 185'000 entries for the Potts model, confirming the popularity and importance of this model. Concerning implementations, we did not find any work that has a similar approach as in this project. Many implementations are specialized for certain cases (e.g. 2D) or modified to solve a different problem (e.g. neural networks). 
+The Potts model is a very well - studied problem. It was defined by Renfrey Potts in 1951 and thus named Potts model, even though equivalent models were studied already earlier (Ashkin - Teller, 1943). Today (06.2014) google scolar lists 185'000 entries for the Potts model, confirming the popularity and importance of this model. Concerning implementations, we did not find any work that has a similar approach as this project. Many implementations are specialized for certain cases (e.g. 2D) or modified to solve a different problem (e.g. neural networks). 
 \section{Background: Potts Model and the Metropolis Algorithm}\label{sec:background}
 This section briefly describes the Potts model and introduces the Metropolis Algorithm, which can be used to simulate a Potts system.
 \subsection{Potts Model}
 The $n$-state Potts model describes an ensemble of spins on a lattice, where $n$ different
 states are available for each spin. These spins interact only with
-their nearest neighbors. The energy of the entire system is given
+their nearest neighbours. The energy of the entire system is given
 by:
 \[
 E=J\sum_{\langle i,j \rangle}\sigma_{i}^{z}\sigma_{j}^{z}
 \]
 where $J$ is an interaction constant, $\sigma_{i}^{z}$ the z-component of the
-spin at lattice site i and $\langle i,j \rangle$ the set of all nearest-neighbor-pairs.
+spin at lattice site i and $\langle i,j \rangle$ the set of all nearest-neighbour-pairs.
 If $J<0$ the spins tend to order ferromagnetically (i.e. they are preferrably aligned). The $2$-state Potts model on a 2D square lattice is identical to the famous Ising
 model. For this work the 4-states Potts model on an 3D cubic lattice
 with periodic boundary conditions was chosen.\newline The mean properties of an observable $A$
@@ -135,8 +135,8 @@ to obtain the configuration $\omega_{s}^{*}$
 are (somewhat) decorrelated
 \item Measure functions of interest on the state $\omega_{s+m}$
 \item If the error in the measurements is too large, repeat from step 1\end{enumerate}
-\section{Modular Optimizations and Autotuning}\label{sec:yourmethod}
-The following section describes the implementation of the Potts model, specifically the splitting into four modules, optimizations performed on those modules and finally autotuning to select the best-performing modules.
+\section{Modular Optimisations and Autotuning}\label{sec:yourmethod}
+The following section describes the implementation of the Potts model, specifically the splitting into four modules, optimisations performed on those modules and finally autotuning to select the best-performing modules.
 \subsection{Modular Structure} Splitting the implementation into four modules (with their respective interfaces) allowed for an efficient workflow. It became possible to optimize parts of the implementation completely independently, which is a great benefit when working in a team. The four modules are as follows:
 \begin{itemize}[noitemsep, topsep = 0pt]
 \item \textbf{\texttt{SIM}:} Contains the high-level aspects of the metropolis algorithm: Computing probabilities, accepting or rejecting an update, and also calls to the other modules (i.e. requesting random numbers or getting / setting spins).
@@ -145,19 +145,19 @@ The following section describes the implementation of the Potts model, specifica
 \item \textbf{\texttt{RNG}:} Provides the random numbers. All implementations use a mersenne twister engine.
 \end{itemize}
 In the following parts, the different optimazation techniques used for each module will briefly be mentioned.
-\subsection{\texttt{SIM} optimizations}\label{opt:sim}
+\subsection{\texttt{SIM} optimisations}\label{opt:sim}
 \begin{itemize}[noitemsep, topsep = 0pt]
 \item \textbf{Probability Precomputation:} Since there is a finite number of possible energy differences $\Delta E$, the probabilities $p_i = \exp{\left(-\frac{\Delta E_i}{k_B T}\right)}$ of accepting a spin change are precomputed. This may increase memory usage, but gets rid of any floating point computation.
 \item \textbf{Interleaving:} The calls to the random number generator (picking the spin location) and the actual computation is interleaved amongst two steps. This allows prefetching, i.e. the data for the next step can be loaded during the current step.
 \item \textbf{Explicit Prefetching:} Instead of leaving it up to the Compiler and/or Hardware, the prefetching is done explicitly. 
 \end{itemize}
-\subsection{\texttt{GRID} optimizations} A \textbf{lookup table} (one array for each space direction) was used to get the nearest neighbour indices efficiently. This method is useful mainly because it replaces the potentially expensive check for the boundary condition.
-\subsection{\texttt{MATRIX} optimizations} The main concern with the \texttt{MATRIX} module storing the system in a memory - efficient way. Also, since the access to spins is random, the \texttt{MATRIX} is the only way we can hope to achieve locality (between one position and its nearest neighbours). The following optimizations have been done:
+\subsection{\texttt{GRID} optimisations} A \textbf{lookup table} (one array for each space direction) was used to get the nearest neighbour indices efficiently. This method is useful mainly because it replaces the potentially expensive check for the boundary condition.
+\subsection{\texttt{MATRIX} optimisations} The main concern with the \texttt{MATRIX} module storing the system in a memory - efficient way. Also, since the access to spins is random, the \texttt{MATRIX} is the only way we can hope to achieve locality (between one position and its nearest neighbours). The following optimisations have been done:
 \begin{itemize}[noitemsep, topsep = 0pt]
 \item\textbf{Compression:} Since each spin can only be in one of four states, it can be described using only 2 \texttt{bits}. This can be used to shrink the system's size in memory by a factor of $4$ (compared to using one \texttt{byte} per spin).
 \item{\textbf{Z - order:}} Bit interleaving in the three indices is used to increase locality amongst a spin and its nearest neighbours.
 \end{itemize}
-\subsection{\texttt{RNG} optimizations} \label{opt:rng}
+\subsection{\texttt{RNG} optimisations} \label{opt:rng}
 \begin{itemize}[noitemsep, topsep = 0pt]
 \item \textbf{Economic use:} Since many of the random numbers used only are a few \texttt{bits} long, the \texttt{std::mt19937} implementation (which uses $32 \mathtt{bit}$ for each random number at least) can be optimized greatly by using all the bits in each generated random number (with some overhead for splitting up the random numbers).
 \item \textbf{MKL:} The underlying Mersenne twister engine was exchanged for the MKL implementation \cite{MKL} (whilst still using the method of economic use described before).
@@ -176,14 +176,14 @@ struct opt<150> {
 \end{lstlisting}
 For an arbitrary size $N$, the implementation will then choose the appropriate specialisation (that is, the one with size closest to $N$) by use of type traits, as indicated in Listing \ref{sizehelper} (\texttt{sizes} is a \texttt{constexpr} array containing all measured sizes; for brevity some edge cases are not shown).
 \begin{lstlisting}[label = sizehelper, caption = {size\_helper (partial), part of the type traits}]
-template<int S, int N>
-struct size_helper<S, N, true> {
-    static constexpr int size = sizes[N + 1];
-};
-
 template<int S, int N, bool B>
 struct size_helper {
     static constexpr int size = size_helper<S, N - 1, S >= (sizes[N] + sizes[N - 1])/ 2 >::size;
+};
+
+template<int S, int N>
+struct size_helper<S, N, true> {
+    static constexpr int size = sizes[N + 1];
 };
 \end{lstlisting}
 Making an installation that also varies according to temperature was also discussed, but dismissed because the temperature of the system may be varied during one measurement cycle. This could lead to a large overhead for switching between versions.
@@ -237,7 +237,7 @@ As an example, (0132) would correspond to a baseline \texttt{SIM} with boundary 
 \caption{List of Modules}
 \label{modlist}
 \end{table}
-\subsection{Results: SIM optimization} \label{res:SIM}
+\subsection{Results: SIM optimisation} \label{res:SIM}
 Figure \ref{SIM:Has:20} shows the runtime partition of the single spin update. All modules except \texttt{SIM} are the same in both configurations. The baseline-module computes the \textbf{Boltzmann factors} each time, while the second module \textbf{precomputes} these probabillities. The amount of cycles needed for the SIM part is reduced on both systems. On Haswell, this shows an overall speedup of $2$x for a system with side length $N = 20$. Considering only the part of the runtime caused by the \texttt{SIM} module, however, the speedup is \textbf{roughly $\mathbf{6}$x}.
 	%\begin{figure}[H]\centering
 	%  \includegraphics[width = 8.36cm]{plots/msk_20_2.pdf}
@@ -249,7 +249,7 @@ Figure \ref{SIM:Has:20} shows the runtime partition of the single spin update. A
 	  \caption{Speedup by probability precomputation, on Haswell}
 	  \label{SIM:Has:20}
 	\end{figure}
-\subsection{Results: GRID optimization}
+\subsection{Results: GRID optimisation}
 Storing the boundary condition in a lookup table \textbf{doesn't show} a \textbf{very significant speedup} in terms of total runtime. However, nearest neighbour access - the part that is influenced most by the improvement - is sped up by roughly $2$x for sidelength $N = 20$ (see Fig. \ref{GRID:Wolf:20}).
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_20_1.pdf}
@@ -261,7 +261,7 @@ Storing the boundary condition in a lookup table \textbf{doesn't show} a \textbf
 	%  \caption{Influence on runtime by using a boundary lookup table (\texttt{GRID} optimisation), on Haswell}
 	%  \label{GRID:Has:20}
 	%\end{figure}
-\subsection{Results: MATRIX optimization}
+\subsection{Results: MATRIX optimisation}
 The impact compression and Z-order have on the runtime is clearly \textbf{size - dependent}: For a small system ($N = 20$, $8000$ spins, on Wolfdale), the influence of compression is negligible and the overhead for using Z - order is larger than the gain (see Fig. \ref{MATRIX:Wolf:20}).
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_20_3.pdf}
@@ -286,7 +286,7 @@ On Haswell, it can be observed that even for large sizes ($N=1000$, $10^9$ spins
 	  \caption{Different \texttt{MATRIX} optimisations for $N = 1000$, on Haswell}
 	  \label{MATRIX:Has:1000}
 	\end{figure}
-\subsection{Results: RNG optimization}\label{res:RNG}
+\subsection{Results: RNG optimisation}\label{res:RNG}
 The impact of economic use of random numbers and the MKL Mersenne - twister engine (as explained in Sec. \ref{opt:rng}) are shown in Fig. \ref{RNG:Has:20}. \newline
 It can be seen that the \textbf{main speedup} comes from \textbf{economic use}, whilst changing to the MKL engine has virtually no effect on runtime. \newline
 For a system of size $N = 20$ ($8000$ spins), these optimisations amount to an overall speedup of roughly $2 - 2.5$x (on Haswell). Considering only the part of total runtime caused by the \texttt{RNG} module, the speedup is \textbf{roughly $\mathbf{6}$x}, and hence similar to the speedup seen for \texttt{SIM}.
@@ -332,7 +332,7 @@ The performance of the final version, using the \textbf{fast autotuning procedur
 
 
 \section{Conclusions}
-The modular interface and autotuning routine help the pro-ject to remain expandable. It is possible to write additional modules and run the installation again with little effort. The most successful optimisation techniques were precompuation, economic use of random bits and data compression for both platforms. There are a few open questions worth investigating: What is the runtime penalty for the modular interface? How exactly does Haswell manage to reduce the lookup runtime of the nearest neighbors even at large sizes (Figure \ref{MATRIX:Has:1000})? Where could one use SSE/AVX for the project (we used SSE for Z-order index computation, but measured no speedup there)? The project was a valuable experience in optimisation and teamwork. 
+The modular interface and autotuning routine help the pro-ject to remain expandable. It is possible to write additional modules and run the installation again with little effort. The most successful optimisation techniques were precompuation, economic use of random bits and data compression for both platforms. There are a few open questions worth investigating: What is the runtime penalty for the modular interface? How exactly does Haswell manage to reduce the lookup runtime of the nearest neighbours even at large sizes (see Fig. \ref{MATRIX:Has:1000})? Where could one use SSE/AVX for the project (we used SSE for Z-order index computation, but measured no speedup there)? The project was a valuable experience in optimisation and teamwork. 
 
 \bibliographystyle{IEEEbib}
 \bibliography{bibl_conf}
