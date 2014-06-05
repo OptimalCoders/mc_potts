@@ -83,12 +83,14 @@
 
 
 \begin{abstract}
+In this project, a fast implementation of the metropolis algorithm for the 4-states Potts model on a 3D cubic lattice was written. The algorithm was split into independent 4 modules. For each of these modules, multiple optimizations were applied, resulting in up to $6$x speedup. On top of the modules a install-time search routine was implemented to auto tune the module-composition for different sizes. The measurements were performed on two different processors (Intel Core i7 Haswell / Intel Core 2 Wolfdale). 
 \end{abstract}
 
 \section{Introduction}\label{sec:intro}
 \subsection{Motivation} 
 By studying the Potts model, questions about ferromagentic as well as other phenomena of a solid state can be investigated. The Potts model is a generalisation of the Ising model. It is not just used in statistical physics, but also in electrical engineering (signal processing) and in biology (neural networks). Our goal is to investigate numerous optimization techniques for the 4-state 3D Potts model and provide a framework with the optimal implementation. 
 \subsection{Related work}
+The Potts model is a very well - studied problem. It was defined by Renfrey Potts in 1951 and thus named Potts model, even though equivalent models were studies already earlier (Ashkin - Teller, 1943). Today (06.2014) google scolar lists 185'000 entries for the Potts model, confirming the popularity and importance of this model. Concerning implementations, we did not find any work that has a similar approach as in this project. Many implementations are specialized for certain cases (e.g. 2D) or modified to solve a different problem (e.g. neural networks). 
 \section{Background: Potts Model and the Metropolis Algorithm}\label{sec:background}
 This section briefly describes the Potts model and introduces the Metropolis Algorithm, which can be used to simulate a Potts system.
 \subsection{Potts Model}
@@ -236,29 +238,29 @@ As an example, (0132) would correspond to a baseline \texttt{SIM} with boundary 
 \label{modlist}
 \end{table}
 \subsection{Results: SIM optimization} \label{res:SIM}
-Figures \ref{SIM:Wolf:20} and \ref{SIM:Has:20} show the runtime partition of the single spin update. All modules except \texttt{SIM} are the same in both configurations. The baseline-module computes the \textbf{Boltzmann factors} each time, while the second module \textbf{precomputes} these probabillities. The amount of cycles needed for the SIM part is reduced on both systems. On Haswell, this shows an overall speedup of $2$x for a system with side length $N = 20$. Considering only the part of the runtime caused by the \texttt{SIM} module, however, the speedup is \textbf{roughly $\mathbf{6}$x}.
-	\begin{figure}[H]\centering
-	  \includegraphics[width = 8.36cm]{plots/msk_20_2.pdf}
-	  \caption{Speedup by probability precomputation, on Wolfdale}
-	  \label{SIM:Wolf:20}
-	\end{figure}
+Figure \ref{SIM:Has:20} shows the runtime partition of the single spin update. All modules except \texttt{SIM} are the same in both configurations. The baseline-module computes the \textbf{Boltzmann factors} each time, while the second module \textbf{precomputes} these probabillities. The amount of cycles needed for the SIM part is reduced on both systems. On Haswell, this shows an overall speedup of $2$x for a system with side length $N = 20$. Considering only the part of the runtime caused by the \texttt{SIM} module, however, the speedup is \textbf{roughly $\mathbf{6}$x}.
+	%\begin{figure}[H]\centering
+	%  \includegraphics[width = 8.36cm]{plots/msk_20_2.pdf}
+	%  \caption{Speedup by probability precomputation, on Wolfdale}
+	%  \label{SIM:Wolf:20}
+	%\end{figure}
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/dg_20_2.pdf}
 	  \caption{Speedup by probability precomputation, on Haswell}
 	  \label{SIM:Has:20}
 	\end{figure}
 \subsection{Results: GRID optimization}
-Storing the boundary condition in a lookup table \textbf{doesn't show} a \textbf{very significant speedup} in terms of total runtime. However, nearest neighbour access - the part that is influenced most by the improvement - is sped up by roughly $2$x for sidelength $N = 20$ (see Fig. \ref{GRID:Wolf:20} and \ref{GRID:Has:20}).
+Storing the boundary condition in a lookup table \textbf{doesn't show} a \textbf{very significant speedup} in terms of total runtime. However, nearest neighbour access - the part that is influenced most by the improvement - is sped up by roughly $2$x for sidelength $N = 20$ (see Fig. \ref{GRID:Wolf:20}).
 	\begin{figure}[h]\centering
 	  \includegraphics[width = 8.36cm]{plots/msk_20_1.pdf}
 	  \caption{Influence on runtime by using a boundary lookup table (\texttt{GRID} optimisation), on Wolfdale}
 	  \label{GRID:Wolf:20}
 	\end{figure}
-	\begin{figure}[h]\centering
-	  \includegraphics[width = 8.36cm]{plots/dg_20_1.pdf}
-	  \caption{Influence on runtime by using a boundary lookup table (\texttt{GRID} optimisation), on Haswell}
-	  \label{GRID:Has:20}
-	\end{figure}
+	%\begin{figure}[h]\centering
+	%  \includegraphics[width = 8.36cm]{plots/dg_20_1.pdf}
+	%  \caption{Influence on runtime by using a boundary lookup table (\texttt{GRID} optimisation), on Haswell}
+	%  \label{GRID:Has:20}
+	%\end{figure}
 \subsection{Results: MATRIX optimization}
 The impact compression and Z-order have on the runtime is clearly \textbf{size - dependent}: For a small system ($N = 20$, $8000$ spins, on Wolfdale), the influence of compression is negligible and the overhead for using Z - order is larger than the gain (see Fig. \ref{MATRIX:Wolf:20}).
 	\begin{figure}[h]\centering
@@ -294,18 +296,19 @@ For a system of size $N = 20$ ($8000$ spins), these optimisations amount to an o
 	  \label{RNG:Has:20}
 	\end{figure}
 \subsection{Results: Autotuning}
-A full screen of all the runtimes of all the module combinations has been done to determine which perform best at various sizes and temperatures. The runtimes achieved by the fastest version can be seen in Fig. \ref{screen:Wolf} (Wolfdale) and \ref{screen:Has} (Haswell), wich clearly shows the speedup between Wolfdale and Haswell (close to $2$x).
-	\begin{figure}[h]\centering
-	  \includegraphics[width = 8.36cm]{plots/matrix_msk.pdf}
-	  \caption{Runtime of the fastest module combinations, on Wolfdale}
-	  \label{screen:Wolf}
-	\end{figure}
-	\begin{figure}[h]\centering
-	  \includegraphics[width = 8.36cm]{plots/matrix_dg.pdf}
-	  \caption{Runtime of the fastest module combinations, on Haswell}
-	  \label{screen:Has}
-	\end{figure}\newline
-Fig. \ref{mod:Wolf} and \ref{mod,Has} show which module combination performed best, using the indexing introduced in Sec. \ref{exp:setup}. A few points are worth noting: \newline
+A full screen of all the runtimes of all the module combinations has been done to determine which perform best at various sizes and temperatures. 
+%The runtimes achieved by the fastest version can be seen in Fig. \ref{screen:Wolf} (Wolfdale) and \ref{screen:Has} (Haswell), wich clearly shows the speedup between Wolfdale and Haswell (close to $2$x).
+%	\begin{figure}[h]\centering
+%	  \includegraphics[width = 8.36cm]{plots/matrix_msk.pdf}
+%	  \caption{Runtime of the fastest module combinations, on Wolfdale}
+%	  \label{screen:Wolf}
+%	\end{figure}
+%	\begin{figure}[h]\centering
+%	  \includegraphics[width = 8.36cm]{plots/matrix_dg.pdf}
+%	  \caption{Runtime of the fastest module combinations, on Haswell}
+%	  \label{screen:Has}
+%	\end{figure}
+\newline Fig. \ref{mod:Wolf} and \ref{mod,Has} show which module combination performed best, using the indexing introduced in Sec. \ref{exp:setup}. A few points are worth noting: \newline
 Firstly, the module combinations used on the two platforms are sometimes quite different from each other and do not have too much of a pattern. This indicates that it might be quite \textbf{difficult} to actually \textbf{predict} which module works best. \newline
 Secondly, it has to be noted that for some sizes, the \textbf{difference} between fastest and second - fastest module combinations is very \textbf{small} - sometimes even within measurement error. So it might be possible to construct a neater arrangement of modules by allowing those second - best combinations.\newline
 Thirdly, whilst the temperature does have some inpact on which module is used, the \textbf{dominant factor} seems to be the \textbf{size}. This justifies not optimising w.r.t. temperature in the installation procedure (see Sec. \ref{opt:autotuning}).\newline
@@ -329,6 +332,7 @@ The performance of the final version, using the \textbf{fast autotuning procedur
 
 
 \section{Conclusions}
+The modular interface and autotuning routine help the pro-ject to remain expandable. It is possible to write additional modules and run the installation again with little effort. The most successful optimisation techniques were precompuation, economic use of random bits and data compression for both platforms. There are a few open questions worth investigating: What is the runtime penalty for the modular interface? How exactly does Haswell manage to reduce the lookup runtime of the nearest neighbors even at large sizes (Figure \ref{MATRIX:Has:1000})? Where could one use SSE/AVX for the project (we used SSE for Z-order index computation, but measured no speedup there)? The project was a valuable experience in optimisation and teamwork. 
 
 \bibliographystyle{IEEEbib}
 \bibliography{bibl_conf}
